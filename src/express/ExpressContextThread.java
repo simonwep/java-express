@@ -23,8 +23,8 @@ public class ExpressContextThread implements Runnable {
     this.REQUEST = new Request(httpExchange);
     this.RESPONSE = new Response(httpExchange);
 
-    this.requestPath = REQUEST.getRequestURI().getRawPath();
-    this.requestMethod = REQUEST.getRequestMethod();
+    this.requestPath = REQUEST.getURI().getRawPath();
+    this.requestMethod = REQUEST.getMethod();
   }
 
   @Override

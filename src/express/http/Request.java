@@ -2,28 +2,47 @@ package express.http;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import express.ExpressUtils;
 import express.cookie.Cookie;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 
-public class Request {
+public class Request{
 
   private final HttpExchange HTTP_EXCHANGE;
+  private final URI URI;
   private final InputStream BODY;
   private final Headers HEADER;
 
   private final HashMap<String, Cookie> COOKIES;
-
+  private final HashMap<String, String> QUERYS;
   private HashMap<String, String> params;
 
   public Request(HttpExchange exchange) {
     this.HTTP_EXCHANGE = exchange;
+    this.URI = exchange.getRequestURI();
     this.HEADER = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
-    this.COOKIES = parseCookies(exchange.getRequestHeaders());
+
+    this.QUERYS = ExpressUtils.parseRawQuery(exchange.getRequestURI());
+    this.COOKIES = ExpressUtils.parseCookies(exchange.getRequestHeaders());
+  }
+
+  public InputStream getBody() {
+    return BODY;
+  }
+
+  public void pipe(OutputStream os, int bufferSize) throws IOException {
+    byte[] buffer = new byte[bufferSize];
+    int n;
+    while ((n = BODY.read(buffer)) != -1)
+      os.write(buffer, 0, n);
+    os.close();
   }
 
   public Cookie getCookie(String name) {
@@ -43,19 +62,23 @@ public class Request {
   }
 
   public String getContentType() {
-    return HEADER.get("Accept").get(0);
+    return HEADER.get("Content-Type").get(0);
   }
 
-  public URI getRequestURI() {
-    return HTTP_EXCHANGE.getRequestURI();
+  public URI getURI() {
+    return this.URI;
   }
 
-  public String getRequestMethod() {
+  public String getMethod() {
     return HTTP_EXCHANGE.getRequestMethod();
   }
 
   public String getParam(String key) {
     return params.get(key);
+  }
+
+  public String getQuery(String key) {
+    return QUERYS.get(key);
   }
 
   public void setParams(HashMap<String, String> params) {
@@ -64,27 +87,6 @@ public class Request {
 
   public List<String> getHeader(String header) {
     return HEADER.get(header);
-  }
-
-  private HashMap<String, Cookie> parseCookies(Headers headers) {
-    HashMap<String, Cookie> cookieList = new HashMap<>();
-    List<String> headerCookies = headers.get("Cookie");
-
-    if (headerCookies == null || headerCookies.size() == 0) {
-      return cookieList;
-    }
-
-    String hcookies = headerCookies.get(0);
-
-    String[] cookies = hcookies.split(";");
-    for (String cookie : cookies) {
-      String[] split = cookie.split("=");
-      String name = split[0].trim();
-      String value = split[1].trim();
-      cookieList.put(name, new Cookie(name, value));
-    }
-
-    return cookieList;
   }
 
 }
