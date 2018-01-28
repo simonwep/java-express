@@ -1,8 +1,6 @@
 package express.cookie;
 
 
-import express.SameSite;
-
 import java.time.Instant;
 
 public class Cookie {

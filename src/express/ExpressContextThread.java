@@ -7,7 +7,7 @@ import express.http.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ExpressContextThread extends Express implements Runnable {
+public class ExpressContextThread implements Runnable {
 
   private final Express EXPRESS;
   private final HttpExchange HTTP_EXCHANGE;
@@ -27,7 +27,6 @@ public class ExpressContextThread extends Express implements Runnable {
     this.requestMethod = REQUEST.getRequestMethod();
   }
 
-
   @Override
   public void run() {
     ArrayList<ExpressHandler> middleware = EXPRESS.MITTLEWARE.get(requestMethod);
@@ -35,14 +34,14 @@ public class ExpressContextThread extends Express implements Runnable {
 
     if (middleware != null && middleware.size() > 0) {
       middleware.forEach(exh -> {
-        if (RESPONSE.isClosed())
-          return;
 
         HashMap<String, String> params = exh.parseParams(requestPath);
         if (params != null) {
-
           REQUEST.setParams(params);
           exh.getRequest().handle(REQUEST, RESPONSE);
+
+          if (RESPONSE.isClosed())
+            return;
         }
       });
     }
@@ -52,11 +51,11 @@ public class ExpressContextThread extends Express implements Runnable {
 
         HashMap<String, String> params = exh.parseParams(requestPath);
         if (params != null) {
-          if (RESPONSE.isClosed())
-            return;
-
           REQUEST.setParams(params);
           exh.getRequest().handle(REQUEST, RESPONSE);
+
+          if (RESPONSE.isClosed())
+            return;
         }
       });
     }

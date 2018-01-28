@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
 public class Express {
 
@@ -88,10 +89,10 @@ public class Express {
     new Thread(() -> {
       try {
         httpServer = HttpServer.create(new InetSocketAddress("localhost", port), 0);
-        httpServer.start();
-
+        httpServer.setExecutor(null);
         httpServer.createContext("/", new ExpressContext(this));
 
+        httpServer.start();
         action.action();
       } catch (IOException e) {
         // TODO: Handle errors

@@ -43,8 +43,16 @@ public class Response {
     return this.status;
   }
 
+  public void send() {
+    if (checkIfClosed()) return;
+    this.contentLength = 0;
+    sendHeaders();
+    close();
+  }
+
   public void send(String s) {
     if (checkIfClosed()) return;
+    this.contentLength += s.length();
     sendHeaders();
 
     try {
@@ -53,25 +61,23 @@ public class Response {
       // TODO: Handle error
       e.printStackTrace();
     }
-    this.contentLength += s.length();
     close();
   }
 
   public void sendFile(File file, String contentType) {
     if (checkIfClosed()) return;
+    this.contentLength += file.length();
+    this.contentType = contentType;
     sendHeaders();
-    byte[] bytes = new byte[0];
 
     try {
-      bytes = Files.readAllBytes(file.toPath());
+      byte[]  bytes = Files.readAllBytes(file.toPath());
       this.BODY.write(bytes);
     } catch (IOException e) {
       // TODO: Handle error
       e.printStackTrace();
     }
 
-    this.contentLength += bytes.length;
-    this.contentType = contentType;
     close();
   }
 

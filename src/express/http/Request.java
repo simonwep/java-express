@@ -6,7 +6,6 @@ import express.cookie.Cookie;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class Request {
   private final InputStream BODY;
   private final Headers HEADER;
 
-  private final ArrayList<Cookie> COOKIES;
+  private final HashMap<String, Cookie> COOKIES;
 
   private HashMap<String, String> params;
 
@@ -27,7 +26,11 @@ public class Request {
     this.COOKIES = parseCookies(exchange.getRequestHeaders());
   }
 
-  public ArrayList<Cookie> getCookies() {
+  public Cookie getCookie(String name) {
+    return COOKIES.get(name);
+  }
+
+  public HashMap<String, Cookie> getCookies() {
     return COOKIES;
   }
 
@@ -63,18 +66,22 @@ public class Request {
     return HEADER.get(header);
   }
 
-  private ArrayList<Cookie> parseCookies(Headers headers) {
-    ArrayList<Cookie> cookieList = new ArrayList<>();
-    String hcookies = headers.get("Cookie").get(0);
+  private HashMap<String, Cookie> parseCookies(Headers headers) {
+    HashMap<String, Cookie> cookieList = new HashMap<>();
+    List<String> headerCookies = headers.get("Cookie");
 
-    if (hcookies == null || hcookies.length() == 0) {
+    if (headerCookies == null || headerCookies.size() == 0) {
       return cookieList;
     }
+
+    String hcookies = headerCookies.get(0);
 
     String[] cookies = hcookies.split(";");
     for (String cookie : cookies) {
       String[] split = cookie.split("=");
-      cookieList.add(new Cookie(split[0].trim(), split[1].trim()));
+      String name = split[0].trim();
+      String value = split[1].trim();
+      cookieList.put(name, new Cookie(name, value));
     }
 
     return cookieList;

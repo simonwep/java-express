@@ -15,8 +15,7 @@ public class ExpressContext implements HttpHandler {
 
   @Override
   public void handle(HttpExchange httpExchange) throws IOException {
-    ExpressContextThread ect = new ExpressContextThread(httpExchange, EXPRESS);
-    new Thread(ect).start();
+    new Thread(new ExpressContextThread(httpExchange, EXPRESS)).start();
   }
 
 
