@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import express.events.Action;
 import express.events.HttpRequest;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -98,6 +99,18 @@ public class Express {
         e.printStackTrace();
       }
     }).start();
+  }
+
+  public static HttpRequest statics(String path) {
+    return (req, res) -> {
+      File reqFile = new File(path + req.getURI().getPath());
+
+      if (reqFile.exists()) {
+        String extension = reqFile.getAbsolutePath().replaceAll("^(.*\\.|.*\\\\|.+$)", "");
+        String contentType = ExpressUtils.getContentType(extension);
+        res.send(reqFile, contentType);
+      }
+    };
   }
 
 }

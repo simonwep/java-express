@@ -16,7 +16,7 @@ public class Response {
   private final OutputStream BODY;
   private final Headers HEADER;
 
-  private String contentType = "text";
+  private String contentType = "text/plain";
   private boolean isClose = false;
   private long contentLength = 0;
   private int status = 200;
@@ -64,7 +64,7 @@ public class Response {
     close();
   }
 
-  public void sendFile(File file, String contentType) {
+  public void send(File file, String contentType) {
     if (checkIfClosed()) return;
     this.contentLength += file.length();
     this.contentType = contentType;

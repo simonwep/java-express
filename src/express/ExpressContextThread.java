@@ -29,15 +29,26 @@ public class ExpressContextThread implements Runnable {
 
   @Override
   public void run() {
+    ArrayList<ExpressHandler> middlewareAll = EXPRESS.MITTLEWARE.get("*");
+    ArrayList<ExpressHandler> requestsAll = EXPRESS.REQUEST.get("*");
     ArrayList<ExpressHandler> middleware = EXPRESS.MITTLEWARE.get(requestMethod);
     ArrayList<ExpressHandler> requests = EXPRESS.REQUEST.get(requestMethod);
+
+    if (middleware == null && middlewareAll != null)
+      middleware = middlewareAll;
+    else if (middlewareAll != null)
+      middleware.addAll(middlewareAll);
+
+    if (requests == null && requestsAll != null)
+      requests = requestsAll;
+    else if (requestsAll != null)
+      requests.addAll(requestsAll);
 
     if (middleware != null && middleware.size() > 0) {
       middleware.forEach(exh -> {
 
         HashMap<String, String> params = exh.parseParams(requestPath);
-        if (params != null) {
-          REQUEST.setParams(params);
+        if (params != null || exh.getContext().equals("*")) {
           exh.getRequest().handle(REQUEST, RESPONSE);
 
           if (RESPONSE.isClosed())
@@ -50,7 +61,7 @@ public class ExpressContextThread implements Runnable {
       requests.forEach(exh -> {
 
         HashMap<String, String> params = exh.parseParams(requestPath);
-        if (params != null) {
+        if (params != null || exh.getContext().equals("*")) {
           REQUEST.setParams(params);
           exh.getRequest().handle(REQUEST, RESPONSE);
 

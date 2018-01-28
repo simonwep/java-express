@@ -57,7 +57,7 @@ public class Get {
       res.send(buffer.toString());
     });
 
-    express.listen(() -> System.out.println("Server stardet!"));
+    express.listen(() -> System.out.println("Express is listening!"));
   }
 
 }
