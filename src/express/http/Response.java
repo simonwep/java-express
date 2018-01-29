@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-
+/**
+ * @author Simon Reinisch
+ * @implNote Core modul of express, don't change anything.
+ */
 public class Response {
 
   private final HttpExchange HTTP_EXCHANGE;
@@ -27,22 +30,41 @@ public class Response {
     this.BODY = exchange.getResponseBody();
   }
 
+  /**
+   * Set an cookie.
+   *
+   * @param cookie The cookie.
+   * @return This Response instance.
+   */
   public Response setCookie(Cookie cookie) {
     if (checkIfClosed()) return this;
     this.HEADER.add("Set-Cookie", cookie.toString());
     return this;
   }
 
+  /**
+   * Set the response-status.
+   * Default is 200 (ok).
+   *
+   * @param status The response status.
+   * @return This Response instance.
+   */
   public Response setStatus(int status) {
     if (checkIfClosed()) return this;
     this.status = status;
     return this;
   }
 
+  /**
+   * @return Current response status.
+   */
   public int getStatus() {
     return this.status;
   }
 
+  /**
+   * Send an empty response (Content-Length = 0)
+   */
   public void send() {
     if (checkIfClosed()) return;
     this.contentLength = 0;
@@ -50,6 +72,11 @@ public class Response {
     close();
   }
 
+  /**
+   * Send an string as response.
+   *
+   * @param s The string.
+   */
   public void send(String s) {
     if (checkIfClosed()) return;
     this.contentLength += s.length();
@@ -64,6 +91,12 @@ public class Response {
     close();
   }
 
+  /**
+   * Send an entire file as response
+   *
+   * @param file        The file.
+   * @param contentType Content type.
+   */
   public void send(File file, String contentType) {
     if (checkIfClosed()) return;
     this.contentLength += file.length();
@@ -71,7 +104,7 @@ public class Response {
     sendHeaders();
 
     try {
-      byte[]  bytes = Files.readAllBytes(file.toPath());
+      byte[] bytes = Files.readAllBytes(file.toPath());
       this.BODY.write(bytes);
     } catch (IOException e) {
       // TODO: Handle error
@@ -81,6 +114,9 @@ public class Response {
     close();
   }
 
+  /**
+   * @return If the response is already closed (headers are send).
+   */
   public boolean isClosed() {
     return this.isClose;
   }
@@ -103,7 +139,7 @@ public class Response {
     }
   }
 
-  private void close(){
+  private void close() {
     try {
       this.BODY.close();
       this.isClose = true;
@@ -112,6 +148,5 @@ public class Response {
       e.printStackTrace();
     }
   }
-
 
 }

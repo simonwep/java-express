@@ -3,6 +3,9 @@ package express.events;
 import express.http.Request;
 import express.http.Response;
 
+/**
+ * @author Simon Reinisch
+ */
 public interface HttpRequest {
 
   /**

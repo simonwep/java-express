@@ -11,6 +11,12 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Simon Reinisch
+ * @implNote Core modul of express, don't change anything.
+ *
+ * Filter to handle request handling & parsing.
+ */
 public class ExpressFilter extends Filter {
 
   private final HttpRequest REQUEST;
@@ -54,9 +60,11 @@ public class ExpressFilter extends Filter {
       return;
     }
 
+    // Parse params, see README
     HashMap<String, String> params = new HashMap<>();
     Matcher matcher = CONTEXT_PATTERN.matcher(requestPath);
 
+    // Match all params
     if (matcher.find()) {
 
       for (int i = 1; i <= matcher.groupCount() && i < CONTEXT_PARAMS.length; i++) {

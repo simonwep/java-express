@@ -2,6 +2,12 @@ package express;
 
 import java.util.HashMap;
 
+/**
+ * @author Simon Reinisch
+ *
+ * Full list of mime-types to handle static served files.
+ * List-link: https://www.freeformatter.com/mime-types-list.html
+ */
 public class MIMETypes {
 
   private final static HashMap<String, String> MIME = new HashMap<>();
