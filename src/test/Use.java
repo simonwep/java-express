@@ -1,10 +1,9 @@
 package test;
 
 import express.Express;
-import express.cookie.Cookie;
+import express.middleware.Static;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 public class Use {
 
@@ -12,7 +11,8 @@ public class Use {
     Express app = new Express();
 
     // Test for static file service
-    app.use(Express.statics("examplepath\\test_statics"));
+    app.use(new Static("examplepath\\test_statics"));
+
 
     app.listen(() -> System.out.println("Express is listening!"));
   }

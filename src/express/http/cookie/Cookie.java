@@ -1,4 +1,4 @@
-package express.cookie;
+package express.http.cookie;
 
 
 import java.time.Instant;

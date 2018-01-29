@@ -8,7 +8,6 @@ import express.events.HttpRequest;
 import express.http.Request;
 import express.http.Response;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.List;
 /**
  * @author Simon Reinisch
  * @implNote Core modul, don't change anything.
- *
+ * <p>
  * An NodeJS like clone written in Java, see README for more information.
  */
 public class Express {
@@ -233,27 +232,5 @@ public class Express {
         e.printStackTrace();
       }
     }).start();
-  }
-
-  /**
-   * This method serves an entire folder which can contains static file for your
-   * web application, it automatically detect the content type and will send it to
-   * the Client.
-   * <p>
-   * To use it simply put it in the <code>app.use()</code> method!
-   *
-   * @param path The root directory
-   * @return An HttpRequest interface with the service.
-   */
-  public static HttpRequest statics(String path) {
-    return (req, res) -> {
-      File reqFile = new File(path + req.getURI().getPath());
-
-      if (reqFile.exists()) {
-        String extension = reqFile.getAbsolutePath().replaceAll("^(.*\\.|.*\\\\|.+$)", "");
-        String contentType = ExpressUtils.getContentType(extension);
-        res.send(reqFile, contentType);
-      }
-    };
   }
 }

@@ -4,17 +4,13 @@ import java.util.HashMap;
 
 /**
  * @author Simon Reinisch
- *
+ * <p>
  * Full list of mime-types to handle static served files.
  * List-link: https://www.freeformatter.com/mime-types-list.html
  */
 public class MIMETypes {
 
   private final static HashMap<String, String> MIME = new HashMap<>();
-
-  public static HashMap<String, String> get() {
-    return MIME;
-  }
 
   static {
     MIME.put("aw", "application/applixware");
@@ -708,5 +704,9 @@ public class MIMETypes {
     MIME.put("par", "text/plain-bas");
     MIME.put("yaml", "text/yaml");
     MIME.put("dmg", "application/x-apple-diskimage");
+  }
+
+  public static HashMap<String, String> get() {
+    return MIME;
   }
 }

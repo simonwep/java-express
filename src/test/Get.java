@@ -1,7 +1,7 @@
 package test;
 
 import express.Express;
-import express.cookie.Cookie;
+import express.http.cookie.Cookie;
 
 import java.io.IOException;
 import java.util.HashMap;

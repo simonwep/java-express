@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * @author Simon Reinisch
  * @implNote Core modul of express, don't change anything.
- *
+ * <p>
  * Filter to handle request handling & parsing.
  */
 public class ExpressFilter extends Filter {
