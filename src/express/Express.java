@@ -1,12 +1,14 @@
 package express;
 
-import com.sun.net.httpserver.*;
+import com.sun.net.httpserver.Filter;
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpServer;
 import express.events.Action;
 import express.events.HttpRequest;
 import express.http.Request;
 import express.http.Response;
-import express.middleware.ExpressMiddleware;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -15,60 +17,72 @@ import java.util.List;
 
 public class Express {
 
+  private final List<Filter> MIDDLEWARE = Collections.synchronizedList(new ArrayList<>());
   private final List<Filter> FILTER = Collections.synchronizedList(new ArrayList<>());
+  int middlewareIndex = 0;
 
   private HttpServer httpServer;
   private HttpContext httpContext;
   private HttpRequest request404;
 
-  public Express() {
-
-  }
-
   public void use(HttpRequest request) {
-    add("*", "*", request);
+    addFilter(true, "*", "*", request);
   }
 
   public void use(String context, HttpRequest request) {
-    add("*", context, request);
+    addFilter(true, "*", context, request);
   }
 
-  public void use(String method, String context, HttpRequest request) {
-    add(method.toUpperCase(), context, request);
-  }
-
-  public void on(String method, String context, HttpRequest request) {
-    add(method.toUpperCase(), context, request);
+  public void use(String context, String requestMethod, HttpRequest request) {
+    addFilter(true, requestMethod.toUpperCase(), context, request);
   }
 
   public void all(String context, HttpRequest request) {
-    add("*", context, request);
+    addFilter(false, "*", context, request);
   }
 
   public void get(String context, HttpRequest request) {
-    add("GET", context, request);
+    addFilter(false, "GET", context, request);
   }
 
   public void post(String context, HttpRequest request) {
-    add("POST", context, request);
+    addFilter(false, "POST", context, request);
   }
 
   public void put(String context, HttpRequest request) {
-    add("PUT", context, request);
+    addFilter(false, "PUT", context, request);
   }
 
   public void delete(String context, HttpRequest request) {
-    add("DELETE", context, request);
+    addFilter(false, "DELETE", context, request);
   }
 
   public void patch(String context, HttpRequest request) {
-    add("PATCH", context, request);
+    addFilter(false, "PATCH", context, request);
   }
 
-  private void add(String requestMethod, String context, HttpRequest request) {
-    ExpressMiddleware handler = new ExpressMiddleware(requestMethod, context, request);
+  private void addFilter(boolean middleware, String requestMethod, String context, HttpRequest request) {
+    ExpressFilter handler = new ExpressFilter(requestMethod, context, request);
     if (httpContext == null) {
-      FILTER.add(handler);
+      if (middleware) {
+        MIDDLEWARE.add(handler);
+      } else {
+        FILTER.add(handler);
+      }
+    } else {
+      List<Filter> filters = httpContext.getFilters();
+
+      if (middleware) {
+        filters.add(middlewareIndex, handler);
+        middlewareIndex++;
+      } else filters.add(handler);
+    }
+  }
+
+  private void addFirst(String requestMethod, String context, HttpRequest request) {
+    ExpressFilter handler = new ExpressFilter(requestMethod, context, request);
+    if (httpContext == null) {
+      MIDDLEWARE.add(handler);
     } else {
       httpContext.getFilters().add(handler);
     }
@@ -77,7 +91,6 @@ public class Express {
   public void listen() throws IOException {
     launch(null, 80);
   }
-
 
   public void listen(int port) throws IOException {
     launch(null, port);
@@ -110,6 +123,7 @@ public class Express {
           }
         });
 
+        httpContext.getFilters().addAll(MIDDLEWARE);
         httpContext.getFilters().addAll(FILTER);
 
         httpServer.start();
@@ -121,4 +135,15 @@ public class Express {
     }).start();
   }
 
+  public static HttpRequest statics(String path) {
+    return (req, res) -> {
+      File reqFile = new File(path + req.getURI().getPath());
+
+      if (reqFile.exists()) {
+        String extension = reqFile.getAbsolutePath().replaceAll("^(.*\\.|.*\\\\|.+$)", "");
+        String contentType = ExpressUtils.getContentType(extension);
+        res.send(reqFile, contentType);
+      }
+    };
+  }
 }

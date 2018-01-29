@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 
-public class Request{
+public class Request {
 
   private final HttpExchange HTTP_EXCHANGE;
   private final URI URI;
@@ -29,6 +29,7 @@ public class Request{
     this.HEADER = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
 
+    this.params = new HashMap<>();
     this.QUERYS = ExpressUtils.parseRawQuery(exchange.getRequestURI());
     this.COOKIES = ExpressUtils.parseCookies(exchange.getRequestHeaders());
   }
@@ -67,6 +68,10 @@ public class Request{
 
   public URI getURI() {
     return this.URI;
+  }
+
+  public String getPath() {
+    return this.URI.getPath();
   }
 
   public String getMethod() {

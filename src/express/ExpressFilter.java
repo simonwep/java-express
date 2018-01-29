@@ -1,4 +1,4 @@
-package express.middleware;
+package express;
 
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
@@ -11,19 +11,23 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ExpressMiddleware extends Filter {
+public class ExpressFilter extends Filter {
 
   private final HttpRequest REQUEST;
   private final String REQUEST_METHOD;
+
+  private final String CONTEXT;
   private final String[] CONTEXT_PARAMS;
   private final String CONTEXT_REGEX;
   private final Pattern CONTEXT_PATTERN;
 
   private String description;
 
-  public ExpressMiddleware(String requestMethod, String context, HttpRequest httpRequest) {
+  public ExpressFilter(String requestMethod, String context, HttpRequest httpRequest) {
     this.REQUEST_METHOD = requestMethod;
     this.REQUEST = httpRequest;
+
+    this.CONTEXT = context;
     this.CONTEXT_PARAMS = context.split("(/)(:|[^:]+|)(:|)");
     this.CONTEXT_REGEX = "\\Q" + context.replaceAll(":([^/]+)", "\\\\E([^/]+)\\\\Q") + "\\E";
     this.CONTEXT_PATTERN = Pattern.compile(CONTEXT_REGEX);
@@ -37,7 +41,15 @@ public class ExpressMiddleware extends Filter {
     String requestMethod = httpExchange.getRequestMethod();
     String requestPath = request.getURI().getRawPath();
 
-    if (!requestMethod.equals(REQUEST_METHOD) || !requestPath.matches(CONTEXT_REGEX)) {
+    if ((requestMethod.equals(REQUEST_METHOD)) || (REQUEST_METHOD.equals("*") && CONTEXT.equals("*"))) {
+      REQUEST.handle(request, response);
+
+      if (!response.isClosed())
+        chain.doFilter(httpExchange);
+      return;
+    }
+
+    if (!requestPath.matches(CONTEXT_REGEX) && !CONTEXT.equals("*")) {
       chain.doFilter(httpExchange);
       return;
     }
@@ -61,13 +73,12 @@ public class ExpressMiddleware extends Filter {
     REQUEST.handle(request, response);
   }
 
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
   @Override
   public String description() {
     return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
   }
 }

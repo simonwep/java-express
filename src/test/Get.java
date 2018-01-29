@@ -9,39 +9,39 @@ import java.util.HashMap;
 public class Get {
 
   public static void main(String[] args) throws IOException {
-    Express express = new Express();
+    Express app = new Express();
 
     // Test case for url
-    express.get("/", (req, res) -> res.send("Called /"));
+    app.get("/", (req, res) -> res.send("Called /"));
 
     // Test case for url
-    express.get("/user", (req, res) -> res.send("Called /user"));
+    app.get("/user", (req, res) -> res.send("Called /user"));
 
     // Test case for url
-    express.get("/user/bob", (req, res) -> res.send("Called /user/bob"));
+    app.get("/user/bob", (req, res) -> res.send("Called /user/bob"));
 
     // Test case for url querying
-    express.get("/getposts", (req, res) -> {
+    app.get("/getposts", (req, res) -> {
       String age = req.getQuery("age");
       String from = req.getQuery("from");
       res.send("Age: " + age + "\nFrom: " + from);
     });
 
     // Test case for param placeholder
-    express.get("/hello/:username", (req, res) -> {
+    app.get("/hello/:username", (req, res) -> {
       String username = req.getParam("username");
       res.send("User " + username + " sad hello!");
     });
 
     // Test case for multiple param placeholder
-    express.get("/hello/:username/:count", (req, res) -> {
+    app.get("/hello/:username/:count", (req, res) -> {
       String username = req.getParam("username");
       String count = req.getParam("count");
       res.send("User " + username + " want to say " + count + " times hello!");
     });
 
     // Test case for cookie setting & multiple param placeholder
-    express.get("/cookie/:name/:val", (req, res) -> {
+    app.get("/cookie/:name/:val", (req, res) -> {
       String name = req.getParam("name");
       String val = req.getParam("val");
       Cookie cookie = new Cookie(name, val);
@@ -50,14 +50,14 @@ public class Get {
     });
 
     // Test case for cookie reading
-    express.get("/showcookies", (req, res) -> {
+    app.get("/showcookies", (req, res) -> {
       HashMap<String, Cookie> cookies = req.getCookies();
       StringBuffer buffer = new StringBuffer();
       cookies.forEach((s, cookie) -> buffer.append(s).append(": ").append(cookie));
       res.send(buffer.toString());
     });
 
-    express.listen(() -> System.out.println("Express is listening!"));
+    app.listen(() -> System.out.println("Express is listening!"));
   }
 
 }
