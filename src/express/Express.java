@@ -1,71 +1,77 @@
 package express;
 
-import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.*;
 import express.events.Action;
 import express.events.HttpRequest;
+import express.http.Request;
+import express.http.Response;
+import express.middleware.ExpressMiddleware;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.List;
 
 public class Express {
 
-  protected final ConcurrentHashMap<String, ArrayList<ExpressHandler>> MITTLEWARE = new ConcurrentHashMap<>();
-  protected final ConcurrentHashMap<String, ArrayList<ExpressHandler>> REQUEST = new ConcurrentHashMap<>();
+  private final List<Filter> FILTER = Collections.synchronizedList(new ArrayList<>());
 
-  protected HttpServer httpServer;
+  private HttpServer httpServer;
+  private HttpContext httpContext;
+  private HttpRequest request404;
 
   public Express() {
+
   }
 
   public void use(HttpRequest request) {
-    addToRouteMap(MITTLEWARE, "*", "*", request);
+    add("*", "*", request);
   }
 
   public void use(String context, HttpRequest request) {
-    addToRouteMap(MITTLEWARE, "*", context, request);
+    add("*", context, request);
   }
 
   public void use(String method, String context, HttpRequest request) {
-    addToRouteMap(MITTLEWARE, method.toUpperCase(), context, request);
+    add(method.toUpperCase(), context, request);
   }
 
   public void on(String method, String context, HttpRequest request) {
-    addToRouteMap(REQUEST, method.toUpperCase(), context, request);
+    add(method.toUpperCase(), context, request);
   }
 
   public void all(String context, HttpRequest request) {
-    addToRouteMap(REQUEST, "*", context, request);
+    add("*", context, request);
   }
 
   public void get(String context, HttpRequest request) {
-    addToRouteMap(REQUEST, "GET", context, request);
+    add("GET", context, request);
   }
 
   public void post(String context, HttpRequest request) {
-    addToRouteMap(REQUEST, "POST", context, request);
+    add("POST", context, request);
   }
 
   public void put(String context, HttpRequest request) {
-    addToRouteMap(REQUEST, "PUT", context, request);
+    add("PUT", context, request);
   }
 
   public void delete(String context, HttpRequest request) {
-    addToRouteMap(REQUEST, "DELETE", context, request);
+    add("DELETE", context, request);
   }
 
   public void patch(String context, HttpRequest request) {
-    addToRouteMap(REQUEST, "PATCH", context, request);
+    add("PATCH", context, request);
   }
 
-  private void addToRouteMap(ConcurrentHashMap<String, ArrayList<ExpressHandler>> routemap, String key, String context, HttpRequest request) {
-
-    if (!routemap.containsKey(key))
-      routemap.put(key, new ArrayList<>());
-
-    routemap.get(key).add(new ExpressHandler(context, request));
+  private void add(String requestMethod, String context, HttpRequest request) {
+    ExpressMiddleware handler = new ExpressMiddleware(requestMethod, context, request);
+    if (httpContext == null) {
+      FILTER.add(handler);
+    } else {
+      httpContext.getFilters().add(handler);
+    }
   }
 
   public void listen() throws IOException {
@@ -85,12 +91,26 @@ public class Express {
     launch(action, port);
   }
 
+  public void set404(HttpRequest request) {
+    this.request404 = request;
+  }
+
   private void launch(Action action, int port) throws IOException {
     new Thread(() -> {
       try {
         httpServer = HttpServer.create(new InetSocketAddress("localhost", port), 0);
         httpServer.setExecutor(null);
-        httpServer.createContext("/", new ExpressContext(this));
+        httpContext = httpServer.createContext("/", httpExchange -> {
+          if (request404 != null) {
+            Request request = new Request(httpExchange);
+            Response response = new Response(httpExchange);
+            request404.handle(request, response);
+          } else {
+            System.err.println("Not 404 Handler specified");
+          }
+        });
+
+        httpContext.getFilters().addAll(FILTER);
 
         httpServer.start();
         action.action();
@@ -99,18 +119,6 @@ public class Express {
         e.printStackTrace();
       }
     }).start();
-  }
-
-  public static HttpRequest statics(String path) {
-    return (req, res) -> {
-      File reqFile = new File(path + req.getURI().getPath());
-
-      if (reqFile.exists()) {
-        String extension = reqFile.getAbsolutePath().replaceAll("^(.*\\.|.*\\\\|.+$)", "");
-        String contentType = ExpressUtils.getContentType(extension);
-        res.send(reqFile, contentType);
-      }
-    };
   }
 
 }
