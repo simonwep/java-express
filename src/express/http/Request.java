@@ -2,7 +2,7 @@ package express.http;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import express.ExpressUtils;
+import express.utils.ExpressUtils;
 import express.http.cookie.Cookie;
 
 import java.io.IOException;

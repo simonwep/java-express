@@ -1,7 +1,8 @@
-package express;
+package express.utils;
 
 import com.sun.net.httpserver.Headers;
 import express.http.cookie.Cookie;
+import express.utils.MIMETypes;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;

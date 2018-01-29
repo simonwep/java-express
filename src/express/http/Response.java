@@ -3,7 +3,6 @@ package express.http;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import express.http.cookie.Cookie;
-import express.middleware.FormInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +19,6 @@ public class Response {
   private final OutputStream BODY;
   private final Headers HEADER;
 
-  private FormInfo formInfo;
-
   private String contentType = "text/plain";
   private boolean isClose = false;
   private long contentLength = 0;
@@ -31,20 +28,6 @@ public class Response {
     this.HTTP_EXCHANGE = exchange;
     this.HEADER = exchange.getResponseHeaders();
     this.BODY = exchange.getResponseBody();
-  }
-
-  /**
-   * If the request was an multipart-formdata request, you can
-   * receive over the FormInfo object serveral informations.
-   *
-   * @return
-   */
-  public FormInfo getFormInfo() {
-    return formInfo;
-  }
-
-  public void setFormInfo(FormInfo formInfo) {
-    this.formInfo = formInfo;
   }
 
   /**
