@@ -1,6 +1,5 @@
 package express;
 
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import express.events.Action;
 import express.events.HttpRequest;
@@ -8,9 +7,13 @@ import express.expressfilter.ExpressFilter;
 import express.expressfilter.ExpressFilterChain;
 import express.http.Request;
 import express.http.Response;
+import express.middleware.ExpressWorker;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Simon Reinisch
@@ -20,6 +23,7 @@ import java.net.InetSocketAddress;
  */
 public class Express {
 
+  private final List<ExpressWorker> WORKERS = Collections.synchronizedList(new ArrayList<>());
   private final ExpressFilterChain FILTER_CHAIN = new ExpressFilterChain();
 
   private HttpServer httpServer;
@@ -125,6 +129,12 @@ public class Express {
   private void addFilter(boolean middleware, String requestMethod, String context, HttpRequest request) {
     ExpressFilter handler = new ExpressFilter(requestMethod, context, request);
 
+    if (request instanceof ExpressWorker){
+      ((ExpressWorker) request).start();
+      WORKERS.add((ExpressWorker) request);
+    }
+
+
     // Middleware needs an seperated list because it will ALWAYS fired before each request handler
     if (middleware)
       FILTER_CHAIN.addMiddleware(handler);
@@ -138,6 +148,7 @@ public class Express {
    *
    * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
    */
+
   public void listen() throws IOException {
     listen(null, 80);
   }

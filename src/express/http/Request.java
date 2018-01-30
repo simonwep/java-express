@@ -3,6 +3,7 @@ package express.http;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import express.http.cookie.Cookie;
+import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,8 @@ public class Request {
   private final Headers HEADER;
   private final String CONTENT_TYPE;
 
+  private final HashMap<String, Object> MIDDLEWARE;
+
   private final HashMap<String, Cookie> COOKIES;
   private final HashMap<String, String> QUERYS;
   private HashMap<String, String> params;
@@ -38,6 +41,7 @@ public class Request {
     this.BODY = exchange.getRequestBody();
     this.CONTENT_TYPE = HEADER.get("Content-Type") == null ? "" : HEADER.get("Content-Type").get(0);
 
+    this.MIDDLEWARE = new HashMap<>();
     this.params = new HashMap<>();
 
     this.QUERYS = parseRawQuery(exchange.getRequestURI());
@@ -83,6 +87,14 @@ public class Request {
    */
   public HashMap<String, Cookie> getCookies() {
     return COOKIES;
+  }
+
+  public void addMiddlewareContent(ExpressMiddleware middleware, Object middlewareData) {
+    MIDDLEWARE.put(middleware.getName(), middlewareData);
+  }
+
+  public Object getMiddlewareContent(String name) {
+    return MIDDLEWARE.get(name);
   }
 
   /**
