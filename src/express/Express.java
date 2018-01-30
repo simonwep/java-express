@@ -1,18 +1,16 @@
 package express;
 
-import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import express.events.Action;
 import express.events.HttpRequest;
+import express.expressfilter.ExpressFilter;
+import express.expressfilter.ExpressFilterChain;
 import express.http.Request;
 import express.http.Response;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Simon Reinisch
@@ -22,15 +20,9 @@ import java.util.List;
  */
 public class Express {
 
-  private final List<Filter> MIDDLEWARE = Collections.synchronizedList(new ArrayList<>());
-  private final List<Filter> FILTER = Collections.synchronizedList(new ArrayList<>());
-
-  // Index of last middleware to keep it sorted
-  int middlewareIndex = 0;
+  private final ExpressFilterChain FILTER_CHAIN = new ExpressFilterChain();
 
   private HttpServer httpServer;
-  private HttpContext httpContext;
-  private HttpRequest request404;
 
   /**
    * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
@@ -133,35 +125,11 @@ public class Express {
   private void addFilter(boolean middleware, String requestMethod, String context, HttpRequest request) {
     ExpressFilter handler = new ExpressFilter(requestMethod, context, request);
 
-    // Check if the server is already active
-    if (httpContext == null) {
-
-      // Middleware needs an seperated list because it will ALWAYS fired before each request handler
-      if (middleware) {
-        MIDDLEWARE.add(handler);
-      } else {
-        FILTER.add(handler);
-      }
-    } else {
-      List<Filter> filters = httpContext.getFilters();
-
-      if (middleware) {
-
-        // Insert middleware after the last middleware
-        filters.add(middlewareIndex, handler);
-        middlewareIndex++;
-      } else filters.add(handler);
-    }
-  }
-
-  /**
-   * Set an extra lisener for 404 (not found) requests, also request where no context
-   * match the given request path (or method).
-   *
-   * @param request An listener.
-   */
-  public void set404(HttpRequest request) {
-    this.request404 = request;
+    // Middleware needs an seperated list because it will ALWAYS fired before each request handler
+    if (middleware)
+      FILTER_CHAIN.addMiddleware(handler);
+    else
+      FILTER_CHAIN.addFilter(handler);
   }
 
   /**
@@ -210,18 +178,11 @@ public class Express {
         httpServer = HttpServer.create(new InetSocketAddress("localhost", port), 0);
         httpServer.setExecutor(null);
 
-        httpContext = httpServer.createContext("/", httpExchange -> {
-          if (request404 != null) {
-            Request request = new Request(httpExchange);
-            Response response = new Response(httpExchange);
-            request404.handle(request, response);
-          } else {
-            System.err.println("Not 404 Handler specified");
-          }
+        httpServer.createContext("/", httpExchange -> {
+          Request request = new Request(httpExchange);
+          Response response = new Response(httpExchange);
+          FILTER_CHAIN.filter(request, response);
         });
-
-        httpContext.getFilters().addAll(MIDDLEWARE);
-        httpContext.getFilters().addAll(FILTER);
 
         httpServer.start();
 

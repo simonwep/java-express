@@ -3,7 +3,6 @@ package express.http;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import express.http.cookie.Cookie;
-import express.multipart.MultiPartData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +29,6 @@ public class Request {
 
   private final HashMap<String, Cookie> COOKIES;
   private final HashMap<String, String> QUERYS;
-  private HashMap<String, MultiPartData> formData;
   private HashMap<String, String> params;
 
   public Request(HttpExchange exchange) {
@@ -40,7 +38,6 @@ public class Request {
     this.BODY = exchange.getRequestBody();
     this.CONTENT_TYPE = HEADER.get("Content-Type").get(0);
 
-    this.formData = new HashMap<>();
     this.params = new HashMap<>();
 
     this.QUERYS = parseRawQuery(exchange.getRequestURI());
@@ -128,14 +125,6 @@ public class Request {
    */
   public String getMethod() {
     return HTTP_EXCHANGE.getRequestMethod();
-  }
-
-  public HashMap<String, MultiPartData> getFormData() {
-    return this.formData;
-  }
-
-  public void setFormData(HashMap<String, MultiPartData> formData) {
-    this.formData = formData;
   }
 
   /**

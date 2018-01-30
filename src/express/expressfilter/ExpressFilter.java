@@ -1,12 +1,9 @@
-package express;
+package express.expressfilter;
 
-import com.sun.net.httpserver.Filter;
-import com.sun.net.httpserver.HttpExchange;
 import express.events.HttpRequest;
 import express.http.Request;
 import express.http.Response;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +14,7 @@ import java.util.regex.Pattern;
  * <p>
  * Filter to handle request handling & parsing.
  */
-public class ExpressFilter extends Filter {
+public class ExpressFilter extends AbstractExpressFilter {
 
   private final HttpRequest REQUEST;
   private final String REQUEST_METHOD;
@@ -26,8 +23,6 @@ public class ExpressFilter extends Filter {
   private final String[] CONTEXT_PARAMS;
   private final String CONTEXT_REGEX;
   private final Pattern CONTEXT_PATTERN;
-
-  private String description;
 
   public ExpressFilter(String requestMethod, String context, HttpRequest httpRequest) {
     this.REQUEST_METHOD = requestMethod;
@@ -40,23 +35,16 @@ public class ExpressFilter extends Filter {
   }
 
   @Override
-  public void doFilter(HttpExchange httpExchange, Chain chain) throws IOException {
-    Request request = new Request(httpExchange);
-    Response response = new Response(httpExchange);
+  public void doFilter(Request req, Response res, ExpressFilterChain chain) {
+    String requestMethod = req.getMethod();
+    String requestPath = req.getURI().getRawPath();
 
-    String requestMethod = httpExchange.getRequestMethod();
-    String requestPath = request.getURI().getRawPath();
-
-    if ((requestMethod.equals(REQUEST_METHOD)) || (REQUEST_METHOD.equals("*") && CONTEXT.equals("*"))) {
-      REQUEST.handle(request, response);
-
-      if (!response.isClosed())
-        chain.doFilter(httpExchange);
+    if (!requestMethod.equals(REQUEST_METHOD) || (REQUEST_METHOD.equals("*") && CONTEXT.equals("*"))) {
+      REQUEST.handle(req, res);
       return;
     }
 
     if (!requestPath.matches(CONTEXT_REGEX) && !CONTEXT.equals("*")) {
-      chain.doFilter(httpExchange);
       return;
     }
 
@@ -73,20 +61,10 @@ public class ExpressFilter extends Filter {
       }
 
     } else {
-      chain.doFilter(httpExchange);
       return;
     }
 
-    request.setParams(params);
-    REQUEST.handle(request, response);
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  @Override
-  public String description() {
-    return description;
+    req.setParams(params);
+    REQUEST.handle(req, res);
   }
 }
