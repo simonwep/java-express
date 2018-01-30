@@ -2,7 +2,6 @@ package test;
 
 import express.Express;
 import express.middleware.Static;
-
 import java.io.IOException;
 
 public class Use {

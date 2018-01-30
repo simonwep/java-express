@@ -3,6 +3,7 @@ package express.http;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import express.http.cookie.Cookie;
+import express.multipart.MultiPartData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,13 +22,15 @@ import java.util.regex.Pattern;
  */
 public class Request {
 
-  private final HttpExchange HTTP_EXCHANGE;
   private final URI URI;
+  private final HttpExchange HTTP_EXCHANGE;
   private final InputStream BODY;
   private final Headers HEADER;
+  private final String CONTENT_TYPE;
 
   private final HashMap<String, Cookie> COOKIES;
   private final HashMap<String, String> QUERYS;
+  private HashMap<String, MultiPartData> formData;
   private HashMap<String, String> params;
 
   public Request(HttpExchange exchange) {
@@ -35,8 +38,11 @@ public class Request {
     this.URI = exchange.getRequestURI();
     this.HEADER = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
+    this.CONTENT_TYPE = HEADER.get("Content-Type").get(0);
 
+    this.formData = new HashMap<>();
     this.params = new HashMap<>();
+
     this.QUERYS = parseRawQuery(exchange.getRequestURI());
     this.COOKIES = parseCookies(exchange.getRequestHeaders());
   }
@@ -100,7 +106,7 @@ public class Request {
    * @return The request content-type.
    */
   public String getContentType() {
-    return HEADER.get("Content-Type").get(0);
+    return CONTENT_TYPE;
   }
 
   /**
@@ -122,6 +128,14 @@ public class Request {
    */
   public String getMethod() {
     return HTTP_EXCHANGE.getRequestMethod();
+  }
+
+  public HashMap<String, MultiPartData> getFormData() {
+    return this.formData;
+  }
+
+  public void setFormData(HashMap<String, MultiPartData> formData) {
+    this.formData = formData;
   }
 
   /**
