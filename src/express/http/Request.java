@@ -36,7 +36,7 @@ public class Request {
     this.URI = exchange.getRequestURI();
     this.HEADER = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
-    this.CONTENT_TYPE = HEADER.get("Content-Type").get(0);
+    this.CONTENT_TYPE = HEADER.get("Content-Type") == null ? "" : HEADER.get("Content-Type").get(0);
 
     this.params = new HashMap<>();
 
