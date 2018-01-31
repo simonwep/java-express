@@ -8,13 +8,9 @@ import express.http.cookie.Cookie;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Simon Reinisch
@@ -22,33 +18,45 @@ import java.util.regex.Pattern;
  */
 public class Request {
 
-  private final URI URI;
   private final HttpExchange HTTP_EXCHANGE;
-  private final InputStream BODY;
-  private final Headers HEADER;
-  private final String CONTENT_TYPE;
-  private final Authorization AUTH;
+  private final URI URI;                              // Request URI
+  private final InputStream BODY;                     // Request body
+  private final Headers HEADERS;                       // Request Headers
+  private final String CONTENT_TYPE;                  // Request content-type
+  private final Authorization AUTH;                   // Authorization header parsed
 
-  private final HashMap<String, Object> MIDDLEWARE;
+  private final HashMap<String, Object> MIDDLEWARE;   // Middleware Data
+  private final HashMap<String, Cookie> COOKIES;      // Request cookies
+  private final HashMap<String, String> QUERYS;       // URL Querys
+  private final HashMap<String, String> FORM_QUERYS;  // Form Querys (application/x-www-form-urlencoded)
 
-  private final HashMap<String, Cookie> COOKIES;
-  private final HashMap<String, String> QUERYS;
-  private HashMap<String, String> params;
+  private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
+
+  {
+    this.MIDDLEWARE = new HashMap<>();
+    this.params = new HashMap<>();
+  }
 
   public Request(HttpExchange exchange) {
     this.HTTP_EXCHANGE = exchange;
     this.URI = exchange.getRequestURI();
-    this.HEADER = exchange.getRequestHeaders();
+    this.HEADERS = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
 
-    this.CONTENT_TYPE = HEADER.get("Content-Type") == null ? "" : HEADER.get("Content-Type").get(0);
-    this.AUTH = HEADER.get("Authorization") == null ? null : new Authorization(HEADER.get("Authorization").get(0));
+    // Check if the request contains an body-content
+    this.CONTENT_TYPE = HEADERS.get("Content-Type") == null ? "" : HEADERS.get("Content-Type").get(0);
 
-    this.MIDDLEWARE = new HashMap<>();
-    this.params = new HashMap<>();
+    // Check if the request has an Authorization header
+    this.AUTH = HEADERS.get("Authorization") == null ? null : new Authorization(HEADERS.get("Authorization").get(0));
 
-    this.QUERYS = parseRawQuery(exchange.getRequestURI());
-    this.COOKIES = parseCookies(exchange.getRequestHeaders());
+    // Check if the request contains x-www-form-urlencoded form data
+    this.FORM_QUERYS = CONTENT_TYPE.equals("application/x-www-form-urlencoded")
+        ? RequestUtils.parseRawQuery(RequestUtils.streamToString(BODY))
+        : new HashMap<>();
+
+    // Parse query and cookies, both returns not null if there is nothing
+    this.QUERYS = RequestUtils.parseRawQuery(exchange.getRequestURI().getRawQuery());
+    this.COOKIES = RequestUtils.parseCookies(exchange.getRequestHeaders());
   }
 
   /**
@@ -92,10 +100,23 @@ public class Request {
     return COOKIES;
   }
 
+  /**
+   * Add an the content from an middleware
+   *
+   * @param middleware     The middleware
+   * @param middlewareData The data from the middleware
+   */
   public void addMiddlewareContent(ExpressFilter middleware, Object middlewareData) {
     MIDDLEWARE.put(middleware.getName(), middlewareData);
   }
 
+  /**
+   * Get the data from a specific middleware by name (Also the reason
+   * why the interface ExpressFilter implements a getName())
+   *
+   * @param name The middleware name
+   * @return The middleware object
+   */
   public Object getMiddlewareContent(String name) {
     return MIDDLEWARE.get(name);
   }
@@ -104,14 +125,14 @@ public class Request {
    * @return The request user-agent.
    */
   public String getUserAgent() {
-    return HEADER.get("User-agent").get(0);
+    return HEADERS.get("User-agent").get(0);
   }
 
   /**
    * @return The request host.
    */
   public String getHost() {
-    return HEADER.get("Host").get(0);
+    return HEADERS.get("Host").get(0);
   }
 
   /**
@@ -160,8 +181,17 @@ public class Request {
   }
 
   /**
+   * Returns a query from a form which uses the 'application/x-www-form-urlencoded' request header.
+   *
+   * @param name The name.
+   * @return The value, null if there is none.
+   */
+  public String getFormQuery(String name) {
+    return FORM_QUERYS.get(name);
+  }
+
+  /**
    * Returns an param from a dynamic url.
-   * see README
    *
    * @param param The param.
    * @return The value, null if there is none.
@@ -181,6 +211,33 @@ public class Request {
   }
 
   /**
+   * Returns all querys from an x-www-form-urlencoded body.
+   *
+   * @return An entire list of key-values
+   */
+  public HashMap<String, String> getFormQuerys() {
+    return FORM_QUERYS;
+  }
+
+  /**
+   * Returns all params from the url.
+   *
+   * @return An entire list of key-values
+   */
+  public HashMap<String, String> getParams() {
+    return params;
+  }
+
+  /**
+   * Return all url-querys.
+   *
+   * @return An entire list of key-values
+   */
+  public HashMap<String, String> getQuerys() {
+    return QUERYS;
+  }
+
+  /**
    * Set the params.
    *
    * @param params
@@ -196,61 +253,6 @@ public class Request {
    * @return An list with values.
    */
   public List<String> getHeader(String header) {
-    return HEADER.get(header);
+    return HEADERS.get(header);
   }
-
-  /**
-   * Extract the cookies from the 'Cookie' header.
-   *
-   * @param headers The Headers
-   * @return An hashmap with the cookie name as key and the complete cookie as value.
-   */
-  private static HashMap<String, Cookie> parseCookies(Headers headers) {
-    HashMap<String, Cookie> cookieList = new HashMap<>();
-    List<String> headerCookies = headers.get("Cookie");
-
-    if (headerCookies == null || headerCookies.size() == 0) {
-      return cookieList;
-    }
-
-    String hcookies = headerCookies.get(0);
-
-    String[] cookies = hcookies.split(";");
-    for (String cookie : cookies) {
-      String[] split = cookie.split("=");
-      String name = split[0].trim();
-      String value = split[1].trim();
-      cookieList.put(name, new Cookie(name, value));
-    }
-
-    return cookieList;
-  }
-
-  /**
-   * Method to extract the querys from an url.
-   *
-   * @param uri The uri.
-   * @return An list with key-values which are encoded in UTF8.
-   */
-  private static HashMap<String, String> parseRawQuery(URI uri) {
-    HashMap<String, String> querys = new HashMap<>();
-    String rawQuery = uri.getRawQuery();
-
-    if (rawQuery == null)
-      return querys;
-
-    Matcher mat = Pattern.compile("(.+?)=(.+?)(&|$)").matcher(rawQuery);
-    while (mat.find()) {
-      try {
-        String key = URLDecoder.decode(mat.group(1), "UTF8");
-        String val = URLDecoder.decode(mat.group(2), "UTF8");
-        querys.put(key, val);
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
-      }
-    }
-
-    return querys;
-  }
-
 }

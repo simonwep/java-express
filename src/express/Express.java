@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * @author Simon Reinisch
  * @implNote Core modul, don't change anything.
  * <p>
- * An NodeJS like clone written in Java, see README for more information.
+ * An NodeJS like clone written in Java.
  */
 public class Express {
 
@@ -40,7 +40,7 @@ public class Express {
   /**
    * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
    *
-   * @param context    The context where the middleware should listen, see README for information about placeholder.
+   * @param context    The context where the middleware should listen.
    * @param middleware An middleware which will be fired if the context matches the requestpath.
    */
   public void use(String context, HttpRequest middleware) {
@@ -69,7 +69,7 @@ public class Express {
   /**
    * Add an listener for GET request's.
    *
-   * @param context The context, see README for information about placeholder.
+   * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void all(String context, HttpRequest request) {
@@ -89,7 +89,7 @@ public class Express {
   /**
    * Add an listener for POST request's.
    *
-   * @param context The context, see README for information about placeholder.
+   * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void post(String context, HttpRequest request) {
@@ -109,7 +109,7 @@ public class Express {
   /**
    * Add an listener for DELETE request's.
    *
-   * @param context The context, see README for information about placeholder.
+   * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void delete(String context, HttpRequest request) {

@@ -30,7 +30,7 @@ public class ExpressFilterImpl implements HttpRequest {
 
     this.CONTEXT = context;
     this.CONTEXT_PARAMS = context.split("(/)(:|[^:]+|)(:|)");
-    this.CONTEXT_REGEX = "\\Q" + context.replaceAll(":([^/]+)", "\\\\E([^/]+)\\\\Q") + "\\E";
+    this.CONTEXT_REGEX = "^\\Q" + context.replaceAll(":([^/]+)", "\\\\E([^/]+)\\\\Q") + "\\E$";
     this.CONTEXT_PATTERN = Pattern.compile(CONTEXT_REGEX);
   }
 
@@ -46,7 +46,7 @@ public class ExpressFilterImpl implements HttpRequest {
       return;
     }
 
-    // Parse params, see README
+    // Parse params
     HashMap<String, String> params = new HashMap<>();
     Matcher matcher = CONTEXT_PATTERN.matcher(requestPath);
 

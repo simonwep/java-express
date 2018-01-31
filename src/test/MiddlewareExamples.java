@@ -1,6 +1,7 @@
 package test;
 
 import express.Express;
+import express.http.cookie.Cookie;
 import express.middleware.CookieSession;
 import express.middleware.SessionCookie;
 import express.middleware.Static;

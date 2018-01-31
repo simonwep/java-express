@@ -69,6 +69,13 @@ public class BasicExamples {
       }
     });
 
+    // Test case for form query
+    app.post("/form", (req, res) -> {
+      String username = req.getFormQuery("username");
+      String age = req.getFormQuery("age");
+      res.send("Username: " + username + "\nAge: " + age);
+    });
+
     app.listen(() -> System.out.println("Express is listening!"));
   }
 
