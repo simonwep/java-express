@@ -39,12 +39,10 @@ public class ExpressFilterImpl implements HttpRequest {
     String requestMethod = req.getMethod();
     String requestPath = req.getURI().getRawPath();
 
-    if (!requestMethod.equals(REQUEST_METHOD) || (REQUEST_METHOD.equals("*") && CONTEXT.equals("*"))) {
-      REQUEST.handle(req, res);
+    if(!(REQUEST_METHOD.equals("*") || REQUEST_METHOD.equals(requestMethod))){
       return;
-    }
-
-    if (!requestPath.matches(CONTEXT_REGEX) && !CONTEXT.equals("*")) {
+    } else if(CONTEXT.equals("*")){
+      REQUEST.handle(req, res);
       return;
     }
 

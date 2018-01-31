@@ -54,7 +54,6 @@ public class MiddlewareExamples {
       }
     });
 
-
     app.listen(() -> System.out.println("Express is listening!"));
   }
 
