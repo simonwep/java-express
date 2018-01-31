@@ -9,6 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * @author Simon Reinisch
+ * <p>
+ * Iterator for ExpressFilters
+ */
 public class ExpressFilterChain <T extends HttpRequest> {
 
   private List<T> expressFilters = Collections.synchronizedList(new ArrayList<>());

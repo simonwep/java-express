@@ -66,6 +66,12 @@ public class Express {
     MIDDLEWARE_CHAIN.add(new ExpressFilterImpl(requestMethod, context, middleware));
   }
 
+  /**
+   * Add an listener for GET request's.
+   *
+   * @param context The context, see README for information about placeholder.
+   * @param request An listener which will be fired if the context matches the requestpath.
+   */
   public void all(String context, HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl("*", context, request));
   }
@@ -190,5 +196,19 @@ public class Express {
         e.printStackTrace();
       }
     }).start();
+  }
+
+  /**
+   * Stop express
+   */
+  public void stop() {
+    if (httpServer != null) {
+
+      // Stop http-server
+      httpServer.stop(0);
+
+      // Stop worker threads
+      WORKER.forEach(ExpressFilterWorker::stop);
+    }
   }
 }

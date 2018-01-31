@@ -19,6 +19,13 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
   private final String COOKIE_NAME;
   private final long MAX_AGE;
 
+  /**
+   * Create an new cookie-session middleware.
+   * You can access and edit to session-cookie data via request.getMiddlewareContent('SessionCookie').
+   *
+   * @param cookieName An name for the session-cookie, it's recommed to use NOT SID for security reasons
+   * @param maxAge     An maxage for the cookie
+   */
   public CookieSession(String cookieName, long maxAge) {
     this.COOKIE_NAME = cookieName;
     this.MAX_AGE = maxAge;
@@ -51,12 +58,12 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
 
   @Override
   public void onStart() {
-
+    // Nothing to initialize
   }
 
   @Override
   public void onStop() {
-
+    // Nothing to do
   }
 
   @Override
@@ -75,6 +82,12 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
     });
   }
 
+  /**
+   * Generates an token with SecureRandom
+   *
+   * @param byteLength the token length
+   * @return An hex token
+   */
   private static String generateSecureToken(int byteLength) {
     SecureRandom secureRandom = new SecureRandom();
     byte[] token = new byte[byteLength];
