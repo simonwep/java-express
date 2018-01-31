@@ -10,7 +10,7 @@ public interface ExpressFilter {
   /**
    * Identifier for the middleware
    *
-   * @return
+   * @return The filter name
    */
   String getName();
 }

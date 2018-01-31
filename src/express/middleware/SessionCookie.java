@@ -18,21 +18,21 @@ public class SessionCookie {
   }
 
   /**
-   * @return max age from this cookie
+     * @return Max age from this cookie
    */
   public long getMaxAge() {
     return MAX_AGE;
   }
 
   /**
-   * @return create date from the cookie
+   * @return Create date from the cookie
    */
   public long getCreated() {
     return CREATED;
   }
 
   /**
-   * @return session data
+   * @return Session data
    */
   public Object getData() {
     return data;
@@ -40,8 +40,8 @@ public class SessionCookie {
 
   /**
    * Set the session data
-   * @param data the data object
-   * @return the object itself
+   * @param data The data object
+   * @return The object itself
    */
   public Object setData(Object data) {
     return this.data = data;

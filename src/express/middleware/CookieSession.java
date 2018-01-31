@@ -74,7 +74,6 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
   @Override
   public void onUpdate() {
     long current = System.currentTimeMillis();
-    System.out.println("Update!");
 
     COOKIES.forEach((s, o) -> {
       if (current > o.getCreated() + o.getMaxAge())
