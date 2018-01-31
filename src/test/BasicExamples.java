@@ -1,12 +1,14 @@
 package test;
 
 import express.Express;
+import express.http.Authorization;
 import express.http.cookie.Cookie;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 
-public class GETExamples {
+public class BasicExamples {
 
   public static void main(String[] args) throws IOException {
     Express app = new Express();
@@ -51,10 +53,20 @@ public class GETExamples {
 
     // Test case for cookie reading
     app.get("/showcookies", (req, res) -> {
-      HashMap<String, Cookie> cookies = req.getCookies();
       StringBuffer buffer = new StringBuffer();
-      cookies.forEach((s, cookie) -> buffer.append(s).append(": ").append(cookie));
+      req.getCookies().forEach((s, cookie) -> buffer.append(s).append(": ").append(cookie));
       res.send(buffer.toString());
+    });
+
+    // Test case for authorization
+    app.get("/auth", (req, res) -> {
+      if(req.hasAuthorization()){
+        Authorization auth = req.getAuthorization();
+        System.out.println("NAME: " + auth.getType());
+        System.out.println("DATA: " + auth.getData());
+      } else {
+        System.out.println("No Authorisation");
+      }
     });
 
     app.listen(() -> System.out.println("Express is listening!"));

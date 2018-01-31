@@ -27,6 +27,7 @@ public class Request {
   private final InputStream BODY;
   private final Headers HEADER;
   private final String CONTENT_TYPE;
+  private final Authorization AUTH;
 
   private final HashMap<String, Object> MIDDLEWARE;
 
@@ -39,7 +40,9 @@ public class Request {
     this.URI = exchange.getRequestURI();
     this.HEADER = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
+
     this.CONTENT_TYPE = HEADER.get("Content-Type") == null ? "" : HEADER.get("Content-Type").get(0);
+    this.AUTH = HEADER.get("Authorization") == null ? null : new Authorization(HEADER.get("Authorization").get(0));
 
     this.MIDDLEWARE = new HashMap<>();
     this.params = new HashMap<>();
@@ -137,6 +140,23 @@ public class Request {
    */
   public String getMethod() {
     return HTTP_EXCHANGE.getRequestMethod();
+  }
+
+  /**
+   * If there is an Authorization header, it was parsed and saved
+   * in a Authorization Object.
+   *
+   * @return The Authorization object or null if there was no Authorization header present.
+   */
+  public Authorization getAuthorization() {
+    return AUTH;
+  }
+
+  /**
+   * @return True if there was an Authorization header and the Authorization object was successfully created.
+   */
+  public boolean hasAuthorization() {
+    return AUTH != null;
   }
 
   /**
