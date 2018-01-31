@@ -25,7 +25,7 @@ public class SessionCookie {
   }
 
   public Object setData(Object data) {
-   return this.data = data;
+    return this.data = data;
   }
 
 }

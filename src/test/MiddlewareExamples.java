@@ -7,7 +7,7 @@ import express.middleware.Static;
 
 import java.io.IOException;
 
-public class Use {
+public class MiddlewareExamples {
 
   public static void main(String[] args) throws IOException {
     Express app = new Express();

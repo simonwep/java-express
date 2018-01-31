@@ -1,6 +1,8 @@
 package express.middleware;
 
 import express.events.HttpRequest;
+import express.expressfilter.ExpressFilter;
+import express.expressfilter.ExpressFilterTask;
 import express.http.Request;
 import express.http.Response;
 import express.http.cookie.Cookie;
@@ -9,7 +11,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CookieSession extends ExpressWorker implements HttpRequest, ExpressMiddleware {
+public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterTask {
 
   private final static String MIDDLEWARE_NAME = "SessionCookie";
 
@@ -20,11 +22,6 @@ public class CookieSession extends ExpressWorker implements HttpRequest, Express
   public CookieSession(String cookieName, long maxAge) {
     this.COOKIE_NAME = cookieName;
     this.MAX_AGE = maxAge;
-  }
-
-  @Override
-  public String getName() {
-    return MIDDLEWARE_NAME;
   }
 
   @Override
@@ -48,13 +45,29 @@ public class CookieSession extends ExpressWorker implements HttpRequest, Express
   }
 
   @Override
-  long getDelay() {
+  public String getName() {
+    return MIDDLEWARE_NAME;
+  }
+
+  @Override
+  public void onStart() {
+
+  }
+
+  @Override
+  public void onStop() {
+
+  }
+
+  @Override
+  public long getDelay() {
     return 15000; // 1min
   }
 
   @Override
-  void update() {
+  public void onUpdate() {
     long current = System.currentTimeMillis();
+    System.out.println("Update!");
 
     COOKIES.forEach((s, o) -> {
       if (current > o.getCreated() + o.getMaxAge())

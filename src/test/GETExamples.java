@@ -6,7 +6,7 @@ import express.http.cookie.Cookie;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class Get {
+public class GETExamples {
 
   public static void main(String[] args) throws IOException {
     Express app = new Express();

@@ -3,17 +3,16 @@ package express;
 import com.sun.net.httpserver.HttpServer;
 import express.events.Action;
 import express.events.HttpRequest;
-import express.expressfilter.ExpressFilter;
 import express.expressfilter.ExpressFilterChain;
+import express.expressfilter.ExpressFilterImpl;
+import express.expressfilter.ExpressFilterTask;
+import express.expressfilter.ExpressFilterWorker;
 import express.http.Request;
 import express.http.Response;
-import express.middleware.ExpressWorker;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Simon Reinisch
@@ -23,7 +22,8 @@ import java.util.List;
  */
 public class Express {
 
-  private final List<ExpressWorker> WORKERS = Collections.synchronizedList(new ArrayList<>());
+  private final ArrayList<ExpressFilterWorker> WORKER = new ArrayList<>();
+  private final ExpressFilterChain MIDDLEWARE_CHAIN = new ExpressFilterChain();
   private final ExpressFilterChain FILTER_CHAIN = new ExpressFilterChain();
 
   private HttpServer httpServer;
@@ -31,20 +31,20 @@ public class Express {
   /**
    * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
    *
-   * @param request An listener which will be fired on every equestmethod- and  path.
+   * @param middleware An middleware which will be fired on every equestmethod- and  path.
    */
-  public void use(HttpRequest request) {
-    addFilter(true, "*", "*", request);
+  public void use(HttpRequest middleware) {
+    addMiddleware("*", "*", middleware);
   }
 
   /**
    * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
    *
-   * @param context The context where the middleware should listen, see README for information about placeholder.
-   * @param request An listener which will be fired if the context matches the requestpath.
+   * @param context    The context where the middleware should listen, see README for information about placeholder.
+   * @param middleware An middleware which will be fired if the context matches the requestpath.
    */
-  public void use(String context, HttpRequest request) {
-    addFilter(true, "*", context, request);
+  public void use(String context, HttpRequest middleware) {
+    addMiddleware("*", context, middleware);
   }
 
   /**
@@ -52,20 +52,22 @@ public class Express {
    *
    * @param context       The context where the middleware should listen, see README for information about placeholder.
    * @param requestMethod And type of request-method eg. GET, POST etc.
-   * @param request       An listener which will be fired if the context matches the requestmethod- and  path.
+   * @param middleware    An middleware which will be fired if the context matches the requestmethod- and  path.
    */
-  public void use(String context, String requestMethod, HttpRequest request) {
-    addFilter(true, requestMethod.toUpperCase(), context, request);
+  public void use(String context, String requestMethod, HttpRequest middleware) {
+    addMiddleware(requestMethod.toUpperCase(), context, middleware);
   }
 
-  /**
-   * Add an listener for request types.
-   *
-   * @param context The context, see README for information about placeholder.
-   * @param request An listener.
-   */
+  private void addMiddleware(String requestMethod, String context, HttpRequest middleware) {
+    if (middleware instanceof ExpressFilterTask) {
+      WORKER.add(new ExpressFilterWorker((ExpressFilterTask) middleware));
+    }
+
+    MIDDLEWARE_CHAIN.add(new ExpressFilterImpl(requestMethod, context, middleware));
+  }
+
   public void all(String context, HttpRequest request) {
-    addFilter(false, "*", context, request);
+    FILTER_CHAIN.add(new ExpressFilterImpl("*", context, request));
   }
 
   /**
@@ -75,7 +77,7 @@ public class Express {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void get(String context, HttpRequest request) {
-    addFilter(false, "GET", context, request);
+    FILTER_CHAIN.add(new ExpressFilterImpl("GET", context, request));
   }
 
   /**
@@ -85,7 +87,7 @@ public class Express {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void post(String context, HttpRequest request) {
-    addFilter(false, "POST", context, request);
+    FILTER_CHAIN.add(new ExpressFilterImpl("POST", context, request));
   }
 
   /**
@@ -95,7 +97,7 @@ public class Express {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void put(String context, HttpRequest request) {
-    addFilter(false, "PUT", context, request);
+    FILTER_CHAIN.add(new ExpressFilterImpl("PUT", context, request));
   }
 
   /**
@@ -105,7 +107,7 @@ public class Express {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void delete(String context, HttpRequest request) {
-    addFilter(false, "DELETE", context, request);
+    FILTER_CHAIN.add(new ExpressFilterImpl("DELETE", context, request));
   }
 
   /**
@@ -115,31 +117,7 @@ public class Express {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void patch(String context, HttpRequest request) {
-    addFilter(false, "PATCH", context, request);
-  }
-
-  /**
-   * Internal method to add an filter
-   *
-   * @param middleware    If the filter is an middleware
-   * @param requestMethod The request-method
-   * @param context       The url-path
-   * @param request       An listener which will be fired if the given context is matching
-   */
-  private void addFilter(boolean middleware, String requestMethod, String context, HttpRequest request) {
-    ExpressFilter handler = new ExpressFilter(requestMethod, context, request);
-
-    if (request instanceof ExpressWorker){
-      ((ExpressWorker) request).start();
-      WORKERS.add((ExpressWorker) request);
-    }
-
-
-    // Middleware needs an seperated list because it will ALWAYS fired before each request handler
-    if (middleware)
-      FILTER_CHAIN.addMiddleware(handler);
-    else
-      FILTER_CHAIN.addFilter(handler);
+    FILTER_CHAIN.add(new ExpressFilterImpl("PATCH", context, request));
   }
 
   /**
@@ -186,12 +164,20 @@ public class Express {
   public void listen(Action onStart, int port) throws IOException {
     new Thread(() -> {
       try {
+        // Fire worker threads
+        WORKER.forEach(ExpressFilterWorker::start);
+
+
+        // Create http server
         httpServer = HttpServer.create(new InetSocketAddress("localhost", port), 0);
         httpServer.setExecutor(null);
 
         httpServer.createContext("/", httpExchange -> {
           Request request = new Request(httpExchange);
           Response response = new Response(httpExchange);
+
+          // First fire all middlewares, then the normal request filter
+          MIDDLEWARE_CHAIN.filter(request, response);
           FILTER_CHAIN.filter(request, response);
         });
 

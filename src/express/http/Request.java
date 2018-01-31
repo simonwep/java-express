@@ -2,8 +2,8 @@ package express.http;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import express.expressfilter.ExpressFilter;
 import express.http.cookie.Cookie;
-import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,7 +89,7 @@ public class Request {
     return COOKIES;
   }
 
-  public void addMiddlewareContent(ExpressMiddleware middleware, Object middlewareData) {
+  public void addMiddlewareContent(ExpressFilter middleware, Object middlewareData) {
     MIDDLEWARE.put(middleware.getName(), middlewareData);
   }
 
