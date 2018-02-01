@@ -65,27 +65,4 @@ public class RequestUtils {
     return querys;
   }
 
-  /**
-   * Write all data from an InputStream in an String
-   *
-   * @param is The source inputstream
-   * @return The data as string
-   */
-  public static String streamToString(InputStream is) {
-    try {
-      BufferedReader br = new BufferedReader(new InputStreamReader(is));
-      StringBuffer buffer = new StringBuffer();
-      String line;
-
-      while ((line = br.readLine()) != null)
-        buffer.append(line);
-
-      return buffer.toString();
-    } catch (IOException e) {
-      // TODO: Handle error
-      e.printStackTrace();
-    }
-    return null;
-  }
-
 }

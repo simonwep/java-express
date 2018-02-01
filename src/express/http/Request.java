@@ -2,6 +2,7 @@ package express.http;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import express.ExpressUtils;
 import express.expressfilter.ExpressFilter;
 import express.http.cookie.Cookie;
 
@@ -51,7 +52,7 @@ public class Request {
 
     // Check if the request contains x-www-form-urlencoded form data
     this.FORM_QUERYS = CONTENT_TYPE.equals("application/x-www-form-urlencoded")
-        ? RequestUtils.parseRawQuery(RequestUtils.streamToString(BODY))
+        ? RequestUtils.parseRawQuery(ExpressUtils.streamToString(BODY))
         : new HashMap<>();
 
     // Parse query and cookies, both returns not null if there is nothing

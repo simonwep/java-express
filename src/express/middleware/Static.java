@@ -1,5 +1,6 @@
 package express.middleware;
 
+import express.ExpressUtils;
 import express.events.HttpRequest;
 import express.http.Request;
 import express.http.Response;
@@ -34,24 +35,10 @@ public class Static implements HttpRequest {
     File reqFile = new File(PATH + req.getURI().getPath());
 
     if (reqFile.exists()) {
-      String extension = reqFile.getAbsolutePath().replaceAll("^(.*\\.|.*\\\\|.+$)", "");
-      String contentType = getContentType(extension);
+      String contentType = ExpressUtils.getContentType(reqFile);
       res.send(reqFile, contentType);
     }
   }
 
-  /**
-   * Returns the MIME-Type of an filename.
-   *
-   * @param fileExtension The file extension.
-   * @return The MIME-Type.
-   */
-  private static String getContentType(String fileExtension) {
-    String ct = MIMETypes.get().get(fileExtension);
 
-    if (ct == null)
-      ct = "text/plain";
-
-    return ct;
-  }
 }
