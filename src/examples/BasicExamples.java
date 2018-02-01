@@ -1,13 +1,10 @@
-package test;
+package examples;
 
 import express.Express;
 import express.http.Authorization;
 import express.http.cookie.Cookie;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
 
 public class BasicExamples {
 
