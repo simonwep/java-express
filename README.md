@@ -1,5 +1,6 @@
 
 
+
 ![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
 
 Small clone of the node-js express framework written in pure Java 8.
@@ -8,6 +9,7 @@ Small clone of the node-js express framework written in pure Java 8.
 
 # Getting Started
 **This project is currently in progress, feel free to [contribute](https://github.com/Simonwep/java-express/graphs/contributors) / [report](https://github.com/Simonwep/java-express/issues) issues! :)**
+
 If you have downloaded the lastest [release](https://github.com/Simonwep/java-express/releases) and include it to your project, you can start with the creating of an simple "Hello World" application: 
 ```java
 Express app  = new Express();
@@ -19,6 +21,14 @@ app.get("/", (req, res) -> {
 app.listen(3000);
 ```
 First of all we've create an new Express instance, named `app` then we create an root context `/` for the request-method `get`. 
+
+When you create an new Express instance you can add an additional host name for example, your local network:
+```java
+// Will bind the server to your ip-adress
+Express app  = new Express(Inet4Address.getLocalHost().getHostAddress());
+```
+Default is localhost, so you can access, without setting the hostname, only from your local pc.
+
 Quick reference:
 * [URL Basics](#url-basics)
    * [URL Parameter](#url-parameter)
