@@ -26,7 +26,24 @@ public class Express {
   private final ExpressFilterChain MIDDLEWARE_CHAIN = new ExpressFilterChain();
   private final ExpressFilterChain FILTER_CHAIN = new ExpressFilterChain();
 
+  private String hostname = "localhost";
   private HttpServer httpServer;
+
+  /**
+   * Create an express instance and bind the server to an hostname.
+   * Default is "Localhost"
+   *
+   * @param hostname The host name
+   */
+  public Express(String hostname) {
+    if (hostname != null)
+      this.hostname = hostname;
+  }
+
+  /**
+   * Default, will bind the server to "localhost"
+   */
+  public Express() {}
 
   /**
    * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
@@ -175,7 +192,7 @@ public class Express {
 
 
         // Create http server
-        httpServer = HttpServer.create(new InetSocketAddress("localhost", port), 0);
+        httpServer = HttpServer.create(new InetSocketAddress(this.hostname, port), 0);
         httpServer.setExecutor(null);
 
         httpServer.createContext("/", httpExchange -> {
@@ -190,7 +207,7 @@ public class Express {
         httpServer.start();
 
         // Fire listener
-        onStart.action();
+        if (onStart != null) onStart.action();
       } catch (IOException e) {
         // TODO: Handle errors
         e.printStackTrace();
