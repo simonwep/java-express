@@ -34,10 +34,8 @@ public class Static implements HttpRequest {
   public void handle(Request req, Response res) {
     File reqFile = new File(PATH + req.getURI().getPath());
 
-    if (reqFile.exists()) {
-      String contentType = ExpressUtils.getContentType(reqFile);
-      res.send(reqFile, contentType);
-    }
+    if (reqFile.exists())
+      res.send(reqFile);
   }
 
 

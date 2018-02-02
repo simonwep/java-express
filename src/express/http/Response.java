@@ -2,6 +2,7 @@ package express.http;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import express.ExpressUtils;
 import express.http.cookie.Cookie;
 
 import java.io.File;
@@ -93,14 +94,14 @@ public class Response {
 
   /**
    * Send an entire file as response
+   * The mime type will be automatically detected.
    *
-   * @param file        The file.
-   * @param contentType Content type.
+   * @param file The file.
    */
-  public void send(File file, String contentType) {
+  public void send(File file) {
     if (checkIfClosed()) return;
     this.contentLength += file.length();
-    this.contentType = contentType;
+    this.contentType = ExpressUtils.getContentType(file);
     sendHeaders();
 
     try {
