@@ -1,5 +1,7 @@
 package express;
 
+import express.utils.MIMETypes;
+
 import java.io.*;
 
 public class ExpressUtils {
@@ -35,11 +37,12 @@ public class ExpressUtils {
    */
   public static String getContentType(File file) {
     String filename = file.getAbsolutePath().replaceAll("^(.*\\.|.*\\|.+$)", "");
+    String contentType = MIMETypes.get().get(filename);
 
-    if (filename == null)
-      filename = "text/plain";
+    if (contentType == null)
+      contentType = "text/plain";
 
-    return filename;
+    return contentType;
   }
 
 }
