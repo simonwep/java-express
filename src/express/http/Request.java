@@ -7,6 +7,8 @@ import express.expressfilter.ExpressFilter;
 import express.http.cookie.Cookie;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +22,11 @@ public class Request {
   private final HttpExchange HTTP_EXCHANGE;
   private final URI URI;                              // Request URI
   private final InputStream BODY;                     // Request body
-  private final Headers HEADERS;                       // Request Headers
+  private final Headers HEADERS;                      // Request Headers
   private final String CONTENT_TYPE;                  // Request content-type
+  private final long CONTENT_LENGTH;                  // Request content-length
   private final Authorization AUTH;                   // Authorization header parsed
-  private final long CONTENT_LENGTH;
+  private final InetSocketAddress INET;             // Client socket adress
 
   private final HashMap<String, Object> MIDDLEWARE;   // Middleware Data
   private final HashMap<String, Cookie> COOKIES;      // Request cookies
@@ -44,6 +47,7 @@ public class Request {
     this.URI = exchange.getRequestURI();
     this.HEADERS = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
+    this.INET = exchange.getRemoteAddress();
 
     // Parse content length
     String contentLength = HEADERS.get("Content-Length") != null ? HEADERS.get("Content-Length").get(0) : null;
@@ -156,6 +160,24 @@ public class Request {
    */
   public String getHost() {
     return HEADERS.get("Host").get(0);
+  }
+
+  /**
+   * Returns the InetAdress from the client.
+   *
+   * @return The InetAdress.
+   */
+  public InetAddress getAddress() {
+    return INET.getAddress();
+  }
+
+  /**
+   * Returns the IP-Adress from the client.
+   *
+   * @return The IP-Adress.
+   */
+  public String getIp() {
+    return INET.getAddress().getHostAddress();
   }
 
   /**

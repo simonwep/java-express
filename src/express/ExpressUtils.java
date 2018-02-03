@@ -4,6 +4,8 @@ import express.utils.MIMETypes;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.security.SecureRandom;
 
 public class ExpressUtils {
@@ -59,5 +61,12 @@ public class ExpressUtils {
     byte[] token = new byte[byteLength];
     secureRandom.nextBytes(token);
     return new BigInteger(1, token).toString(radix); //hex encoding
+  }
+
+  /**
+   * @return Your ip.
+   */
+  public static String getYourIp() throws UnknownHostException {
+    return Inet4Address.getLocalHost().getHostAddress();
   }
 }
