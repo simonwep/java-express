@@ -6,9 +6,7 @@ import express.ExpressUtils;
 import express.expressfilter.ExpressFilter;
 import express.http.cookie.Cookie;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +23,7 @@ public class Request {
   private final Headers HEADERS;                       // Request Headers
   private final String CONTENT_TYPE;                  // Request content-type
   private final Authorization AUTH;                   // Authorization header parsed
+  private final long CONTENT_LENGTH;
 
   private final HashMap<String, Object> MIDDLEWARE;   // Middleware Data
   private final HashMap<String, Cookie> COOKIES;      // Request cookies
@@ -45,6 +44,14 @@ public class Request {
     this.URI = exchange.getRequestURI();
     this.HEADERS = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
+
+    // Parse content length
+    String contentLength = HEADERS.get("Content-Length") != null ? HEADERS.get("Content-Length").get(0) : null;
+    if (contentLength != null && contentLength.matches("^[0-9]+$")) {
+      CONTENT_LENGTH = Long.parseLong(contentLength);
+    } else
+      CONTENT_LENGTH = -1;
+
 
     // Check if the request contains an body-content
     this.CONTENT_TYPE = HEADERS.get("Content-Type") == null ? "" : HEADERS.get("Content-Type").get(0);
@@ -82,6 +89,19 @@ public class Request {
     while ((n = BODY.read(buffer)) != -1)
       os.write(buffer, 0, n);
     os.close();
+  }
+
+  /**
+   * Pipe the body from this request to an file.
+   * If the file not exists, it will be created.
+   *
+   * @param f          The target file
+   * @param bufferSize Buffersize, eg. 4096.
+   * @throws IOException If an IO-Error occurs.
+   */
+  public void pipe(File f, int bufferSize) throws IOException {
+    if (!f.exists()) f.createNewFile();
+    pipe(new FileOutputStream(f), bufferSize);
   }
 
   /**
@@ -143,6 +163,15 @@ public class Request {
    */
   public String getContentType() {
     return CONTENT_TYPE;
+  }
+
+  /**
+   * Returns the to long parsed content-length.
+   *
+   * @return The content-length, -1 if the header was invalid.
+   */
+  public long getContentLength() {
+    return CONTENT_LENGTH;
   }
 
   /**
@@ -277,7 +306,7 @@ public class Request {
   }
 
   public boolean hadRedirect() {
-    if(!hadRedirect) return false;
+    if (!hadRedirect) return false;
     return !(hadRedirect = !hadRedirect);
   }
 }
