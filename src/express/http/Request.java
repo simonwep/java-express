@@ -32,6 +32,8 @@ public class Request {
   private final HashMap<String, String> FORM_QUERYS;  // Form Querys (application/x-www-form-urlencoded)
 
   private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
+  private String redirect = null;
+  private boolean hadRedirect = false;
 
   {
     this.MIDDLEWARE = new HashMap<>();
@@ -151,7 +153,7 @@ public class Request {
   }
 
   /**
-   * @return The entire request uri.
+   * @return The original request URI.
    */
   public URI getURI() {
     return this.URI;
@@ -255,5 +257,27 @@ public class Request {
    */
   public List<String> getHeader(String header) {
     return HEADERS.get(header);
+  }
+
+  /**
+   * Redirect the request to another URL.
+   *
+   * @param path The new URL.
+   */
+  public void redirect(String path) {
+    this.redirect = path;
+    this.hadRedirect = true;
+  }
+
+  /**
+   * @return The redirected path, default is null.
+   */
+  public String getRedirect() {
+    return redirect;
+  }
+
+  public boolean hadRedirect() {
+    if(!hadRedirect) return false;
+    return !(hadRedirect = !hadRedirect);
   }
 }

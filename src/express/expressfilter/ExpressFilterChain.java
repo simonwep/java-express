@@ -14,7 +14,7 @@ import java.util.ListIterator;
  * <p>
  * Iterator for ExpressFilters
  */
-public class ExpressFilterChain <T extends HttpRequest> {
+public class ExpressFilterChain<T extends HttpRequest> {
 
   private List<T> expressFilters = Collections.synchronizedList(new ArrayList<>());
 
@@ -26,8 +26,11 @@ public class ExpressFilterChain <T extends HttpRequest> {
     ListIterator<T> iter = expressFilters.listIterator();
 
     while (!res.isClosed() && iter.hasNext()) {
-      if (iter.hasNext()) {
-        iter.next().handle(req, res);
+      iter.next().handle(req, res);
+
+      if (req.hadRedirect()) {
+        filter(req, res);
+        return;
       }
     }
   }

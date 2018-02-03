@@ -37,11 +37,11 @@ public class ExpressFilterImpl implements HttpRequest {
   @Override
   public void handle(Request req, Response res) {
     String requestMethod = req.getMethod();
-    String requestPath = req.getURI().getRawPath();
+    String requestPath = req.getRedirect() != null ? req.getRedirect() : req.getURI().getRawPath();
 
-    if(!(REQUEST_METHOD.equals("*") || REQUEST_METHOD.equals(requestMethod))){
+    if (!(REQUEST_METHOD.equals("*") || REQUEST_METHOD.equals(requestMethod))) {
       return;
-    } else if(CONTEXT.equals("*")){
+    } else if (CONTEXT.equals("*")) {
       REQUEST.handle(req, res);
       return;
     }
