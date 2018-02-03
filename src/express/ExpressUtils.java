@@ -3,6 +3,8 @@ package express;
 import express.utils.MIMETypes;
 
 import java.io.*;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 public class ExpressUtils {
 
@@ -45,4 +47,17 @@ public class ExpressUtils {
     return contentType;
   }
 
+  /**
+   * Generates an random token with SecureRandom
+   *
+   * @param byteLength The token length
+   * @param radix      The base
+   * @return An token with the base of radix
+   */
+  public static String randomToken(int byteLength, int radix) {
+    SecureRandom secureRandom = new SecureRandom();
+    byte[] token = new byte[byteLength];
+    secureRandom.nextBytes(token);
+    return new BigInteger(1, token).toString(radix); //hex encoding
+  }
 }

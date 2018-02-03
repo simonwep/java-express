@@ -1,5 +1,6 @@
 package express.middleware;
 
+import express.ExpressUtils;
 import express.events.HttpRequest;
 import express.expressfilter.ExpressFilter;
 import express.expressfilter.ExpressFilterTask;
@@ -7,8 +8,6 @@ import express.http.Request;
 import express.http.Response;
 import express.http.cookie.Cookie;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterTask {
@@ -39,7 +38,7 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
 
       req.addMiddlewareContent(this, COOKIES.get(cookie.getValue()));
     } else {
-      String token = generateSecureToken(32);
+      String token = ExpressUtils.randomToken(32, 16);
 
       cookie = new Cookie(COOKIE_NAME, token).setMaxAge(MAX_AGE);
       res.setCookie(cookie);
@@ -79,19 +78,6 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
       if (current > o.getCreated() + o.getMaxAge())
         COOKIES.remove(s);
     });
-  }
-
-  /**
-   * Generates an token with SecureRandom
-   *
-   * @param byteLength the token length
-   * @return An hex token
-   */
-  private static String generateSecureToken(int byteLength) {
-    SecureRandom secureRandom = new SecureRandom();
-    byte[] token = new byte[byteLength];
-    secureRandom.nextBytes(token);
-    return new BigInteger(1, token).toString(16); //hex encoding
   }
 
 }

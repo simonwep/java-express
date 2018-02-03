@@ -43,7 +43,8 @@ public class Express {
   /**
    * Default, will bind the server to "localhost"
    */
-  public Express() {}
+  public Express() {
+  }
 
   /**
    * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
@@ -67,7 +68,7 @@ public class Express {
   /**
    * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
    *
-   * @param context       The context where the middleware should listen, see README for information about placeholder.
+   * @param context       The context where the middleware should listen for the request handler..
    * @param requestMethod And type of request-method eg. GET, POST etc.
    * @param middleware    An middleware which will be fired if the context matches the requestmethod- and  path.
    */
@@ -96,7 +97,7 @@ public class Express {
   /**
    * Add an listener for GET request's.
    *
-   * @param context The context, see README for information about placeholder.
+   * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void get(String context, HttpRequest request) {
@@ -116,7 +117,7 @@ public class Express {
   /**
    * Add an listener for PUT request's.
    *
-   * @param context The context, see README for information about placeholder.
+   * @param context The context for the request handler..
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void put(String context, HttpRequest request) {
@@ -136,11 +137,35 @@ public class Express {
   /**
    * Add an listener for PATCH request's.
    *
-   * @param context The context, see README for information about placeholder.
+   * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void patch(String context, HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl("PATCH", context, request));
+  }
+
+  /**
+   * Add an listener for an specific request method.
+   *
+   * @param requestMethod The request method
+   * @param context       The context for the request handler.
+   * @param request       An listener which will be fired if the context matches the requestpath.
+   */
+  public void on(String requestMethod, String context, HttpRequest request) {
+    FILTER_CHAIN.add(new ExpressFilterImpl(requestMethod, context, request));
+  }
+
+  /**
+   * Add an listener for an specific request method.
+   * You cann add multiple contexts.
+   *
+   * @param requestMethod The request method
+   * @param contexts      The contexts for the request handler..
+   * @param request       An listener which will be fired if the context matches the requestpath.
+   */
+  public void on(String requestMethod, HttpRequest request, String... contexts) {
+    for (String c : contexts)
+      FILTER_CHAIN.add(new ExpressFilterImpl(requestMethod, c, request));
   }
 
   /**
