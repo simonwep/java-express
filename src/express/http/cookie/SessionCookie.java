@@ -1,4 +1,4 @@
-package express.middleware;
+package express.http.cookie;
 
 /**
  * @author Simon Reinisch

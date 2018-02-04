@@ -64,7 +64,7 @@ public class Request {
     this.AUTH = HEADERS.get("Authorization") == null ? null : new Authorization(HEADERS.get("Authorization").get(0));
 
     // Check if the request contains x-www-form-urlencoded form data
-    this.FORM_QUERYS = CONTENT_TYPE.equals("application/x-www-form-urlencoded")
+    this.FORM_QUERYS = CONTENT_TYPE.startsWith("application/x-www-form-urlencoded")
         ? RequestUtils.parseRawQuery(ExpressUtils.streamToString(BODY))
         : new HashMap<>();
 

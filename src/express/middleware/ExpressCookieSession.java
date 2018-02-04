@@ -7,10 +7,11 @@ import express.expressfilter.ExpressFilterTask;
 import express.http.Request;
 import express.http.Response;
 import express.http.cookie.Cookie;
+import express.http.cookie.SessionCookie;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterTask {
+final class ExpressCookieSession implements HttpRequest, ExpressFilter, ExpressFilterTask {
 
   private final static String MIDDLEWARE_NAME = "SessionCookie";
 
@@ -18,14 +19,7 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
   private final String COOKIE_NAME;
   private final long MAX_AGE;
 
-  /**
-   * Create an new cookie-session middleware.
-   * You can access and edit to session-cookie data via request.getMiddlewareContent('SessionCookie').
-   *
-   * @param cookieName An name for the session-cookie, it's recommed to use NOT SID for security reasons
-   * @param maxAge     An maxage for the cookie
-   */
-  public CookieSession(String cookieName, long maxAge) {
+  ExpressCookieSession(String cookieName, long maxAge) {
     this.COOKIE_NAME = cookieName;
     this.MAX_AGE = maxAge;
   }
@@ -62,12 +56,12 @@ public class CookieSession implements HttpRequest, ExpressFilter, ExpressFilterT
 
   @Override
   public void onStop() {
-    // Nothing to do
+    COOKIES.clear();
   }
 
   @Override
   public long getDelay() {
-    return 15000; // 1min
+    return 60000;
   }
 
   @Override

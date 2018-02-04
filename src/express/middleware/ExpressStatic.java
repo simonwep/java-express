@@ -1,10 +1,8 @@
 package express.middleware;
 
-import express.ExpressUtils;
 import express.events.HttpRequest;
 import express.http.Request;
 import express.http.Response;
-import express.utils.MIMETypes;
 
 import java.io.File;
 
@@ -13,20 +11,11 @@ import java.io.File;
  * <p>
  * An Express-Middleware to serve static files.
  */
-public class Static implements HttpRequest {
+final class ExpressStatic implements HttpRequest {
 
   private final String PATH;
 
-  /**
-   * This class serves an entire folder which can contains static file for your
-   * web application, it automatically detect the content type and will send it to
-   * the Client.
-   * <p>
-   * To use it simply put it in the <code>app.use()</code> method!
-   *
-   * @param directoryPath The root directory
-   */
-  public Static(String directoryPath) {
+  ExpressStatic(String directoryPath) {
     this.PATH = directoryPath;
   }
 

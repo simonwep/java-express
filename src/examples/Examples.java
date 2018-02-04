@@ -2,8 +2,7 @@ package examples;
 
 import express.Express;
 import express.http.cookie.Cookie;
-import express.middleware.CookieSession;
-import express.middleware.SessionCookie;
+import express.http.cookie.SessionCookie;
 
 import java.io.IOException;
 
@@ -78,7 +77,7 @@ public class Examples {
       // req.pipe(new OutputStream() {...});  // Pipe the body to an outputstream
     });
 
-    app.use(new CookieSession("f3v4", 9000));
+    app.use(Express.cookieSession("f3v4", 9000));
 
     app.get("/session", (req, res) -> {
 

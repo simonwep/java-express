@@ -9,6 +9,7 @@ import express.expressfilter.ExpressFilterTask;
 import express.expressfilter.ExpressFilterWorker;
 import express.http.Request;
 import express.http.Response;
+import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  * <p>
  * An NodeJS like clone written in Java.
  */
-public class Express {
+public class Express extends ExpressMiddleware {
 
   private final ArrayList<ExpressFilterWorker> WORKER = new ArrayList<>();
   private final ExpressFilterChain MIDDLEWARE_CHAIN = new ExpressFilterChain();

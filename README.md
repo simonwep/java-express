@@ -1,6 +1,7 @@
 
 
 
+
 ![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
 
 Small clone of the node-js express framework written in pure Java 8.
@@ -217,13 +218,13 @@ No we can, as we learned above, include it with:
 app.use(new PortMiddleware());
 ```
 ## Existing Middlewares
-There are already some basic middlewares included:
+There are already some basic middlewares included, you can access these via static methods provided from `Express`.
 
 #### Static File serving
 If you want to allocate some files, like js-librarys or css files you can use the [static](https://github.com/Simonwep/java-express/blob/master/src/express/middleware/Static.java) middleware. But you can also provide other files like mp4 etc.
 Example:
 ```java
- app.use(new Static("examplepath\\test_statics"));
+ app.use(Express.statics("examplepath\\test_statics"));
 ```
 Now you can access every files in the `test_statics` over the root adress `\`.
 #### Cookie Session
@@ -231,7 +232,7 @@ Java Express also includes an simple cookie-session middleware:
 ```java
 // You should use an meaningless cookie name for serveral security reasons, here f3v4.
 // Also you can specify the maximum age of the cookie from the creation date, here 3000. 
-app.use(new CookieSession("f3v4", 9000));
+app.use(Express.cookieSession("f3v4", 9000));
 ```
 To use a session cookie we need to get the data from the middleware which is actually an `SessionCookie`:
 ```java
