@@ -40,8 +40,8 @@ public class ExpressUtils {
    * @return The MIME-Type.
    */
   public static String getContentType(File file) {
-    String filename = file.getAbsolutePath().replaceAll("^(.*\\.|.*\\|.+$)", "");
-    String contentType = MIMETypes.get().get(filename);
+    String ex = file.getAbsolutePath().replaceAll("^(.*\\.|.*\\|.+$)", "");
+    String contentType = MIMETypes.get().get(ex);
 
     if (contentType == null)
       contentType = "text/plain";

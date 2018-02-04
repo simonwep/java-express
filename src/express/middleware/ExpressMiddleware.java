@@ -1,11 +1,13 @@
 package express.middleware;
 
+import express.events.HttpRequest;
+
 /**
  * @author Simon Reinisch
  * <p>
  * Class which serves middleware
  */
-public abstract class ExpressMiddleware{
+public abstract class ExpressMiddleware {
 
   /**
    * Create an new cookie-session middleware.
@@ -29,5 +31,34 @@ public abstract class ExpressMiddleware{
    */
   public static ExpressStatic statics(String directoryPath) {
     return new ExpressStatic(directoryPath);
+  }
+
+  /**
+   * This class serves an entire folder which can contains static file for your
+   * web application, it automatically detect the content type and will send it to
+   * the Client.
+   * <p>
+   * To use it simply put it in the <code>app.use()</code> method!
+   *
+   * @param directoryPath The root directory
+   * @param extensions    The allowed extensions
+   */
+  public static ExpressStatic statics(String directoryPath, String... extensions) {
+    return new ExpressStatic(directoryPath, extensions);
+  }
+
+  /**
+   * This class serves an entire folder which can contains static file for your
+   * web application, it automatically detect the content type and will send it to
+   * the Client.
+   * <p>
+   * To use it simply put it in the <code>app.use()</code> method!
+   *
+   * @param directoryPath The root directory
+   * @param middleware    An handler which will be fired BEFORE the files will be served
+   * @param extensions    The allowed extensions
+   */
+  public static ExpressStatic statics(String directoryPath, HttpRequest middleware, String... extensions) {
+    return new ExpressStatic(directoryPath, extensions, middleware);
   }
 }
