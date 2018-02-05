@@ -21,7 +21,7 @@ final class ExpressStatic implements HttpRequest {
     for (Object o : params) {
       if (o instanceof String[]) this.EXTENSIONS = (String[]) o;
       else if (o instanceof String) this.PATH = (String) o;
-      else if (o instanceof HttpRequest) this.ONHANDLE= (HttpRequest) o;
+      else if (o instanceof HttpRequest) this.ONHANDLE = (HttpRequest) o;
     }
   }
 

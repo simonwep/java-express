@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 final class ExpressCookieSession implements HttpRequest, ExpressFilter, ExpressFilterTask {
 
-  private final static String MIDDLEWARE_NAME = "SessionCookie";
+  private final static String MIDDLEWARE_NAME = "sessioncookie";
 
   private final ConcurrentHashMap<String, SessionCookie> COOKIES = new ConcurrentHashMap<>();
   private final String COOKIE_NAME;
