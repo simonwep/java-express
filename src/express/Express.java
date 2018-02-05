@@ -175,7 +175,6 @@ public class Express extends ExpressMiddleware {
    *
    * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
    */
-
   public void listen() throws IOException {
     listen(null, 80);
   }
