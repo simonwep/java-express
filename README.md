@@ -2,6 +2,7 @@
 
 
 
+
 ![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
 
 Small clone of the node-js express framework written in pure Java 8.
@@ -224,7 +225,10 @@ Example:
 ```java
  app.use(Express.statics("examplepath\\test_statics"));
 ```
-Now you can access every files in the `test_statics` over the root adress `\`.
+Now you can access every files in the `test_statics` over the root adress `\`. If you want you can specify which files can be accessed:
+```java
+ app.use(Express.statics("examplepath\\test_statics", "html", "css", "js"));
+```
 #### Cookie Session
 Java Express also includes an simple cookie-session middleware:
 ```java
@@ -241,7 +245,7 @@ app.get("/session", (req, res) -> {
    * CookieSession named his data "Session Cookie" which is
    * an SessionCookie so we can Cast it.
    */
-   SessionCookie sessionCookie = (SessionCookie) req.getMiddlewareContent("SessionCookie");
+   SessionCookie sessionCookie = (SessionCookie) req.getMiddlewareContent("sessioncookie");
    int count;
    
    // Check if the data is null, we want to implement an simple counter
