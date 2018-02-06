@@ -27,7 +27,8 @@ final class ExpressStatic implements HttpRequest {
 
   @Override
   public void handle(Request req, Response res) {
-    File reqFile = new File(PATH + req.getURI().getPath());
+    String path = req.getURI().getPath();
+    File reqFile = new File(path.equals("/") ? (PATH + "/index.html") : (PATH + path));
 
     if (reqFile.exists()) {
 
@@ -44,7 +45,9 @@ final class ExpressStatic implements HttpRequest {
         }
 
       } else {
-        if (ONHANDLE != null) ONHANDLE.handle(req, res);
+        if (ONHANDLE != null)
+          ONHANDLE.handle(req, res);
+        
         res.send(reqFile);
       }
     }
