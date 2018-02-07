@@ -1,8 +1,8 @@
 package examples;
 
 import express.Express;
-import express.http.cookie.Cookie;
-import express.http.cookie.SessionCookie;
+import express.http.Cookie;
+import express.http.SessionCookie;
 
 import java.io.IOException;
 

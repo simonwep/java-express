@@ -1,9 +1,9 @@
-package express.http;
+package express.http.response;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import express.ExpressUtils;
-import express.http.cookie.Cookie;
+import express.utils.Utils;
+import express.http.Cookie;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,7 +101,7 @@ public class Response {
   public void send(File file) {
     if (checkIfClosed()) return;
     this.contentLength += file.length();
-    this.contentType = ExpressUtils.getContentType(file);
+    this.contentType = Utils.getContentType(file);
     sendHeaders();
 
     try {

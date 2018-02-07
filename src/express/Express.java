@@ -7,8 +7,8 @@ import express.expressfilter.ExpressFilterChain;
 import express.expressfilter.ExpressFilterImpl;
 import express.expressfilter.ExpressFilterTask;
 import express.expressfilter.ExpressFilterWorker;
-import express.http.Request;
-import express.http.Response;
+import express.http.request.Request;
+import express.http.response.Response;
 import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;

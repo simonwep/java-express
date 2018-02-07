@@ -1,6 +1,4 @@
-package express;
-
-import express.utils.MIMETypes;
+package express.utils;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -8,7 +6,7 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
 
-public class ExpressUtils {
+public class Utils {
 
   /**
    * Write all data from an InputStream in an String
@@ -41,7 +39,7 @@ public class ExpressUtils {
    */
   public static String getContentType(File file) {
     String ex = file.getAbsolutePath().replaceAll("^(.*\\.|.*\\|.+$)", "");
-    String contentType = MIMETypes.get().get(ex);
+    String contentType = MediaType.get().get(ex);
 
     if (contentType == null)
       contentType = "text/plain";

@@ -8,14 +8,13 @@ import java.util.HashMap;
  * Full list of mime-types to handle static served files.
  * List-link: https://www.freeformatter.com/mime-types-list.html
  */
-public class MIMETypes {
+public final class MediaType {
 
   private final static HashMap<String, String> MIME = new HashMap<>();
 
   static {
     MIME.put("aw", "application/applixware");
     MIME.put("atom", "application/atom+xml ");
-    MIME.put("xml", "application/xml");
     MIME.put("atomcat", "application/atomcat+xml");
     MIME.put("atomsvc", "application/atomsvc+xml");
     MIME.put("ccxml", "application/ccxml+xml");
@@ -53,7 +52,6 @@ public class MIMETypes {
     MIME.put("mets", "application/mets+xml");
     MIME.put("mods", "application/mods+xml");
     MIME.put("m21", "application/mp21");
-    MIME.put("mp4", "application/mp4");
     MIME.put("doc", "application/msword");
     MIME.put("mxf", "application/mxf");
     MIME.put("bin", "application/octet-stream");

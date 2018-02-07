@@ -2,8 +2,8 @@ package examples;
 
 import express.events.HttpRequest;
 import express.expressfilter.ExpressFilter;
-import express.http.Request;
-import express.http.Response;
+import express.http.request.Request;
+import express.http.response.Response;
 
 public class PortMiddleware implements HttpRequest, ExpressFilter {
 

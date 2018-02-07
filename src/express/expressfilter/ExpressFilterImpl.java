@@ -1,8 +1,8 @@
 package express.expressfilter;
 
 import express.events.HttpRequest;
-import express.http.Request;
-import express.http.Response;
+import express.http.request.Request;
+import express.http.response.Response;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;

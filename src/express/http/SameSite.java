@@ -1,4 +1,4 @@
-package express.http.cookie;
+package express.http;
 
 /**
  * @author Simon Reinisch

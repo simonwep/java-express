@@ -1,7 +1,7 @@
 package express.events;
 
-import express.http.Request;
-import express.http.Response;
+import express.http.request.Request;
+import express.http.response.Response;
 
 /**
  * @author Simon Reinisch

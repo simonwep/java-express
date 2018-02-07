@@ -1,10 +1,10 @@
-package express.http;
+package express.http.request;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import express.ExpressUtils;
+import express.utils.Utils;
 import express.expressfilter.ExpressFilter;
-import express.http.cookie.Cookie;
+import express.http.Cookie;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -65,7 +65,7 @@ public class Request {
 
     // Check if the request contains x-www-form-urlencoded form data
     this.FORM_QUERYS = CONTENT_TYPE.startsWith("application/x-www-form-urlencoded")
-        ? RequestUtils.parseRawQuery(ExpressUtils.streamToString(BODY))
+        ? RequestUtils.parseRawQuery(Utils.streamToString(BODY))
         : new HashMap<>();
 
     // Parse query and cookies, both returns not null if there is nothing

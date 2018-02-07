@@ -1,7 +1,7 @@
-package express.http;
+package express.http.request;
 
 import com.sun.net.httpserver.Headers;
-import express.http.cookie.Cookie;
+import express.http.Cookie;
 
 import java.io.*;
 import java.net.URLDecoder;

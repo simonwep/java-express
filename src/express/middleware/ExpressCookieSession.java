@@ -1,13 +1,13 @@
 package express.middleware;
 
-import express.ExpressUtils;
+import express.utils.Utils;
 import express.events.HttpRequest;
 import express.expressfilter.ExpressFilter;
 import express.expressfilter.ExpressFilterTask;
-import express.http.Request;
-import express.http.Response;
-import express.http.cookie.Cookie;
-import express.http.cookie.SessionCookie;
+import express.http.request.Request;
+import express.http.response.Response;
+import express.http.Cookie;
+import express.http.SessionCookie;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +32,7 @@ final class ExpressCookieSession implements HttpRequest, ExpressFilter, ExpressF
 
       req.addMiddlewareContent(this, COOKIES.get(cookie.getValue()));
     } else {
-      String token = ExpressUtils.randomToken(32, 16);
+      String token = Utils.randomToken(32, 16);
 
       cookie = new Cookie(COOKIE_NAME, token).setMaxAge(MAX_AGE);
       res.setCookie(cookie);
