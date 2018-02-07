@@ -2,6 +2,7 @@ package express.http.request;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import express.utils.MediaType;
 import express.utils.Utils;
 import express.expressfilter.ExpressFilter;
 import express.http.Cookie;
@@ -26,7 +27,7 @@ public class Request {
   private final String CONTENT_TYPE;                  // Request content-type
   private final long CONTENT_LENGTH;                  // Request content-length
   private final Authorization AUTH;                   // Authorization header parsed
-  private final InetSocketAddress INET;             // Client socket adress
+  private final InetSocketAddress INET;               // Client socket adress
 
   private final HashMap<String, Object> MIDDLEWARE;   // Middleware Data
   private final HashMap<String, Cookie> COOKIES;      // Request cookies

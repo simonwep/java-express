@@ -3,8 +3,10 @@ package express.http.response;
 import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import express.utils.Utils;
 import express.http.Cookie;
+import express.utils.MediaType;
+import express.utils.Status;
+import express.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public class Response {
   private final OutputStream BODY;
   private final Headers HEADER;
 
-  private String contentType = "text/plain";
+  private MediaType contentType = MediaType._txt;
   private boolean isClose = false;
   private long contentLength = 0;
   private int status = 200;
@@ -58,10 +60,27 @@ public class Response {
    * @param status The response status.
    * @return This Response instance.
    */
-  public Response setStatus(int status) {
+  public Response setStatus(@NotNull Status status) {
     if (checkIfClosed()) return this;
-    this.status = status;
+    this.status = status.getCode();
     return this;
+  }
+
+  /**
+   *
+   * @return The current contentType
+   */
+  public MediaType getContentType() {
+    return contentType;
+  }
+
+  /**
+   * Set the contentType for this response.
+   *
+   * @param contentType - The contentType
+   */
+  public void setContentType(MediaType contentType) {
+    this.contentType = contentType;
   }
 
   /**
@@ -90,6 +109,7 @@ public class Response {
       // TODO: Handle error
       e.printStackTrace();
     }
+
     close();
   }
 
@@ -133,6 +153,11 @@ public class Response {
 
   private void sendHeaders() {
     try {
+
+      // Fallback
+      String contentType = getContentType().getMIME() == null ? MediaType._bin.getMIME() : getContentType().getMIME();
+
+      // Set header and send response
       this.HEADER.set("Content-Type", contentType);
       this.HTTP_EXCHANGE.sendResponseHeaders(status, contentLength);
     } catch (IOException e) {

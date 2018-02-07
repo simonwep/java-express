@@ -40,12 +40,12 @@ public class Utils {
    * @param file The file.
    * @return The MIME-Type.
    */
-  public static String getContentType(File file) {
+  public static MediaType getContentType(File file) {
     String ex = getExtension(file);
-    String contentType = MediaType.getForExtension(ex).getMIME();
+    MediaType contentType = MediaType.getForExtension(ex);
 
     if (contentType == null)
-      contentType = "application/octet-stream";
+     return MediaType._bin;
 
     return contentType;
   }
