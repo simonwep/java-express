@@ -1,5 +1,9 @@
 package express.utils;
 
+/**
+ * @author Simon Reinisch
+ * Enum with all MediaTypes
+ */
 public enum MediaType {
 
   _aw("aw", "application/applixware"),

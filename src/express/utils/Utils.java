@@ -1,10 +1,13 @@
 package express.utils;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 public class Utils {
 
@@ -38,7 +41,7 @@ public class Utils {
    * @return The MIME-Type.
    */
   public static String getContentType(File file) {
-    String ex = file.getAbsolutePath().replaceAll("^(.*\\.|.*\\|.+$)", "");
+    String ex = getExtension(file);
     String contentType = MediaType.getForExtension(ex).getMIME();
 
     if (contentType == null)
@@ -67,4 +70,24 @@ public class Utils {
   public static String getYourIp() throws UnknownHostException {
     return Inet4Address.getLocalHost().getHostAddress();
   }
+
+  /**
+   * Extract the extension from the file.
+   *
+   * @param file The file.
+   * @return The extension.
+   */
+  public static String getExtension(@NotNull File file) {
+    char[] buffer = new char[255];
+    int bufferIndex = 0;
+
+    for (char c : file.getAbsolutePath().toCharArray()) {
+      if (c == '\\' || c == '.' || c == '/')
+        bufferIndex = 0;
+      else
+        buffer[bufferIndex++] = c;
+    }
+    return new String(Arrays.copyOf(buffer, bufferIndex));
+  }
+
 }

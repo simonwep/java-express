@@ -1,5 +1,6 @@
 package express.http.response;
 
+import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import express.utils.Utils;
@@ -98,7 +99,7 @@ public class Response {
    *
    * @param file The file.
    */
-  public void send(File file) {
+  public void send(@NotNull File file) {
     if (checkIfClosed()) return;
     this.contentLength += file.length();
     this.contentType = Utils.getContentType(file);
