@@ -19,7 +19,7 @@ app.get("/", (req, res) -> {
    res.send("Hello World");
 });
 
-app.listen(3000);
+app.listen(); // Port 80 is default
 ```
 
 When you create an new Express instance you can add an additional host name for example, your local network:
@@ -123,7 +123,9 @@ app.get("/res", (req, res) -> {
   // res.send();                     // Send empty response
   // res.send("Hello World");        // Send an string
   // res.send("chart.pdf");          // Send an file
-  // res.setStatus(200);             // Set the response status
+  // setContentType(MediaType._txt); // Set the content type, default is txt/plain
+  // getContentType();               // Returns the current content type
+  // res.setStatus(Status._200);     // Set the response status
   // res.getStatus();                // Returns the current response status
   // res.setCookie(new Cookie(...)); // Send an cookie
   // res.isClosed();                 // Check if already something has been send to the client
@@ -233,7 +235,7 @@ Now you can access every files in the `test_statics` over the root adress `\`. I
 Java Express also includes an simple cookie-session middleware:
 ```java
 // You should use an meaningless cookie name for serveral security reasons, here f3v4.
-// Also you can specify the maximum age of the cookie from the creation date, here 3000. 
+// Also you can specify the maximum age of the cookie from the creation date and the file types wich are actually allowed.
 app.use(Express.cookieSession("f3v4", 9000));
 ```
 To use a session cookie we need to get the data from the middleware which is actually an `SessionCookie`:
