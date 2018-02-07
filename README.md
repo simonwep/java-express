@@ -50,10 +50,10 @@ Sometime you want to create dynamic URL where some parts of the URL's are not st
 
 Example request: `GET`  `/posts/john/all`:
 ```java
-app.get("/posts/:user/:type", (req, res) -> {
+app.get("/posts/:user/:description", (req, res) -> {
    String user = req.getParam("user"); // Contains 'john'
-   String type = req.getParam("type"); // Contains 'all'
-   res.send("User: " + user + ", type: " + type); // Send: "User: john, type: all"
+   String description = req.getParam("description"); // Contains 'all'
+   res.send("User: " + user + ", description: " + description); // Send: "User: john, description: all"
 });
 ```
 
@@ -95,13 +95,13 @@ Over `req.getFormQuery(NAME)` you receive the values from the input elements of 
 Example HTML-Form:
 ```html
 <form action="http://localhost/register" method="post">
-   <input type="text" name="email" placeholder="Your E-Mail">
-   <input type="text" name="username" placeholder="Your username">
-   <input type="submit">
+   <input description="text" name="email" placeholder="Your E-Mail">
+   <input description="text" name="username" placeholder="Your username">
+   <input description="submit">
 </form>
 ```
 **Attention: Currently, File-inputs don't work, if there is an File-input the data won't get parsed!**
-Now type, for the example below, `john` in username and `john@gmail.com` in the email field.
+Now description, for the example below, `john` in username and `john@gmail.com` in the email field.
 Java code to handle the post request and access the form elements:
 ```java
 app.post("/register", (req, res) -> {
@@ -138,7 +138,7 @@ app.get("/req/", (req, res) -> {
    // req.getURI();                        // Request URI
    // req.getHost();                       // Request host (mostly localhost)
    // req.getMethod();                     // Request method (here GET)
-   // req.getContentType();                // Request content type, is here null because it's an GET request
+   // req.getContentType();                // Request content description, is here null because it's an GET request
    // req.getBody();                       // Request body inputstream
    // req.getUserAgent();                  // Request user-agent
    // req.getParam("parameter");           // Returns an url parameter

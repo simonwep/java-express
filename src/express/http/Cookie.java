@@ -5,7 +5,6 @@ import java.time.Instant;
 
 /**
  * @author Simon Reinisch
- * @implNote Can be reused
  */
 public class Cookie {
 

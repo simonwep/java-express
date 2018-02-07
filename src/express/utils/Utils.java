@@ -39,10 +39,10 @@ public class Utils {
    */
   public static String getContentType(File file) {
     String ex = file.getAbsolutePath().replaceAll("^(.*\\.|.*\\|.+$)", "");
-    String contentType = MediaType.get().get(ex);
+    String contentType = MediaType.getForExtension(ex).getMIME();
 
     if (contentType == null)
-      contentType = "text/plain";
+      contentType = "application/octet-stream";
 
     return contentType;
   }
