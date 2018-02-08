@@ -3,7 +3,7 @@ package express.http.request;
 import com.sun.net.httpserver.Headers;
 import express.http.Cookie;
 
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;

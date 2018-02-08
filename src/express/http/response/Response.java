@@ -67,7 +67,6 @@ public class Response {
   }
 
   /**
-   *
    * @return The current contentType
    */
   public MediaType getContentType() {

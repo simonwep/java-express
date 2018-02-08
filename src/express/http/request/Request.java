@@ -2,10 +2,9 @@ package express.http.request;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import express.utils.MediaType;
-import express.utils.Utils;
 import express.expressfilter.ExpressFilter;
 import express.http.Cookie;
+import express.utils.Utils;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -284,21 +283,21 @@ public class Request {
   }
 
   /**
-   * Return all url-querys.
-   *
-   * @return An entire list of key-values
-   */
-  public HashMap<String, String> getQuerys() {
-    return QUERYS;
-  }
-
-  /**
    * Set the params.
    *
    * @param params
    */
   public void setParams(HashMap<String, String> params) {
     this.params = params;
+  }
+
+  /**
+   * Return all url-querys.
+   *
+   * @return An entire list of key-values
+   */
+  public HashMap<String, String> getQuerys() {
+    return QUERYS;
   }
 
   /**

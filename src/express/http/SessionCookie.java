@@ -18,7 +18,7 @@ public class SessionCookie {
   }
 
   /**
-     * @return Max age from this cookie
+   * @return Max age from this cookie
    */
   public long getMaxAge() {
     return MAX_AGE;
@@ -40,6 +40,7 @@ public class SessionCookie {
 
   /**
    * Set the session data
+   *
    * @param data The data object
    * @return The object itself
    */

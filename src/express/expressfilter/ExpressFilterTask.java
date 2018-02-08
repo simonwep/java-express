@@ -9,6 +9,7 @@ public interface ExpressFilterTask {
 
   /**
    * Returns the delay between the updates
+   *
    * @return Update delay in milliseconds
    */
   long getDelay();

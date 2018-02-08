@@ -5,8 +5,6 @@ import express.http.request.Request;
 import express.http.response.Response;
 
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Simon Reinisch
@@ -40,14 +38,14 @@ public class ExpressFilterImpl implements HttpRequest {
 
     // Parse params
     HashMap<String, String> params = matchURL(CONTEXT, requestPath);
-    if(params == null)
+    if (params == null)
       return;
 
     req.setParams(params);
     REQUEST.handle(req, res);
   }
 
-  private static HashMap<String, String> matchURL(String filter, String url) {
+  private HashMap<String, String> matchURL(String filter, String url) {
     HashMap<String, String> params = new HashMap<>();
     StringBuilder key = new StringBuilder();
     StringBuilder val = new StringBuilder();

@@ -3,6 +3,7 @@ package express.middleware;
 import express.events.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
+import express.utils.Utils;
 
 import java.io.File;
 
@@ -33,7 +34,7 @@ final class ExpressStatic implements HttpRequest {
     if (reqFile.exists()) {
 
       if (EXTENSIONS != null) {
-        String reqEx = reqFile.getAbsolutePath().replaceAll("^(.*\\.|.*\\|.+$)", "");
+        String reqEx = Utils.getExtension(reqFile);
 
         for (String ex : EXTENSIONS) {
           if (reqEx.equals(ex)) {
@@ -47,7 +48,7 @@ final class ExpressStatic implements HttpRequest {
       } else {
         if (ONHANDLE != null)
           ONHANDLE.handle(req, res);
-        
+
         res.send(reqFile);
       }
     }

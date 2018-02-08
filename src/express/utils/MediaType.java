@@ -700,14 +700,6 @@ public enum MediaType {
     this.extension = extension;
   }
 
-  public String getMIME() {
-    return MIME;
-  }
-
-  public String getExtension() {
-    return extension;
-  }
-
   public static MediaType getForExtension(String extension) {
     switch (extension) {
       case "aw":
@@ -2082,5 +2074,13 @@ public enum MediaType {
         return _dmg;
     }
     return null;
+  }
+
+  public String getMIME() {
+    return MIME;
+  }
+
+  public String getExtension() {
+    return extension;
   }
 }
