@@ -18,20 +18,12 @@ public class ExpressFilterImpl implements HttpRequest {
 
   private final HttpRequest REQUEST;
   private final String REQUEST_METHOD;
-
   private final String CONTEXT;
-  private final String[] CONTEXT_PARAMS;
-  private final String CONTEXT_REGEX;
-  private final Pattern CONTEXT_PATTERN;
 
   public ExpressFilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
     this.REQUEST_METHOD = requestMethod;
     this.REQUEST = httpRequest;
-
     this.CONTEXT = context;
-    this.CONTEXT_PARAMS = context.split("(/)(:|[^:]+|)(:|)");
-    this.CONTEXT_REGEX = "^\\Q" + context.replaceAll(":([^/]+)", "\\\\E([^/]+)\\\\Q") + "\\E$";
-    this.CONTEXT_PATTERN = Pattern.compile(CONTEXT_REGEX);
   }
 
   @Override
@@ -47,22 +39,51 @@ public class ExpressFilterImpl implements HttpRequest {
     }
 
     // Parse params
-    HashMap<String, String> params = new HashMap<>();
-    Matcher matcher = CONTEXT_PATTERN.matcher(requestPath);
-
-    // Match all params
-    if (matcher.find()) {
-
-      for (int i = 1; i <= matcher.groupCount() && i < CONTEXT_PARAMS.length; i++) {
-        String g = matcher.group(i);
-        params.put(CONTEXT_PARAMS[i], g);
-      }
-
-    } else {
+    HashMap<String, String> params = matchURL(CONTEXT, requestPath);
+    if(params == null)
       return;
-    }
 
     req.setParams(params);
     REQUEST.handle(req, res);
   }
+
+  private static HashMap<String, String> matchURL(String filter, String url) {
+    HashMap<String, String> params = new HashMap<>();
+    StringBuilder key = new StringBuilder();
+    StringBuilder val = new StringBuilder();
+    char[] uc = url.toCharArray();
+    char[] fc = filter.toCharArray();
+    int ui = 0, fi = 0;
+
+
+    for (; fi < fc.length; fi++, ui++) {
+
+      if (fc[fi] == ':') {
+        key.setLength(0);
+        val.setLength(0);
+
+        fi++;
+        while (fi < fc.length && fc[fi] != '/') {
+          key.append(fc[fi++]);
+        }
+
+        while (ui < uc.length && uc[ui] != '/') {
+          val.append(uc[ui++]);
+        }
+
+        params.put(key.toString(), val.toString());
+      } else if (fc[fi] != uc[ui]) {
+
+        // Failed
+        return null;
+      }
+    }
+
+    if (ui < url.length() || fi < filter.length()) {
+      return null;
+    }
+
+    return params;
+  }
+
 }
