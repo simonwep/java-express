@@ -695,8 +695,8 @@ public enum MediaType {
   private String MIME;
   private String extension;
 
-  MediaType(String MIME, String extension) {
-    this.MIME = MIME;
+  MediaType(String extension, String mime) {
+    this.MIME = mime;
     this.extension = extension;
   }
 

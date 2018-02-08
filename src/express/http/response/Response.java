@@ -154,7 +154,7 @@ public class Response {
     try {
 
       // Fallback
-      String contentType = getContentType().getMIME() == null ? MediaType._bin.getMIME() : getContentType().getMIME();
+      String contentType = getContentType().getExtension() == null ? MediaType._bin.getExtension() : getContentType().getMIME();
 
       // Set header and send response
       this.HEADER.set("Content-Type", contentType);

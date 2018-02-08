@@ -78,7 +78,11 @@ public class Utils {
    */
   public static String getExtension(@NotNull File file) {
     String path = file.getAbsolutePath();
-    return path.substring(path.lastIndexOf('.'));
+    int indx = path.lastIndexOf('.') + 1;
+    if (indx == 0)
+      return null;
+
+    return path.substring(indx);
   }
 
 }
