@@ -15,13 +15,19 @@ import java.util.HashMap;
 public class ExpressFilterImpl implements HttpRequest {
 
   private final HttpRequest REQUEST;
-  private final String REQUEST_METHOD;
+  private final String REQ;
   private final String CONTEXT;
+  private final boolean REQ_ALL;
+  private final boolean CONTEXT_ALL;
 
   public ExpressFilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
-    this.REQUEST_METHOD = requestMethod;
+    this.REQ = requestMethod;
     this.REQUEST = httpRequest;
     this.CONTEXT = context;
+
+    // Save some informations which don't need to be processed again
+    this.REQ_ALL = requestMethod.equals("*");
+    this.CONTEXT_ALL = context.equals("*");
   }
 
   @Override
@@ -29,9 +35,10 @@ public class ExpressFilterImpl implements HttpRequest {
     String requestMethod = req.getMethod();
     String requestPath = req.getRedirect() != null ? req.getRedirect() : req.getURI().getRawPath();
 
-    if (!(REQUEST_METHOD.equals("*") || REQUEST_METHOD.equals(requestMethod))) {
+    // Check if
+    if (!(REQ_ALL || REQ.equals(requestMethod))) {
       return;
-    } else if (CONTEXT.equals("*")) {
+    } else if (CONTEXT_ALL) {
       REQUEST.handle(req, res);
       return;
     }
@@ -45,6 +52,9 @@ public class ExpressFilterImpl implements HttpRequest {
     REQUEST.handle(req, res);
   }
 
+  /**
+   * Extract and match the parameter from the url with an filter.
+   */
   private HashMap<String, String> matchURL(String filter, String url) {
     HashMap<String, String> params = new HashMap<>();
     StringBuilder key = new StringBuilder();
@@ -53,7 +63,6 @@ public class ExpressFilterImpl implements HttpRequest {
     char[] fc = filter.toCharArray();
     int ui = 0, fi = 0;
 
-
     for (; fi < fc.length; fi++, ui++) {
 
       if (fc[fi] == ':') {
@@ -61,13 +70,11 @@ public class ExpressFilterImpl implements HttpRequest {
         val.setLength(0);
 
         fi++;
-        while (fi < fc.length && fc[fi] != '/') {
+        while (fi < fc.length && fc[fi] != '/')
           key.append(fc[fi++]);
-        }
 
-        while (ui < uc.length && uc[ui] != '/') {
+        while (ui < uc.length && uc[ui] != '/')
           val.append(uc[ui++]);
-        }
 
         params.put(key.toString(), val.toString());
       } else if (fc[fi] != uc[ui]) {
@@ -83,5 +90,6 @@ public class ExpressFilterImpl implements HttpRequest {
 
     return params;
   }
+
 
 }

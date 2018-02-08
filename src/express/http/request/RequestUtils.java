@@ -3,12 +3,8 @@ package express.http.request;
 import com.sun.net.httpserver.Headers;
 import express.http.Cookie;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RequestUtils {
 
@@ -51,16 +47,30 @@ public class RequestUtils {
     if (rawQuery == null)
       return querys;
 
-    Matcher mat = Pattern.compile("(.+?)=(.+?)(&|$)").matcher(rawQuery);
-    while (mat.find()) {
-      try {
-        String key = URLDecoder.decode(mat.group(1), "UTF8");
-        String val = URLDecoder.decode(mat.group(2), "UTF8");
-        querys.put(key, val);
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
-      }
+    StringBuilder key = new StringBuilder();
+    StringBuilder val = new StringBuilder();
+    char[] chars = rawQuery.toCharArray();
+    boolean keyac = false;
+    char c = '=';
+
+    for (int i = 0; i < chars.length; i++) {
+      c = chars[i];
+
+      if (c == '=')
+        keyac = true;
+      else if (c == '&') {
+        querys.put(key.toString(), val.toString());
+        key.setLength(0);
+        val.setLength(0);
+        keyac = false;
+      } else if (keyac)
+        val.append(c);
+      else
+        key.append(c);
     }
+
+    if (c != '=' && c != '&')
+      querys.put(key.toString(), val.toString());
 
     return querys;
   }

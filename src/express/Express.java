@@ -86,7 +86,7 @@ public class Express extends ExpressMiddleware {
   }
 
   /**
-   * Add an listener for GET request's.
+   * Add an listener for all request methods.
    *
    * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.

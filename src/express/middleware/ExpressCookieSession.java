@@ -29,10 +29,13 @@ final class ExpressCookieSession implements HttpRequest, ExpressFilter, ExpressF
     Cookie cookie = req.getCookie(COOKIE_NAME);
 
     if (cookie != null && COOKIES.containsKey(cookie.getValue())) {
-
       req.addMiddlewareContent(this, COOKIES.get(cookie.getValue()));
     } else {
-      String token = Utils.randomToken(32, 16);
+      String token;
+
+      do {
+        token = Utils.randomToken(32, 16);
+      } while (COOKIES.contains(token));
 
       cookie = new Cookie(COOKIE_NAME, token).setMaxAge(MAX_AGE);
       res.setCookie(cookie);
@@ -68,9 +71,9 @@ final class ExpressCookieSession implements HttpRequest, ExpressFilter, ExpressF
   public void onUpdate() {
     long current = System.currentTimeMillis();
 
-    COOKIES.forEach((s, o) -> {
-      if (current > o.getCreated() + o.getMaxAge())
-        COOKIES.remove(s);
+    COOKIES.forEach((cookieHash, cookie) -> {
+      if (current > cookie.getCreated() + cookie.getMaxAge())
+        COOKIES.remove(cookieHash);
     });
   }
 
