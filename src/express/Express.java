@@ -14,6 +14,8 @@ import express.middleware.ExpressMiddleware;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author Simon Reinisch
@@ -27,6 +29,7 @@ public class Express extends ExpressMiddleware {
   private final ExpressFilterChain MIDDLEWARE_CHAIN = new ExpressFilterChain();
   private final ExpressFilterChain FILTER_CHAIN = new ExpressFilterChain();
 
+  private Executor executor;
   private String hostname = "localhost";
   private HttpServer httpServer;
 
@@ -39,6 +42,23 @@ public class Express extends ExpressMiddleware {
   public Express(String hostname) {
     if (hostname != null)
       this.hostname = hostname;
+
+    this.executor = Executors.newCachedThreadPool();
+  }
+
+  /**
+   * Set an executor service. Default is CachedThreadPool
+   * Can only changed if the server isn't already stardet.
+   *
+   * @param executor The new executor.
+   * @throws IOException If the server is currently running
+   */
+  public void setExecutor(Executor executor) throws IOException {
+    if (httpServer != null) {
+      throw new IOException("Cannot set the executor after the server has starderd!");
+    } else {
+      this.executor = executor;
+    }
   }
 
   /**
@@ -218,7 +238,7 @@ public class Express extends ExpressMiddleware {
 
         // Create http server
         httpServer = HttpServer.create(new InetSocketAddress(this.hostname, port), 0);
-        httpServer.setExecutor(null);
+        httpServer.setExecutor(executor);
 
         httpServer.createContext("/", httpExchange -> {
           Request request = new Request(httpExchange);
