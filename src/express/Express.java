@@ -14,6 +14,7 @@ import express.middleware.ExpressMiddleware;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -24,6 +25,8 @@ import java.util.concurrent.Executors;
  * An NodeJS like clone written in Java.
  */
 public class Express extends ExpressMiddleware {
+
+  private final ConcurrentHashMap<Object, Object> LOCALS = new ConcurrentHashMap<>();
 
   private final ArrayList<ExpressFilterWorker> WORKER = new ArrayList<>();
   private final ExpressFilterChain MIDDLEWARE_CHAIN = new ExpressFilterChain();
@@ -47,6 +50,34 @@ public class Express extends ExpressMiddleware {
   }
 
   /**
+   * Default, will bind the server to "localhost"
+   */
+  public Express() {
+  }
+
+  /**
+   * Add an key-val pair to the express app, can be used
+   * to store data. Uses ConcurrentHashMap so it's thread save.
+   *
+   * @param key The key
+   * @param val The value
+   * @return The last value which was attached by this key, can be null.
+   */
+  public Object set(Object key, Object val) {
+    return LOCALS.put(key, val);
+  }
+
+  /**
+   * Returns the value which was allocated by this key.
+   *
+   * @param key The key.
+   * @return The value.
+   */
+  public Object get(Object key) {
+    return LOCALS.get(key);
+  }
+
+  /**
    * Set an executor service. Default is CachedThreadPool
    * Can only changed if the server isn't already stardet.
    *
@@ -59,12 +90,6 @@ public class Express extends ExpressMiddleware {
     } else {
       this.executor = executor;
     }
-  }
-
-  /**
-   * Default, will bind the server to "localhost"
-   */
-  public Express() {
   }
 
   /**
