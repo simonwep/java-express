@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  * @author Simon Reinisch
@@ -32,6 +33,37 @@ public class Response {
     this.HTTP_EXCHANGE = exchange;
     this.HEADER = exchange.getResponseHeaders();
     this.BODY = exchange.getResponseBody();
+  }
+
+  /**
+   * Add an specific value to the reponse header.
+   *
+   * @param key   The header name.
+   * @param value The header value.
+   * @return This Response instance.
+   */
+  public Response setHeader(String key, String value) {
+    HEADER.add(key, value);
+    return this;
+  }
+
+  /**
+   * @param key The header key.
+   * @return The values which are associated with this key.
+   */
+  public List<String> getHeader(String key) {
+    return HEADER.get(key);
+  }
+
+  /**
+   * Sets the response Location HTTP header to the specified path parameter.
+   *
+   * @param location The location.
+   */
+  public void setLocation(String location) {
+    HEADER.add("Location", location);
+    setStatus(Status._302);
+    send();
   }
 
   /**
