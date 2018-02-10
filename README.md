@@ -1,12 +1,6 @@
-
-
-
-
-
 ![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
 
 Small clone of the node-js express framework written in pure Java 8.
-
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
 
 # Getting Started
@@ -32,10 +26,11 @@ Default is localhost, so you can access, without setting the hostname, only from
 Quick reference:
 * [URL Basics](#url-basics)
    * [URL Parameter](#url-parameter)
+   * [URL Parameter Listener](#url-parameter-listener)
    * [URL Querys](#url-querys)
    * [Cookies](#cookies)
    * [Form Data](#form-data)
-* [HTTP - Request and Response object](#http---request-and-response-object)
+* [HTTP - Request and Response](#http---request-and-response-object)
    * [Response Object](#response-object)
    * [Request Object](#request-object)
 * [Middleware](#middleware)
@@ -56,6 +51,21 @@ app.get("/posts/:user/:description", (req, res) -> {
    res.send("User: " + user + ", description: " + description); // Send: "User: john, description: all"
 });
 ```
+
+### URL Parameter Listener
+You can also add an event listener when the user called an route which contains an certain parameter:
+```java
+app.get("/posts/:user/:id", (req, res) -> {
+  // Code
+});
+```
+For example, if we want to check every `id` before the associated get post etc. handler will be fired, we can use the `app.onParam([PARAM])` function:
+```java
+app.onParam("id", (req, res) -> {
+  // Do something with the id parameter, eg. check if it's valid.
+});
+```
+Now, this function will be called every time when an context is requested which contains the `id` parameter placeholder.
 
 ## URL Querys
 If you make an request which contains querys, you can access the querys over `req.getQuery(NAME)`. 
