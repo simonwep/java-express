@@ -19,7 +19,6 @@ public class Cookie {
 
   /**
    * Creates an new http-cookie
-   * *
    *
    * @param name  Cookie name
    * @param value Cookie value

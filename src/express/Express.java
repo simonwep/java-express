@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
  */
 public class Express extends ExpressMiddleware {
 
+  private final ConcurrentHashMap<String, HttpRequest> PARAMETER_LISTENER = new ConcurrentHashMap<>();
   private final ConcurrentHashMap<Object, Object> LOCALS = new ConcurrentHashMap<>();
 
   private final ArrayList<ExpressFilterWorker> WORKER = new ArrayList<>();
@@ -53,6 +54,20 @@ public class Express extends ExpressMiddleware {
    * Default, will bind the server to "localhost"
    */
   public Express() {
+  }
+
+  /**
+   * Add an listener which will be called when an url with this parameter is called.
+   *
+   * @param param   The parameter name.
+   * @param request An request handler.
+   */
+  public void onParam(String param, HttpRequest request) {
+    PARAMETER_LISTENER.put(param, request);
+  }
+
+  public ConcurrentHashMap<String, HttpRequest> getParameterListener() {
+    return PARAMETER_LISTENER;
   }
 
   /**
@@ -127,7 +142,7 @@ public class Express extends ExpressMiddleware {
       WORKER.add(new ExpressFilterWorker((ExpressFilterTask) middleware));
     }
 
-    MIDDLEWARE_CHAIN.add(new ExpressFilterImpl(requestMethod, context, middleware));
+    MIDDLEWARE_CHAIN.add(new ExpressFilterImpl(this, requestMethod, context, middleware));
   }
 
   /**
@@ -137,7 +152,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void all(String context, HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl("*", context, request));
+    FILTER_CHAIN.add(new ExpressFilterImpl(this, "*", context, request));
   }
 
   /**
@@ -147,7 +162,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void get(String context, HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl("GET", context, request));
+    FILTER_CHAIN.add(new ExpressFilterImpl(this, "GET", context, request));
   }
 
   /**
@@ -157,7 +172,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void post(String context, HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl("POST", context, request));
+    FILTER_CHAIN.add(new ExpressFilterImpl(this, "POST", context, request));
   }
 
   /**
@@ -167,7 +182,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void put(String context, HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl("PUT", context, request));
+    FILTER_CHAIN.add(new ExpressFilterImpl(this, "PUT", context, request));
   }
 
   /**
@@ -177,7 +192,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void delete(String context, HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl("DELETE", context, request));
+    FILTER_CHAIN.add(new ExpressFilterImpl(this, "DELETE", context, request));
   }
 
   /**
@@ -187,7 +202,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void patch(String context, HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl("PATCH", context, request));
+    FILTER_CHAIN.add(new ExpressFilterImpl(this, "PATCH", context, request));
   }
 
   /**
@@ -198,7 +213,7 @@ public class Express extends ExpressMiddleware {
    * @param request       An listener which will be fired if the context matches the requestpath.
    */
   public void on(String requestMethod, String context, HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(requestMethod, context, request));
+    FILTER_CHAIN.add(new ExpressFilterImpl(this, requestMethod, context, request));
   }
 
   /**
@@ -211,7 +226,7 @@ public class Express extends ExpressMiddleware {
    */
   public void on(String requestMethod, HttpRequest request, String... contexts) {
     for (String c : contexts)
-      FILTER_CHAIN.add(new ExpressFilterImpl(requestMethod, c, request));
+      FILTER_CHAIN.add(new ExpressFilterImpl(this, requestMethod, c, request));
   }
 
   /**

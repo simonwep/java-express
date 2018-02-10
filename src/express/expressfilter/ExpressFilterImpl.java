@@ -1,10 +1,12 @@
 package express.expressfilter;
 
+import express.Express;
 import express.events.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Simon Reinisch
@@ -14,13 +16,16 @@ import java.util.HashMap;
  */
 public class ExpressFilterImpl implements HttpRequest {
 
+  private final Express APP;
+
   private final HttpRequest REQUEST;
   private final String REQ;
   private final String CONTEXT;
   private final boolean REQ_ALL;
   private final boolean CONTEXT_ALL;
 
-  public ExpressFilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
+  public ExpressFilterImpl(Express app, String requestMethod, String context, HttpRequest httpRequest) {
+    this.APP = app;
     this.REQ = requestMethod;
     this.REQUEST = httpRequest;
     this.CONTEXT = context;
@@ -48,7 +53,21 @@ public class ExpressFilterImpl implements HttpRequest {
     if (params == null)
       return;
 
+    // Save parameter to request object
     req.setParams(params);
+    
+    // Check parameter lsitener
+    params.forEach((s, s2) -> {
+      HttpRequest hreq = APP.getParameterListener().get(s);
+      if (hreq != null)
+        hreq.handle(req, res);
+    });
+
+    // Check if the response is closed
+    if (res.isClosed())
+      return;
+
+    // Handle request
     REQUEST.handle(req, res);
   }
 
