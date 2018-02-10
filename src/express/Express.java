@@ -1,5 +1,6 @@
 package express;
 
+import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.HttpServer;
 import express.events.Action;
 import express.events.HttpRequest;
@@ -33,7 +34,7 @@ public class Express extends ExpressMiddleware {
   private final ExpressFilterChain MIDDLEWARE_CHAIN = new ExpressFilterChain();
   private final ExpressFilterChain FILTER_CHAIN = new ExpressFilterChain();
 
-  private Executor executor;
+  private Executor executor = Executors.newCachedThreadPool();
   private String hostname = "localhost";
   private HttpServer httpServer;
 
@@ -43,11 +44,8 @@ public class Express extends ExpressMiddleware {
    *
    * @param hostname The host name
    */
-  public Express(String hostname) {
-    if (hostname != null)
-      this.hostname = hostname;
-
-    this.executor = Executors.newCachedThreadPool();
+  public Express(@NotNull String hostname) {
+    this.hostname = hostname;
   }
 
   /**
@@ -62,7 +60,7 @@ public class Express extends ExpressMiddleware {
    * @param param   The parameter name.
    * @param request An request handler.
    */
-  public void onParam(String param, HttpRequest request) {
+  public void onParam(@NotNull String param, @NotNull HttpRequest request) {
     PARAMETER_LISTENER.put(param, request);
   }
 
@@ -99,7 +97,7 @@ public class Express extends ExpressMiddleware {
    * @param executor The new executor.
    * @throws IOException If the server is currently running
    */
-  public void setExecutor(Executor executor) throws IOException {
+  public void setExecutor(@NotNull Executor executor) throws IOException {
     if (httpServer != null) {
       throw new IOException("Cannot set the executor after the server has starderd!");
     } else {
@@ -112,7 +110,7 @@ public class Express extends ExpressMiddleware {
    *
    * @param middleware An middleware which will be fired on every equestmethod- and  path.
    */
-  public void use(HttpRequest middleware) {
+  public void use(@NotNull HttpRequest middleware) {
     addMiddleware("*", "*", middleware);
   }
 
@@ -122,7 +120,7 @@ public class Express extends ExpressMiddleware {
    * @param context    The context where the middleware should listen.
    * @param middleware An middleware which will be fired if the context matches the requestpath.
    */
-  public void use(String context, HttpRequest middleware) {
+  public void use(@NotNull String context, @NotNull HttpRequest middleware) {
     addMiddleware("*", context, middleware);
   }
 
@@ -133,11 +131,11 @@ public class Express extends ExpressMiddleware {
    * @param requestMethod And type of request-method eg. GET, POST etc.
    * @param middleware    An middleware which will be fired if the context matches the requestmethod- and  path.
    */
-  public void use(String context, String requestMethod, HttpRequest middleware) {
+  public void use(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest middleware) {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
   }
 
-  private void addMiddleware(String requestMethod, String context, HttpRequest middleware) {
+  private void addMiddleware(@NotNull String requestMethod, @NotNull String context, HttpRequest middleware) {
     if (middleware instanceof ExpressFilterTask) {
       WORKER.add(new ExpressFilterWorker((ExpressFilterTask) middleware));
     }
@@ -151,7 +149,7 @@ public class Express extends ExpressMiddleware {
    * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
-  public void all(String context, HttpRequest request) {
+  public void all(@NotNull String context, @NotNull HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl(this, "*", context, request));
   }
 
@@ -161,7 +159,7 @@ public class Express extends ExpressMiddleware {
    * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
-  public void get(String context, HttpRequest request) {
+  public void get(@NotNull String context, @NotNull HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl(this, "GET", context, request));
   }
 
@@ -171,7 +169,7 @@ public class Express extends ExpressMiddleware {
    * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
-  public void post(String context, HttpRequest request) {
+  public void post(@NotNull String context, @NotNull HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl(this, "POST", context, request));
   }
 
@@ -181,7 +179,7 @@ public class Express extends ExpressMiddleware {
    * @param context The context for the request handler..
    * @param request An listener which will be fired if the context matches the requestpath.
    */
-  public void put(String context, HttpRequest request) {
+  public void put(@NotNull String context, @NotNull HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl(this, "PUT", context, request));
   }
 
@@ -191,7 +189,7 @@ public class Express extends ExpressMiddleware {
    * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
-  public void delete(String context, HttpRequest request) {
+  public void delete(@NotNull String context, @NotNull HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl(this, "DELETE", context, request));
   }
 
@@ -201,7 +199,7 @@ public class Express extends ExpressMiddleware {
    * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
    */
-  public void patch(String context, HttpRequest request) {
+  public void patch(@NotNull String context, @NotNull HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl(this, "PATCH", context, request));
   }
 
@@ -212,7 +210,7 @@ public class Express extends ExpressMiddleware {
    * @param context       The context for the request handler.
    * @param request       An listener which will be fired if the context matches the requestpath.
    */
-  public void on(String requestMethod, String context, HttpRequest request) {
+  public void on(@NotNull String requestMethod, @NotNull String context, @NotNull HttpRequest request) {
     FILTER_CHAIN.add(new ExpressFilterImpl(this, requestMethod, context, request));
   }
 
@@ -224,7 +222,7 @@ public class Express extends ExpressMiddleware {
    * @param contexts      The contexts for the request handler..
    * @param request       An listener which will be fired if the context matches the requestpath.
    */
-  public void on(String requestMethod, HttpRequest request, String... contexts) {
+  public void on(@NotNull String requestMethod, @NotNull HttpRequest request, String... contexts) {
     for (String c : contexts)
       FILTER_CHAIN.add(new ExpressFilterImpl(this, requestMethod, c, request));
   }
