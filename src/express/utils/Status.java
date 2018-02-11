@@ -97,14 +97,6 @@ public enum Status {
     this.description = description;
   }
 
-  public String getDescription() {
-    return description;
-  }
-
-  public int getCode() {
-    return code;
-  }
-
   public static Status valueOf(int code) {
     switch (code) {
       case 100:
@@ -235,5 +227,13 @@ public enum Status {
         return _599;
     }
     return null;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public int getCode() {
+    return code;
   }
 }

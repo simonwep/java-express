@@ -4,12 +4,10 @@ import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.HttpServer;
 import express.events.Action;
 import express.events.HttpRequest;
-import express.expressfilter.ExpressFilterChain;
 import express.expressfilter.ExpressFilterImpl;
 import express.expressfilter.ExpressFilterTask;
 import express.expressfilter.ExpressFilterWorker;
-import express.http.request.Request;
-import express.http.response.Response;
+import express.expressfilter.FilterLayerHandler;
 import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;
@@ -27,16 +25,27 @@ import java.util.concurrent.Executors;
  */
 public class Express extends ExpressMiddleware {
 
-  private final ConcurrentHashMap<String, HttpRequest> PARAMETER_LISTENER = new ConcurrentHashMap<>();
-  private final ConcurrentHashMap<Object, Object> LOCALS = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<String, HttpRequest> PARAMETER_LISTENER;
+  private final ConcurrentHashMap<Object, Object> LOCALS;
 
-  private final ArrayList<ExpressFilterWorker> WORKER = new ArrayList<>();
-  private final ExpressFilterChain MIDDLEWARE_CHAIN = new ExpressFilterChain();
-  private final ExpressFilterChain FILTER_CHAIN = new ExpressFilterChain();
+  private final ArrayList<ExpressFilterWorker> WORKER;
+  private final FilterLayerHandler HANDLER;
 
-  private Executor executor = Executors.newCachedThreadPool();
-  private String hostname = "localhost";
+  private Executor executor;
+  private String hostname;
   private HttpServer httpServer;
+
+  {
+    // Initialize
+    PARAMETER_LISTENER = new ConcurrentHashMap<>();
+    LOCALS = new ConcurrentHashMap<>();
+
+    WORKER = new ArrayList<>();
+    HANDLER = new FilterLayerHandler();
+
+    executor = Executors.newCachedThreadPool();
+    hostname = "localhost";
+  }
 
   /**
    * Create an express instance and bind the server to an hostname.
@@ -135,12 +144,13 @@ public class Express extends ExpressMiddleware {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
   }
 
+  // Internal service to handle middleware
   private void addMiddleware(@NotNull String requestMethod, @NotNull String context, HttpRequest middleware) {
     if (middleware instanceof ExpressFilterTask) {
       WORKER.add(new ExpressFilterWorker((ExpressFilterTask) middleware));
     }
 
-    MIDDLEWARE_CHAIN.add(new ExpressFilterImpl(this, requestMethod, context, middleware));
+    HANDLER.add(0, new ExpressFilterImpl(this, requestMethod, context, middleware));
   }
 
   /**
@@ -150,7 +160,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void all(@NotNull String context, @NotNull HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(this, "*", context, request));
+    HANDLER.add(1, new ExpressFilterImpl(this, "*", context, request));
   }
 
   /**
@@ -160,7 +170,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void get(@NotNull String context, @NotNull HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(this, "GET", context, request));
+    HANDLER.add(1, new ExpressFilterImpl(this, "GET", context, request));
   }
 
   /**
@@ -170,7 +180,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void post(@NotNull String context, @NotNull HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(this, "POST", context, request));
+    HANDLER.add(1, new ExpressFilterImpl(this, "POST", context, request));
   }
 
   /**
@@ -180,7 +190,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void put(@NotNull String context, @NotNull HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(this, "PUT", context, request));
+    HANDLER.add(1, new ExpressFilterImpl(this, "PUT", context, request));
   }
 
   /**
@@ -190,7 +200,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void delete(@NotNull String context, @NotNull HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(this, "DELETE", context, request));
+    HANDLER.add(1, new ExpressFilterImpl(this, "DELETE", context, request));
   }
 
   /**
@@ -200,7 +210,7 @@ public class Express extends ExpressMiddleware {
    * @param request An listener which will be fired if the context matches the requestpath.
    */
   public void patch(@NotNull String context, @NotNull HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(this, "PATCH", context, request));
+    HANDLER.add(1, new ExpressFilterImpl(this, "PATCH", context, request));
   }
 
   /**
@@ -211,7 +221,7 @@ public class Express extends ExpressMiddleware {
    * @param request       An listener which will be fired if the context matches the requestpath.
    */
   public void on(@NotNull String requestMethod, @NotNull String context, @NotNull HttpRequest request) {
-    FILTER_CHAIN.add(new ExpressFilterImpl(this, requestMethod, context, request));
+    HANDLER.add(1, new ExpressFilterImpl(this, requestMethod, context, request));
   }
 
   /**
@@ -224,7 +234,7 @@ public class Express extends ExpressMiddleware {
    */
   public void on(@NotNull String requestMethod, @NotNull HttpRequest request, String... contexts) {
     for (String c : contexts)
-      FILTER_CHAIN.add(new ExpressFilterImpl(this, requestMethod, c, request));
+      HANDLER.add(1, new ExpressFilterImpl(this, requestMethod, c, request));
   }
 
   /**
@@ -276,21 +286,14 @@ public class Express extends ExpressMiddleware {
 
         // Create http server
         httpServer = HttpServer.create(new InetSocketAddress(this.hostname, port), 0);
-        httpServer.setExecutor(executor);
-
-        httpServer.createContext("/", httpExchange -> {
-          Request request = new Request(httpExchange);
-          Response response = new Response(httpExchange);
-
-          // First fire all middlewares, then the normal request filter
-          MIDDLEWARE_CHAIN.filter(request, response);
-          FILTER_CHAIN.filter(request, response);
-        });
-
-        httpServer.start();
+        httpServer.setExecutor(executor);           // Set thread executor
+        httpServer.createContext("/", HANDLER);  // Set handler for all contexts
+        httpServer.start();                         // Start server
 
         // Fire listener
-        if (onStart != null) onStart.action();
+        if (onStart != null)
+          onStart.action();
+
       } catch (IOException e) {
         // TODO: Handle errors
         e.printStackTrace();

@@ -6,7 +6,6 @@ import express.http.request.Request;
 import express.http.response.Response;
 
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Simon Reinisch
@@ -55,7 +54,7 @@ public class ExpressFilterImpl implements HttpRequest {
 
     // Save parameter to request object
     req.setParams(params);
-    
+
     // Check parameter lsitener
     params.forEach((s, s2) -> {
       HttpRequest hreq = APP.getParameterListener().get(s);
