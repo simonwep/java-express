@@ -24,7 +24,7 @@ public class Response {
   private final OutputStream BODY;
   private final Headers HEADER;
 
-  private MediaType contentType = MediaType._txt;
+  private String contentType = MediaType._txt.getMIME();
   private boolean isClose = false;
   private long contentLength = 0;
   private int status = 200;
@@ -112,7 +112,7 @@ public class Response {
   /**
    * @return The current contentType
    */
-  public MediaType getContentType() {
+  public String getContentType() {
     return contentType;
   }
 
@@ -122,6 +122,15 @@ public class Response {
    * @param contentType - The contentType
    */
   public void setContentType(MediaType contentType) {
+    this.contentType = contentType.getMIME();
+  }
+
+  /**
+   * Set the contentType for this response.
+   *
+   * @param contentType - The contentType
+   */
+  public void setContentType(String contentType) {
     this.contentType = contentType;
   }
 
@@ -164,7 +173,9 @@ public class Response {
   public void send(@NotNull File file) {
     if (checkIfClosed()) return;
     this.contentLength += file.length();
-    this.contentType = Utils.getContentType(file);
+
+    MediaType mediaType = Utils.getContentType(file);
+    this.contentType = mediaType == null ? null : mediaType.getMIME();
     sendHeaders();
 
     try {
@@ -197,7 +208,7 @@ public class Response {
     try {
 
       // Fallback
-      String contentType = getContentType().getExtension() == null ? MediaType._bin.getExtension() : getContentType().getMIME();
+      String contentType = getContentType() == null ? MediaType._bin.getExtension() : getContentType();
 
       // Set header and send response
       this.HEADER.set("Content-Type", contentType);

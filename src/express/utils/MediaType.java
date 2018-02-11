@@ -690,7 +690,8 @@ public enum MediaType {
   _ice("ice", "x-conference/x-cooltalk"),
   _par("par", "text/plain-bas"),
   _yaml("yaml", "text/yaml"),
-  _dmg("dmg", "application/x-apple-diskimage");
+  _dmg("dmg", "application/x-apple-diskimage"),
+  _xww("form", "application/x-www-form-urlencoded");
 
   private String MIME;
   private String extension;
