@@ -99,6 +99,17 @@ public class Response {
   }
 
   /**
+   * Set the response-status and send the response.
+   *
+   * @param status The response status.
+   */
+  public void sendStatus(@NotNull Status status) {
+    if (checkIfClosed()) return;
+    this.status = status.getCode();
+    send();
+  }
+
+  /**
    * @return The current contentType
    */
   public MediaType getContentType() {

@@ -3,6 +3,9 @@ package express.http.request;
 import com.sun.net.httpserver.Headers;
 import express.http.Cookie;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class RequestUtils {
    * @param rawQuery The raw query
    * @return An list with key-values which are encoded in UTF8.
    */
-  protected static HashMap<String, String> parseRawQuery(String rawQuery) {
+  protected static HashMap<String, String> parseRawQuery(String rawQuery)  {
     HashMap<String, String> querys = new HashMap<>();
 
     if (rawQuery == null)
@@ -59,7 +62,14 @@ public class RequestUtils {
       if (c == '=')
         keyac = true;
       else if (c == '&') {
-        querys.put(key.toString(), val.toString());
+
+        try {
+          querys.put(URLDecoder.decode(key.toString(), "UTF-8"), URLDecoder.decode(val.toString(), "UTF8"));
+        } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
+          // TODO: Handle error
+        }
+
         key.setLength(0);
         val.setLength(0);
         keyac = false;

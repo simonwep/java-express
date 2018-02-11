@@ -1,6 +1,6 @@
 ![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
 
-Small clone of the node-js express framework written in pure Java 8.
+
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
 
 # Getting Started
