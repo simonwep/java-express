@@ -10,14 +10,14 @@ import java.io.IOException;
 
 public class FilterLayerHandler implements HttpHandler {
 
-  private ExpressFilterChain[] LEVELS;
+  private ExpressFilterChain[] LAYER;
 
   {
     // Initialize layers
-    LEVELS = new ExpressFilterChain[2];
+    LAYER = new ExpressFilterChain[2];
 
-    for (int i = 0; i < LEVELS.length; i++) {
-      LEVELS[i] = new ExpressFilterChain();
+    for (int i = 0; i < LAYER.length; i++) {
+      LAYER[i] = new ExpressFilterChain();
     }
   }
 
@@ -27,7 +27,7 @@ public class FilterLayerHandler implements HttpHandler {
     Response response = new Response(httpExchange);
 
     // First fire all middlewares, then the normal request filter
-    for (ExpressFilterChain chain : LEVELS) {
+    for (ExpressFilterChain chain : LAYER) {
       chain.filter(request, response);
 
       if (response.isClosed())
@@ -43,12 +43,12 @@ public class FilterLayerHandler implements HttpHandler {
    */
   public void add(int level, HttpRequest handler) {
 
-    if (level >= LEVELS.length)
-      throw new IndexOutOfBoundsException("Out of bounds: " + level + " > " + LEVELS.length);
+    if (level >= LAYER.length)
+      throw new IndexOutOfBoundsException("Out of bounds: " + level + " > " + LAYER.length);
     if (level < 0)
       throw new IndexOutOfBoundsException("Cannot be under zero: " + level + " < 0");
 
-    LEVELS[level].add(handler);
+    LAYER[level].add(handler);
   }
 
 }

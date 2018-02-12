@@ -283,7 +283,6 @@ public class Express extends ExpressMiddleware {
         // Fire worker threads
         WORKER.forEach(ExpressFilterWorker::start);
 
-
         // Create http server
         httpServer = HttpServer.create(new InetSocketAddress(this.hostname, port), 0);
         httpServer.setExecutor(executor);           // Set thread executor

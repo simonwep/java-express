@@ -24,8 +24,16 @@ public class Cookie {
    * @param value Cookie value
    */
   public Cookie(String name, String value) {
+    name = name.trim();
+
+    if (name.length() == 0 || name.charAt(0) == '$')
+      throw new IllegalArgumentException("Illegal cookie name");
+
     this.name = name;
     this.value = value;
+  }
+
+  public Cookie() {
   }
 
   /**
@@ -184,7 +192,33 @@ public class Cookie {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Cookie) {
+      Cookie other = (Cookie) obj;
+
+      if (!other.getValue().equals(this.getValue())) return false;
+      if (!other.getName().equals(this.getName())) return false;
+      if (!other.getDomain().equals(this.getDomain())) return false;
+      if (!other.getExpire().equals(this.getExpire())) return false;
+      if (other.getMaxAge() != this.getMaxAge()) return false;
+      if (!other.getSameSite().equals(this.getSameSite())) return false;
+      if (!other.getPath().equals(this.getPath())) return false;
+
+      return true;
+    }
+    return super.equals(obj);
+  }
+
+  /**
+   * Build the string to an cookie-string.
+   *
+   * @return The cookie as string, null if the name / value is null.
+   */
+  @Override
   public String toString() {
+    if (name == null || value == null)
+      return null;
+
     StringBuffer b = new StringBuffer();
     b.append(name).append("=").append(value);
 

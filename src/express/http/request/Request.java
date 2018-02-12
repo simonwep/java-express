@@ -70,7 +70,9 @@ public class Request {
 
     // Parse query and cookies, both returns not null if there is nothing
     this.QUERYS = RequestUtils.parseRawQuery(exchange.getRequestURI().getRawQuery());
-    this.COOKIES = RequestUtils.parseCookies(exchange.getRequestHeaders());
+
+    // Parse cookies
+    this.COOKIES = RequestUtils.parseCookies(HEADERS);
   }
 
   /**

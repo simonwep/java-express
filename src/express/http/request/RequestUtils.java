@@ -16,7 +16,7 @@ public class RequestUtils {
    * @param headers The Headers
    * @return An hashmap with the cookie name as key and the complete cookie as value.
    */
-  protected static HashMap<String, Cookie> parseCookies(Headers headers) {
+  static HashMap<String, Cookie> parseCookies(Headers headers) {
     HashMap<String, Cookie> cookieList = new HashMap<>();
     List<String> headerCookies = headers.get("Cookie");
 
@@ -24,14 +24,31 @@ public class RequestUtils {
       return cookieList;
     }
 
-    String hcookies = headerCookies.get(0);
+    char[] chars = headerCookies.get(0).toCharArray();
+    StringBuilder key = new StringBuilder();
+    StringBuilder val = new StringBuilder();
+    boolean swap = false;
 
-    String[] cookies = hcookies.split(";");
-    for (String cookie : cookies) {
-      String[] split = cookie.split("=");
-      String name = split[0].trim();
-      String value = split[1].trim();
-      cookieList.put(name, new Cookie(name, value));
+    for (char c : chars) {
+      if (c == '=') {
+        swap = true;
+      } else if (c == ';') {
+        String rkey = key.toString().trim();
+        cookieList.put(rkey, new Cookie(rkey, val.toString()));
+
+        key.setLength(0);
+        val.setLength(0);
+        swap = false;
+      } else if (swap) {
+        val.append(c);
+      } else {
+        key.append(c);
+      }
+    }
+
+    if (key.length() > 0 && val.length() > 0) {
+      String rkey = key.toString().trim();
+      cookieList.put(rkey, new Cookie(rkey, val.toString()));
     }
 
     return cookieList;
@@ -43,7 +60,7 @@ public class RequestUtils {
    * @param rawQuery The raw query
    * @return An list with key-values which are encoded in UTF8.
    */
-  protected static HashMap<String, String> parseRawQuery(String rawQuery) {
+  static HashMap<String, String> parseRawQuery(String rawQuery) {
     HashMap<String, String> querys = new HashMap<>();
 
     if (rawQuery == null)
