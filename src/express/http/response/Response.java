@@ -9,9 +9,9 @@ import express.utils.Status;
 import express.utils.Utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -24,10 +24,18 @@ public class Response {
   private final OutputStream BODY;
   private final Headers HEADER;
 
-  private String contentType = MediaType._txt.getMIME();
-  private boolean isClose = false;
-  private long contentLength = 0;
-  private int status = 200;
+  private String contentType;
+  private boolean isClose;
+  private long contentLength;
+  private int status;
+
+  {
+    // Initialize with default data
+    contentType = MediaType._txt.getMIME();
+    isClose = false;
+    contentLength = 0;
+    status = 200;
+  }
 
   public Response(HttpExchange exchange) {
     this.HTTP_EXCHANGE = exchange;
@@ -121,8 +129,8 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(MediaType contentType) {
-    this.contentType = contentType.getMIME();
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
   }
 
   /**
@@ -130,8 +138,8 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
+  public void setContentType(MediaType contentType) {
+    this.contentType = contentType.getMIME();
   }
 
   /**
@@ -151,7 +159,9 @@ public class Response {
    */
   public void send(String s) {
     if (checkIfClosed()) return;
-    this.contentLength += s.length();
+    byte[] data = s.getBytes();
+
+    this.contentLength = data.length;
     sendHeaders();
 
     try {
@@ -172,15 +182,26 @@ public class Response {
    */
   public void send(@NotNull File file) {
     if (checkIfClosed()) return;
-    this.contentLength += file.length();
-
-    MediaType mediaType = Utils.getContentType(file);
-    this.contentType = mediaType == null ? null : mediaType.getMIME();
-    sendHeaders();
-
     try {
-      byte[] bytes = Files.readAllBytes(file.toPath());
-      this.BODY.write(bytes);
+      this.contentLength = file.length();
+
+      // Detect content type
+      MediaType mediaType = Utils.getContentType(file);
+      this.contentType = mediaType == null ? null : mediaType.getMIME();
+
+      // Send header
+      sendHeaders();
+
+      // Send file
+      FileInputStream fis = new FileInputStream(file);
+      byte[] buffer = new byte[1024];
+      int n;
+      while ((n = fis.read(buffer)) != -1) {
+        this.BODY.write(buffer, 0, n);
+      }
+
+      fis.close();
+
     } catch (IOException e) {
       // TODO: Handle error
       e.printStackTrace();
