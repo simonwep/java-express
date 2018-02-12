@@ -1,3 +1,4 @@
+
 ![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
 
 
@@ -39,6 +40,16 @@ Quick reference:
 
 Every following code can be also found in [this package](https://github.com/Simonwep/java-express/tree/master/src/examples).
 # URL Basics
+Over the express object you can create handler for all [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts. Some examples:
+```java
+app.get("/home", (req, res) -> {
+	// Will match every request which uses the 'GET' method and matches the '/home' path
+});
+
+app.post("/login", (req, res) -> {
+	// Will match every request which uses the 'POST' method and matches the /login' path
+});
+```
 
 ## URL Parameter
 Sometime you want to create dynamic URL where some parts of the URL's are not static.
@@ -172,17 +183,27 @@ Middleware are one of the most important functions of JavaExpress, with middlewa
 * `ExpressFilter` - Is **required** to put data on the request listener.
 * `ExpressFilterTask` - Can be used for middleware which needs an background thread.
 
-To use an middleware, you simply call:
-```java
-// Global context, you can also pass an context if you want
-app.use(new YourMiddleWare());
-```
+Middlewares work, for you, exact same as request handler.
+For example an middleware for all [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts:
 
-Or create an inline-middleware:
 ```java
-// Global context, you can also pass an context if you want
+// Global context, matches every request.
 app.use((req, res) -> {
    // Handle data
+});
+```
+You can also filter by [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts:
+```java
+// Global context, you can also pass an context if you want
+app.use("/home", "POST", (req, res) -> {
+   // Handle request by context '/home' and method 'POST'
+});
+```
+In addition to that yo can use `*` which stands for every **context** or **request method**:
+```java
+// Global context, you can also pass an context if you want
+app.use("/home", "*", (req, res) -> {
+   // Handle request which matches the context '/home' and all methods.
 });
 ```
 ## Create own middleware
