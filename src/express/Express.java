@@ -2,6 +2,8 @@ package express;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsServer;
 import express.events.Action;
 import express.events.HttpRequest;
 import express.expressfilter.ExpressFilterImpl;
@@ -34,6 +36,7 @@ public class Express extends ExpressMiddleware {
   private Executor executor;
   private String hostname;
   private HttpServer httpServer;
+  private HttpsConfigurator httpsConfigurator;
 
   {
     // Initialize
@@ -59,8 +62,36 @@ public class Express extends ExpressMiddleware {
 
   /**
    * Default, will bind the server to "localhost"
+   *
+   * @param httpsConfigurator The HttpsConfigurator for https
+   */
+  public Express(HttpsConfigurator httpsConfigurator) {
+    this.httpsConfigurator = httpsConfigurator;
+  }
+
+  /**
+   * Create an express instance and bind the server to an hostname.
+   * Default is "Localhost"
+   *
+   * @param hostname          The host name
+   * @param httpsConfigurator The HttpsConfigurator for https
+   */
+  public Express(@NotNull String hostname, HttpsConfigurator httpsConfigurator) {
+    this.hostname = hostname;
+    this.httpsConfigurator = httpsConfigurator;
+  }
+
+  /**
+   * Default, will bind the server to "localhost"
    */
   public Express() {
+  }
+
+  /**
+   * @return True if the server uses https.
+   */
+  public boolean isSecure() {
+    return httpsConfigurator != null;
   }
 
   /**
@@ -161,6 +192,15 @@ public class Express extends ExpressMiddleware {
    */
   public void all(@NotNull String context, @NotNull HttpRequest request) {
     HANDLER.add(1, new ExpressFilterImpl(this, "*", context, request));
+  }
+
+  /**
+   * Add an listener for all request methods and contexts.
+   *
+   * @param request Will be fired on all requests.
+   */
+  public void all(@NotNull HttpRequest request) {
+    HANDLER.add(1, new ExpressFilterImpl(this, "*", "*", request));
   }
 
   /**
@@ -283,8 +323,19 @@ public class Express extends ExpressMiddleware {
         // Fire worker threads
         WORKER.forEach(ExpressFilterWorker::start);
 
-        // Create http server
-        httpServer = HttpServer.create(new InetSocketAddress(this.hostname, port), 0);
+        InetSocketAddress socketAddress = new InetSocketAddress(this.hostname, port);
+
+        if (httpsConfigurator != null) {
+
+          // Create https server
+          httpServer = HttpsServer.create(socketAddress, 0);
+          ((HttpsServer) httpServer).setHttpsConfigurator(httpsConfigurator);
+        } else {
+
+          // Create http server
+          httpServer = HttpServer.create(socketAddress, 0);
+        }
+
         httpServer.setExecutor(executor);           // Set thread executor
         httpServer.createContext("/", HANDLER);  // Set handler for all contexts
         httpServer.start();                         // Start server

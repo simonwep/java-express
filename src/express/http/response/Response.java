@@ -129,8 +129,8 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
+  public void setContentType(MediaType contentType) {
+    this.contentType = contentType.getMIME();
   }
 
   /**
@@ -138,8 +138,8 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(MediaType contentType) {
-    this.contentType = contentType.getMIME();
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
   }
 
   /**
