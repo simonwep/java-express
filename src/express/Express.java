@@ -185,7 +185,16 @@ public class Express extends ExpressMiddleware {
   }
 
   /**
-   * Add an listener for all request methods.
+   * Add an listener for all request methods and contexts.
+   *
+   * @param request Will be fired on all requests.
+   */
+  public void all(@NotNull HttpRequest request) {
+    HANDLER.add(1, new ExpressFilterImpl(this, "*", "*", request));
+  }
+
+  /**
+   * Adds an handler for a specific context.
    *
    * @param context The context.
    * @param request An listener which will be fired if the context matches the requestpath.
@@ -195,12 +204,15 @@ public class Express extends ExpressMiddleware {
   }
 
   /**
-   * Add an listener for all request methods and contexts.
+   * Adds an handler for a specific context and method.
+   * You can use a star '*' to match every context / request-method.
    *
-   * @param request Will be fired on all requests.
+   * @param context       The context.
+   * @param requestMethod The request method.
+   * @param request       An listener which will be fired if the context matches the requestpath.
    */
-  public void all(@NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "*", "*", request));
+  public void all(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
+    HANDLER.add(1, new ExpressFilterImpl(this, requestMethod, context, request));
   }
 
   /**
@@ -254,27 +266,15 @@ public class Express extends ExpressMiddleware {
   }
 
   /**
-   * Add an listener for an specific request method.
+   * Adds an handler for a specific context and method.
+   * You can use a star '*' to match every context / request-method.
    *
-   * @param requestMethod The request method
-   * @param context       The context for the request handler.
+   * @param context       The context.
+   * @param requestMethod The request method.
    * @param request       An listener which will be fired if the context matches the requestpath.
    */
-  public void on(@NotNull String requestMethod, @NotNull String context, @NotNull HttpRequest request) {
+  public void on(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
     HANDLER.add(1, new ExpressFilterImpl(this, requestMethod, context, request));
-  }
-
-  /**
-   * Add an listener for an specific request method.
-   * You cann add multiple contexts.
-   *
-   * @param requestMethod The request method
-   * @param contexts      The contexts for the request handler..
-   * @param request       An listener which will be fired if the context matches the requestpath.
-   */
-  public void on(@NotNull String requestMethod, @NotNull HttpRequest request, String... contexts) {
-    for (String c : contexts)
-      HANDLER.add(1, new ExpressFilterImpl(this, requestMethod, c, request));
   }
 
   /**

@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class ExpressFilterImpl implements HttpRequest {
 
-  private final Express APP;
+  private final Express EXPRESS;
 
   private final HttpRequest REQUEST;
   private final String REQ;
@@ -23,8 +23,8 @@ public class ExpressFilterImpl implements HttpRequest {
   private final boolean REQ_ALL;
   private final boolean CONTEXT_ALL;
 
-  public ExpressFilterImpl(Express app, String requestMethod, String context, HttpRequest httpRequest) {
-    this.APP = app;
+  public ExpressFilterImpl(Express express, String requestMethod, String context, HttpRequest httpRequest) {
+    this.EXPRESS = express;
     this.REQ = requestMethod;
     this.REQUEST = httpRequest;
     this.CONTEXT = context;
@@ -57,7 +57,7 @@ public class ExpressFilterImpl implements HttpRequest {
 
     // Check parameter lsitener
     params.forEach((s, s2) -> {
-      HttpRequest hreq = APP.getParameterListener().get(s);
+      HttpRequest hreq = EXPRESS.getParameterListener().get(s);
       if (hreq != null)
         hreq.handle(req, res);
     });
