@@ -1,17 +1,17 @@
 package express;
 
 import com.sun.istack.internal.NotNull;
-import express.events.HttpRequest;
-import express.expressfilter.ExpressFilterImpl;
-import express.expressfilter.ExpressFilterTask;
-import express.expressfilter.ExpressFilterWorker;
-import express.expressfilter.FilterLayerHandler;
+import express.http.HttpRequest;
+import express.filter.FilterImpl;
+import express.filter.FilterTask;
+import express.filter.FilterWorker;
+import express.filter.FilterLayerHandler;
 
 import java.util.ArrayList;
 
 public class ExpressRouter implements Router {
 
-  private final ArrayList<ExpressFilterWorker> WORKER;
+  private final ArrayList<FilterWorker> WORKER;
   private final FilterLayerHandler HANDLER;
 
   {
@@ -37,50 +37,50 @@ public class ExpressRouter implements Router {
   }
 
   private void addMiddleware(@NotNull String requestMethod, @NotNull String context, HttpRequest middleware) {
-    if (middleware instanceof ExpressFilterTask) {
-      WORKER.add(new ExpressFilterWorker((ExpressFilterTask) middleware));
+    if (middleware instanceof FilterTask) {
+      WORKER.add(new FilterWorker((FilterTask) middleware));
     }
 
-    HANDLER.add(0, new ExpressFilterImpl(requestMethod, context, middleware));
+    HANDLER.add(0, new FilterImpl(requestMethod, context, middleware));
   }
 
   public void all(@NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("*", "*", request));
+    HANDLER.add(1, new FilterImpl("*", "*", request));
   }
 
   public void all(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("*", context, request));
+    HANDLER.add(1, new FilterImpl("*", context, request));
   }
 
   public void all(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(requestMethod, context, request));
+    HANDLER.add(1, new FilterImpl(requestMethod, context, request));
   }
 
   public void get(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("GET", context, request));
+    HANDLER.add(1, new FilterImpl("GET", context, request));
   }
 
   public void post(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("POST", context, request));
+    HANDLER.add(1, new FilterImpl("POST", context, request));
   }
 
   public void put(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("PUT", context, request));
+    HANDLER.add(1, new FilterImpl("PUT", context, request));
   }
 
   public void delete(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("DELETE", context, request));
+    HANDLER.add(1, new FilterImpl("DELETE", context, request));
   }
 
   public void patch(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("PATCH", context, request));
+    HANDLER.add(1, new FilterImpl("PATCH", context, request));
   }
 
   public void on(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(requestMethod, context, request));
+    HANDLER.add(1, new FilterImpl(requestMethod, context, request));
   }
 
-  ArrayList<ExpressFilterWorker> getWorker() {
+  ArrayList<FilterWorker> getWorker() {
     return WORKER;
   }
 

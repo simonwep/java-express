@@ -1,11 +1,11 @@
 package examples;
 
-import express.events.HttpRequest;
-import express.expressfilter.ExpressFilter;
+import express.http.HttpRequest;
+import express.filter.Filter;
 import express.http.request.Request;
 import express.http.response.Response;
 
-public class PortMiddleware implements HttpRequest, ExpressFilter {
+public class PortMiddleware implements HttpRequest, Filter {
 
 
   /**

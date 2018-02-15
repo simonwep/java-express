@@ -1,4 +1,4 @@
-package express.expressfilter;
+package express.filter;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,12 +9,12 @@ import java.util.TimerTask;
  * @implNote Core modul, don't change anything!
  * Worker modul for ExpressFilterTasks
  */
-public class ExpressFilterWorker extends TimerTask {
+public class FilterWorker extends TimerTask {
 
-  private final ExpressFilterTask MW;
+  private final FilterTask MW;
   private Timer timer;
 
-  public ExpressFilterWorker(ExpressFilterTask middlewareWorker) {
+  public FilterWorker(FilterTask middlewareWorker) {
     this.MW = middlewareWorker;
   }
 

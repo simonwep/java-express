@@ -1,8 +1,8 @@
 package express.middleware;
 
-import express.events.HttpRequest;
-import express.expressfilter.ExpressFilter;
-import express.expressfilter.ExpressFilterTask;
+import express.http.HttpRequest;
+import express.filter.Filter;
+import express.filter.FilterTask;
 import express.http.Cookie;
 import express.http.SessionCookie;
 import express.http.request.Request;
@@ -11,7 +11,7 @@ import express.utils.Utils;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-final class ExpressCookieSession implements HttpRequest, ExpressFilter, ExpressFilterTask {
+final class ExpressCookieSession implements HttpRequest, Filter, FilterTask {
 
   private final static String MIDDLEWARE_NAME = "sessioncookie";
 

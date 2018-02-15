@@ -1,6 +1,6 @@
 package express.middleware;
 
-import express.events.HttpRequest;
+import express.http.HttpRequest;
 
 /**
  * @author Simon Reinisch

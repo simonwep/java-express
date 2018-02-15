@@ -1,11 +1,11 @@
-package express.expressfilter;
+package express.filter;
 
 /**
  * @author Simon Reinisch
  * <p>
  * ExpressFilterTask to create express-threads
  */
-public interface ExpressFilterTask {
+public interface FilterTask {
 
   /**
    * Returns the delay between the updates

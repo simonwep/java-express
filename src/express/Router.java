@@ -1,7 +1,7 @@
 package express;
 
 import com.sun.istack.internal.NotNull;
-import express.events.HttpRequest;
+import express.http.HttpRequest;
 
 public interface Router {
 

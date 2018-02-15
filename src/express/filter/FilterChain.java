@@ -1,6 +1,6 @@
-package express.expressfilter;
+package express.filter;
 
-import express.events.HttpRequest;
+import express.http.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
 
@@ -14,7 +14,7 @@ import java.util.ListIterator;
  * <p>
  * Iterator for ExpressFilters
  */
-public class ExpressFilterChain<T extends HttpRequest> {
+public class FilterChain<T extends HttpRequest> {
 
   private List<T> expressFilters = Collections.synchronizedList(new ArrayList<>());
 

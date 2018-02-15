@@ -4,12 +4,11 @@ import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
-import express.events.Action;
-import express.events.HttpRequest;
-import express.expressfilter.ExpressFilterImpl;
-import express.expressfilter.ExpressFilterTask;
-import express.expressfilter.ExpressFilterWorker;
-import express.expressfilter.FilterLayerHandler;
+import express.http.HttpRequest;
+import express.filter.FilterImpl;
+import express.filter.FilterTask;
+import express.filter.FilterWorker;
+import express.filter.FilterLayerHandler;
 import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class Express extends ExpressMiddleware implements Router {
   private final ConcurrentHashMap<String, HttpRequest> PARAMETER_LISTENER;
   private final ConcurrentHashMap<Object, Object> LOCALS;
 
-  private final ArrayList<ExpressFilterWorker> WORKER;
+  private final ArrayList<FilterWorker> WORKER;
   private final FilterLayerHandler HANDLER;
 
   private Executor executor;
@@ -169,47 +168,47 @@ public class Express extends ExpressMiddleware implements Router {
 
   // Internal service to handle middleware
   private void addMiddleware(@NotNull String requestMethod, @NotNull String context, HttpRequest middleware) {
-    if (middleware instanceof ExpressFilterTask) {
-      WORKER.add(new ExpressFilterWorker((ExpressFilterTask) middleware));
+    if (middleware instanceof FilterTask) {
+      WORKER.add(new FilterWorker((FilterTask) middleware));
     }
 
-    HANDLER.add(0, new ExpressFilterImpl(requestMethod, context, middleware));
+    HANDLER.add(0, new FilterImpl(requestMethod, context, middleware));
   }
 
   public void all(@NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("*", "*", request));
+    HANDLER.add(1, new FilterImpl("*", "*", request));
   }
 
   public void all(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("*", context, request));
+    HANDLER.add(1, new FilterImpl("*", context, request));
   }
 
   public void all(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(requestMethod, context, request));
+    HANDLER.add(1, new FilterImpl(requestMethod, context, request));
   }
 
   public void get(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("GET", context, request));
+    HANDLER.add(1, new FilterImpl("GET", context, request));
   }
 
   public void post(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("POST", context, request));
+    HANDLER.add(1, new FilterImpl("POST", context, request));
   }
 
   public void put(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("PUT", context, request));
+    HANDLER.add(1, new FilterImpl("PUT", context, request));
   }
 
   public void delete(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("DELETE", context, request));
+    HANDLER.add(1, new FilterImpl("DELETE", context, request));
   }
 
   public void patch(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl("PATCH", context, request));
+    HANDLER.add(1, new FilterImpl("PATCH", context, request));
   }
 
   public void on(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(requestMethod, context, request));
+    HANDLER.add(1, new FilterImpl(requestMethod, context, request));
   }
 
   /**
@@ -240,7 +239,7 @@ public class Express extends ExpressMiddleware implements Router {
    * @param onStart An listener which will be fired after the server is stardet.
    * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
    */
-  public void listen(Action onStart) throws IOException {
+  public void listen(ExpressListener onStart) throws IOException {
     listen(onStart, 80);
   }
 
@@ -252,11 +251,11 @@ public class Express extends ExpressMiddleware implements Router {
    * @param port    The port.
    * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
    */
-  public void listen(Action onStart, int port) throws IOException {
+  public void listen(ExpressListener onStart, int port) throws IOException {
     new Thread(() -> {
       try {
         // Fire worker threads
-        WORKER.forEach(ExpressFilterWorker::start);
+        WORKER.forEach(FilterWorker::start);
 
         InetSocketAddress socketAddress = new InetSocketAddress(this.hostname, port);
 
@@ -303,7 +302,7 @@ public class Express extends ExpressMiddleware implements Router {
       httpServer.stop(0);
 
       // Stop worker threads
-      WORKER.forEach(ExpressFilterWorker::stop);
+      WORKER.forEach(FilterWorker::stop);
     }
   }
 }

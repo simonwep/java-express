@@ -1,6 +1,6 @@
 package express.middleware;
 
-import express.events.HttpRequest;
+import express.http.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
 import express.utils.Utils;

@@ -3,7 +3,7 @@ package express.http.request;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import express.Express;
-import express.expressfilter.ExpressFilter;
+import express.filter.Filter;
 import express.http.Cookie;
 import express.utils.Utils;
 
@@ -138,7 +138,7 @@ public class Request {
    * @param middleware     The middleware
    * @param middlewareData The data from the middleware
    */
-  public void addMiddlewareContent(ExpressFilter middleware, Object middlewareData) {
+  public void addMiddlewareContent(Filter middleware, Object middlewareData) {
     MIDDLEWARE.put(middleware.getName(), middlewareData);
   }
 

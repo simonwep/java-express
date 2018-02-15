@@ -1,8 +1,8 @@
-package express.events;
+package express;
 
 /**
  * @author Simon Reinisch
  */
-public interface Action {
+public interface ExpressListener {
   void action();
 }

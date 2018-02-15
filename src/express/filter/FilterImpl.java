@@ -1,6 +1,6 @@
-package express.expressfilter;
+package express.filter;
 
-import express.events.HttpRequest;
+import express.http.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Filter to handle request handling & parsing.
  */
-public class ExpressFilterImpl implements HttpRequest {
+public class FilterImpl implements HttpRequest {
 
   private final HttpRequest REQUEST;
   private final String REQ;
@@ -21,7 +21,7 @@ public class ExpressFilterImpl implements HttpRequest {
   private final boolean REQ_ALL;
   private final boolean CONTEXT_ALL;
 
-  public ExpressFilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
+  public FilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
     this.REQ = requestMethod;
     this.REQUEST = httpRequest;
     this.CONTEXT = context;
