@@ -1,9 +1,9 @@
 package express.middleware;
 
-import express.http.HttpRequest;
 import express.filter.Filter;
 import express.filter.FilterTask;
 import express.http.Cookie;
+import express.http.HttpRequest;
 import express.http.SessionCookie;
 import express.http.request.Request;
 import express.http.response.Response;

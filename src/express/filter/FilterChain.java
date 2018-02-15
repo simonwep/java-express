@@ -35,7 +35,7 @@ public class FilterChain<T extends HttpRequest> {
   }
 
   void filter(Request req, Response res) {
-    ListIterator<T> iter =  this.expressFilters.listIterator();
+    ListIterator<T> iter = this.expressFilters.listIterator();
 
     while (!res.isClosed() && iter.hasNext()) {
       iter.next().handle(req, res);

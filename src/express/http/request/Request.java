@@ -54,11 +54,7 @@ public class Request {
 
     // Parse content length
     String contentLength = HEADERS.get("Content-Length") != null ? HEADERS.get("Content-Length").get(0) : null;
-    if (contentLength != null && contentLength.matches("^[0-9]+$")) {
-      CONTENT_LENGTH = Long.parseLong(contentLength);
-    } else
-      CONTENT_LENGTH = -1;
-
+    this.CONTENT_LENGTH = contentLength != null ? Long.parseLong(contentLength) : -1;
 
     // Check if the request contains an body-content
     this.CONTENT_TYPE = HEADERS.get("Content-Type") == null ? "" : HEADERS.get("Content-Type").get(0);
@@ -73,8 +69,6 @@ public class Request {
 
     // Parse query and cookies, both returns not null if there is nothing
     this.QUERYS = RequestUtils.parseRawQuery(exchange.getRequestURI().getRawQuery());
-
-    // Parse cookies
     this.COOKIES = RequestUtils.parseCookies(HEADERS);
   }
 

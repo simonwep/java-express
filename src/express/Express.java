@@ -4,11 +4,11 @@ import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
-import express.http.HttpRequest;
 import express.filter.FilterImpl;
+import express.filter.FilterLayerHandler;
 import express.filter.FilterTask;
 import express.filter.FilterWorker;
-import express.filter.FilterLayerHandler;
+import express.http.HttpRequest;
 import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;
@@ -274,7 +274,7 @@ public class Express extends ExpressMiddleware implements Router {
         httpServer.setExecutor(executor);
 
         // Create handler for all contexts
-        httpServer.createContext("/",httpExchange -> {
+        httpServer.createContext("/", httpExchange -> {
           HANDLER.handle(httpExchange, this);
         });
 

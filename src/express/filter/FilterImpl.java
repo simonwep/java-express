@@ -4,6 +4,8 @@ import express.http.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -93,7 +95,13 @@ public class FilterImpl implements HttpRequest {
         while (ui < uc.length && uc[ui] != '/')
           val.append(uc[ui++]);
 
-        params.put(key.toString(), val.toString());
+        try {
+          String decVal = URLDecoder.decode(val.toString(), "UTF8");
+          params.put(key.toString(), decVal);
+        } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
+        }
+
       } else if (fc[fi] != uc[ui]) {
 
         // Failed
