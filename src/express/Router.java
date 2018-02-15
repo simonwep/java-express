@@ -3,6 +3,10 @@ package express;
 import com.sun.istack.internal.NotNull;
 import express.http.HttpRequest;
 
+/**
+ * @author Simon Reinisch
+ * Router interface for express
+ */
 public interface Router {
 
   /**

@@ -15,16 +15,16 @@ public class Examples {
       res.send("Hello World");
     });
 
-    app.get("/posts/:user/:type", (req, res) -> {
-      String user = req.getParam("user"); // Contains 'john'
-      String type = req.getParam("type"); // Contains 'all'
-      res.send("User: " + user + ", type: " + type); // Send: "User: john, type: all"
-    });
-
     app.get("/posts", (req, res) -> {
       String page = req.getQuery("page"); // Contains '12'
       String from = req.getQuery("from"); // Contains 'John'
       res.send("Page: " + page + ", from: " + from); // Send: "Page: 12, from: John"
+    });
+
+    app.get("/posts/:user/:type", (req, res) -> {
+      String user = req.getParam("user"); // Contains 'john'
+      String type = req.getParam("type"); // Contains 'all'
+      res.send("User: " + user + ", type: " + type); // Send: "User: john, type: all"
     });
 
     app.get("/setcookie", (req, res) -> {

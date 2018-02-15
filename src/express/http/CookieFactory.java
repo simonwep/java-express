@@ -3,6 +3,10 @@ package express.http;
 import java.time.Instant;
 import java.util.HashMap;
 
+/**
+ * @author Simon Reinisch
+ * CookieFactory to parse cookies
+ */
 public class CookieFactory {
 
   /**

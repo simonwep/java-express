@@ -9,6 +9,10 @@ import express.http.HttpRequest;
 
 import java.util.ArrayList;
 
+/**
+ * @author Simon Reinisch
+ * Basic implementation of an router
+ */
 public class ExpressRouter implements Router {
 
   private final ArrayList<FilterWorker> WORKER;

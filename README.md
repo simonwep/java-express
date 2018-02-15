@@ -1,4 +1,5 @@
 
+
 ![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
 
 
@@ -24,7 +25,10 @@ Express app  = new Express(Utils.getYourIp());
 ```
 Default is localhost, so you can access, without setting the hostname, only from your local pc.
 
-Quick reference:
+Docs:
+* [Routing](#routing)
+	* [Direct](#direct)
+	* [With Router](#with-router)
 * [URL Basics](#url-basics)
    * [URL Parameter](#url-parameter)
    * [URL Parameter Listener](#url-parameter-listener)
@@ -39,6 +43,64 @@ Quick reference:
 * [License](#license)
 
 Every following code can be also found in [this package](https://github.com/Simonwep/java-express/tree/master/src/examples).
+
+# Routing
+## Direct
+You can add routes (And middlewares) directly to the Express object to handle requests:
+```java
+Express app = new Express();
+
+// Sample for home routes
+app.get("/", (req, res) -> res.send("Hello index!"));
+app.get("/home", (req, res) -> res.send("Homepage"));
+app.get("/about", (req, res) -> res.send("About"));
+
+// Sample for user
+app.get("/user/login", (req, res) -> res.send("Please login!"));
+app.get("/user/register", (req, res) -> res.send("Join now!"));
+
+app.listen(); 
+```
+It also directly supports directly methods like `POST` `PATCH` `DELETE` and `PUT` others need to be created manually:
+```java
+Express app = new Express();
+
+// Basic methods
+app.get("/user", (req, res) -> res.send("Get an user!"));
+app.patch("/user", (req, res) -> res.send("Modify an user!"));
+app.delete("/user", (req, res) -> res.send("Delete an user!"));
+app.put("/user", (req, res) -> res.send("Add an user!"));
+
+// Example fot the CONNECT method
+app.on("/user", "CONNECT", (req, res) -> res.send("Connect!"));
+
+app.listen(); 
+```
+
+## With Router
+But it's better to split your code, right? With the `ExpressRouter` you can create routes and add it later to the `Express` object:
+```java
+Express app = new Express();
+
+// Define router for index sites
+ExpressRouter indexRouter = new ExpressRouter();
+indexRouter.get("/", (req, res) -> res.send("Hello World!"));
+indexRouter.get("/index", (req, res) -> res.send("Index"));
+indexRouter.get("/about", (req, res) -> res.send("About"));
+
+// Define router for user pages
+ExpressRouter userRouter = new ExpressRouter();
+userRouter.get("/user/login", (req, res) -> res.send("User Login"));
+userRouter.get("/user/register", (req, res) -> res.send("User Register"));
+userRouter.get("/user/:username", (req, res) -> res.send("You want to see: " + req.getParam("username")));
+
+// Add roter
+app.use(indexRouter);
+app.use(userRouter);
+
+app.listen();
+```
+
 # URL Basics
 Over the express object you can create handler for all [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts. Some examples:
 ```java
