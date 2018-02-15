@@ -19,11 +19,23 @@ public class ExpressFilterChain<T extends HttpRequest> {
   private List<T> expressFilters = Collections.synchronizedList(new ArrayList<>());
 
   public void add(T expressFilter) {
-    expressFilters.add(expressFilter);
+    this.expressFilters.add(expressFilter);
   }
 
-  public void filter(Request req, Response res) {
-    ListIterator<T> iter = expressFilters.listIterator();
+  public void add(int index, T expressFilter) {
+    this.expressFilters.add(index, expressFilter);
+  }
+
+  void addAll(List<T> expressFilters) {
+    this.expressFilters.addAll(expressFilters);
+  }
+
+  List<T> getFilter() {
+    return expressFilters;
+  }
+
+  void filter(Request req, Response res) {
+    ListIterator<T> iter =  this.expressFilters.listIterator();
 
     while (!res.isClosed() && iter.hasNext()) {
       iter.next().handle(req, res);

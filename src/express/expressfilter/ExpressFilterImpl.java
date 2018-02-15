@@ -1,11 +1,11 @@
 package express.expressfilter;
 
-import express.Express;
 import express.events.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Simon Reinisch
@@ -15,16 +15,13 @@ import java.util.HashMap;
  */
 public class ExpressFilterImpl implements HttpRequest {
 
-  private final Express EXPRESS;
-
   private final HttpRequest REQUEST;
   private final String REQ;
   private final String CONTEXT;
   private final boolean REQ_ALL;
   private final boolean CONTEXT_ALL;
 
-  public ExpressFilterImpl(Express express, String requestMethod, String context, HttpRequest httpRequest) {
-    this.EXPRESS = express;
+  public ExpressFilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
     this.REQ = requestMethod;
     this.REQUEST = httpRequest;
     this.CONTEXT = context;
@@ -38,6 +35,7 @@ public class ExpressFilterImpl implements HttpRequest {
   public void handle(Request req, Response res) {
     String requestMethod = req.getMethod();
     String requestPath = req.getRedirect() != null ? req.getRedirect() : req.getURI().getRawPath();
+    ConcurrentHashMap<String, HttpRequest> parameterListener = req.getApp().getParameterListener();
 
     // Check if
     if (!(REQ_ALL || REQ.equals(requestMethod))) {
@@ -57,7 +55,8 @@ public class ExpressFilterImpl implements HttpRequest {
 
     // Check parameter lsitener
     params.forEach((s, s2) -> {
-      HttpRequest hreq = EXPRESS.getParameterListener().get(s);
+      HttpRequest hreq = parameterListener.get(s);
+
       if (hreq != null)
         hreq.handle(req, res);
     });
@@ -108,6 +107,5 @@ public class ExpressFilterImpl implements HttpRequest {
 
     return params;
   }
-
 
 }

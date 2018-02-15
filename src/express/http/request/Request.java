@@ -2,6 +2,7 @@ package express.http.request;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import express.Express;
 import express.expressfilter.ExpressFilter;
 import express.http.Cookie;
 import express.utils.Utils;
@@ -19,7 +20,8 @@ import java.util.List;
  */
 public class Request {
 
-  private final HttpExchange HTTP_EXCHANGE;
+  private final Express EXPRESS;
+  private final HttpExchange HTTP_EXCHANGE;           // The http exchange
   private final URI URI;                              // Request URI
   private final InputStream BODY;                     // Request body
   private final Headers HEADERS;                      // Request Headers
@@ -42,7 +44,8 @@ public class Request {
     this.params = new HashMap<>();
   }
 
-  public Request(HttpExchange exchange) {
+  public Request(HttpExchange exchange, Express express) {
+    this.EXPRESS = express;
     this.HTTP_EXCHANGE = exchange;
     this.URI = exchange.getRequestURI();
     this.HEADERS = exchange.getRequestHeaders();
@@ -332,5 +335,12 @@ public class Request {
   public boolean hadRedirect() {
     if (!hadRedirect) return false;
     return !(hadRedirect = !hadRedirect);
+  }
+
+  /**
+   * @return The corresponding express object.
+   */
+  public Express getApp() {
+    return EXPRESS;
   }
 }

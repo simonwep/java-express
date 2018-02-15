@@ -23,9 +23,9 @@ import java.util.concurrent.Executors;
  * @author Simon Reinisch
  * @implNote Core modul, don't change anything.
  * <p>
- * An NodeJS like clone written in Java.
+ * Core class of java-express
  */
-public class Express extends ExpressMiddleware {
+public class Express extends ExpressMiddleware implements Router {
 
   private final ConcurrentHashMap<String, HttpRequest> PARAMETER_LISTENER;
   private final ConcurrentHashMap<Object, Object> LOCALS;
@@ -44,7 +44,7 @@ public class Express extends ExpressMiddleware {
     LOCALS = new ConcurrentHashMap<>();
 
     WORKER = new ArrayList<>();
-    HANDLER = new FilterLayerHandler();
+    HANDLER = new FilterLayerHandler(2);
 
     executor = Executors.newCachedThreadPool();
     hostname = "localhost";
@@ -65,7 +65,7 @@ public class Express extends ExpressMiddleware {
    *
    * @param httpsConfigurator The HttpsConfigurator for https
    */
-  public Express(HttpsConfigurator httpsConfigurator) {
+  public Express(@NotNull HttpsConfigurator httpsConfigurator) {
     this.httpsConfigurator = httpsConfigurator;
   }
 
@@ -146,31 +146,23 @@ public class Express extends ExpressMiddleware {
   }
 
   /**
-   * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
+   * Add an routing object.
    *
-   * @param middleware An middleware which will be fired on every equestmethod- and  path.
+   * @param router The router.
    */
+  public void use(@NotNull ExpressRouter router) {
+    this.HANDLER.combine(router.getHandler());
+    this.WORKER.addAll(router.getWorker());
+  }
+
   public void use(@NotNull HttpRequest middleware) {
     addMiddleware("*", "*", middleware);
   }
 
-  /**
-   * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
-   *
-   * @param context    The context where the middleware should listen.
-   * @param middleware An middleware which will be fired if the context matches the requestpath.
-   */
   public void use(@NotNull String context, @NotNull HttpRequest middleware) {
     addMiddleware("*", context, middleware);
   }
 
-  /**
-   * Add an middleware which will be firea BEFORE EACH request-type listener will be fired.
-   *
-   * @param context       The context where the middleware should listen for the request handler..
-   * @param requestMethod And type of request-method eg. GET, POST etc.
-   * @param middleware    An middleware which will be fired if the context matches the requestmethod- and  path.
-   */
   public void use(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest middleware) {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
   }
@@ -181,100 +173,43 @@ public class Express extends ExpressMiddleware {
       WORKER.add(new ExpressFilterWorker((ExpressFilterTask) middleware));
     }
 
-    HANDLER.add(0, new ExpressFilterImpl(this, requestMethod, context, middleware));
+    HANDLER.add(0, new ExpressFilterImpl(requestMethod, context, middleware));
   }
 
-  /**
-   * Add an listener for all request methods and contexts.
-   *
-   * @param request Will be fired on all requests.
-   */
   public void all(@NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "*", "*", request));
+    HANDLER.add(1, new ExpressFilterImpl("*", "*", request));
   }
 
-  /**
-   * Adds an handler for a specific context.
-   *
-   * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
-   */
   public void all(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "*", context, request));
+    HANDLER.add(1, new ExpressFilterImpl("*", context, request));
   }
 
-  /**
-   * Adds an handler for a specific context and method.
-   * You can use a star '*' to match every context / request-method.
-   *
-   * @param context       The context.
-   * @param requestMethod The request method.
-   * @param request       An listener which will be fired if the context matches the requestpath.
-   */
   public void all(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, requestMethod, context, request));
+    HANDLER.add(1, new ExpressFilterImpl(requestMethod, context, request));
   }
 
-  /**
-   * Add an listener for GET request's.
-   *
-   * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
-   */
   public void get(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "GET", context, request));
+    HANDLER.add(1, new ExpressFilterImpl("GET", context, request));
   }
 
-  /**
-   * Add an listener for POST request's.
-   *
-   * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
-   */
   public void post(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "POST", context, request));
+    HANDLER.add(1, new ExpressFilterImpl("POST", context, request));
   }
 
-  /**
-   * Add an listener for PUT request's.
-   *
-   * @param context The context for the request handler..
-   * @param request An listener which will be fired if the context matches the requestpath.
-   */
   public void put(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "PUT", context, request));
+    HANDLER.add(1, new ExpressFilterImpl("PUT", context, request));
   }
 
-  /**
-   * Add an listener for DELETE request's.
-   *
-   * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
-   */
   public void delete(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "DELETE", context, request));
+    HANDLER.add(1, new ExpressFilterImpl("DELETE", context, request));
   }
 
-  /**
-   * Add an listener for PATCH request's.
-   *
-   * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
-   */
   public void patch(@NotNull String context, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, "PATCH", context, request));
+    HANDLER.add(1, new ExpressFilterImpl("PATCH", context, request));
   }
 
-  /**
-   * Adds an handler for a specific context and method.
-   * You can use a star '*' to match every context / request-method.
-   *
-   * @param context       The context.
-   * @param requestMethod The request method.
-   * @param request       An listener which will be fired if the context matches the requestpath.
-   */
   public void on(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new ExpressFilterImpl(this, requestMethod, context, request));
+    HANDLER.add(1, new ExpressFilterImpl(requestMethod, context, request));
   }
 
   /**
@@ -336,9 +271,16 @@ public class Express extends ExpressMiddleware {
           httpServer = HttpServer.create(socketAddress, 0);
         }
 
-        httpServer.setExecutor(executor);           // Set thread executor
-        httpServer.createContext("/", HANDLER);  // Set handler for all contexts
-        httpServer.start();                         // Start server
+        // Set thread executor
+        httpServer.setExecutor(executor);
+
+        // Create handler for all contexts
+        httpServer.createContext("/",httpExchange -> {
+          HANDLER.handle(httpExchange, this);
+        });
+
+        // Start server
+        httpServer.start();
 
         // Fire listener
         if (onStart != null)

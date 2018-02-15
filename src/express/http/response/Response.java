@@ -3,6 +3,7 @@ package express.http.response;
 import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import express.Express;
 import express.http.Cookie;
 import express.utils.MediaType;
 import express.utils.Status;
