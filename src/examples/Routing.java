@@ -16,13 +16,14 @@ public class Routing {
 
     // Define router for user pages
     ExpressRouter userRouter = new ExpressRouter();
-    userRouter.get("/user/login", (req, res) -> res.send("User Login"));
-    userRouter.get("/user/register", (req, res) -> res.send("User Register"));
-    userRouter.get("/user/:username", (req, res) -> res.send("You want to see: " + req.getParam("username")));
+    userRouter.get("/", (req, res) -> res.send("User Page"));
+    userRouter.get("/login", (req, res) -> res.send("User Login"));
+    userRouter.get("/register", (req, res) -> res.send("User Register"));
+    userRouter.get("/:username", (req, res) -> res.send("You want to see: " + req.getParam("username")));
 
-    // Add roter
-    app.use(indexRouter);
-    app.use(userRouter);
+    // Add router and set root pathsl
+    app.use("/", indexRouter);
+    app.use("/user", userRouter);
 
     // Start server
     app.listen();
