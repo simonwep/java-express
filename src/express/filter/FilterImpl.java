@@ -23,14 +23,34 @@ public class FilterImpl implements HttpRequest {
   private final boolean REQ_ALL;
   private final boolean CONTEXT_ALL;
 
+  private String root;
+  private String fullContext;
+
   public FilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
     this.REQ = requestMethod;
     this.REQUEST = httpRequest;
-    this.CONTEXT = context;
+    this.CONTEXT = normalizePath(context);
 
     // Save some informations which don't need to be processed again
     this.REQ_ALL = requestMethod.equals("*");
     this.CONTEXT_ALL = context.equals("*");
+
+    this.root = "/";
+    this.fullContext = this.CONTEXT;
+  }
+
+  public void setRoot(String root) {
+    if (root == null || root.length() == 0)
+      return;
+
+    if (root.charAt(0) != '/')
+      root = '/' + root;
+
+    if (root.charAt(root.length() - 1) != '/')
+      root += '/';
+
+    this.root = normalizePath(root);
+    this.fullContext = normalizePath(this.root + CONTEXT);
   }
 
   @Override
@@ -48,7 +68,7 @@ public class FilterImpl implements HttpRequest {
     }
 
     // Parse params
-    HashMap<String, String> params = matchURL(CONTEXT, requestPath);
+    HashMap<String, String> params = matchURL(fullContext, requestPath);
     if (params == null)
       return;
 
@@ -114,6 +134,25 @@ public class FilterImpl implements HttpRequest {
     }
 
     return params;
+  }
+
+  /**
+   * Replace all double slashes from an string with an single slash
+   */
+  private String normalizePath(String context) {
+    if (context == null || context.length() == 1)
+      return context;
+
+    StringBuilder sb = new StringBuilder();
+    char[] chars = context.toCharArray();
+
+    sb.append(chars[0]);
+    for (int i = 1; i < chars.length; i++) {
+      if ((chars[i] == '/' && chars[i - 1] != '/') || chars[i] != '/')
+        sb.append(chars[i]);
+    }
+
+    return sb.toString();
   }
 
 }

@@ -8,17 +8,18 @@ import express.http.request.Request;
 import express.http.response.Response;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class FilterLayerHandler {
 
-  private FilterChain[] LAYER;
+  private FilterLayer[] LAYER;
 
   public FilterLayerHandler(int layer) {
 
     // Initialize layers
-    this.LAYER = new FilterChain[layer];
+    this.LAYER = new FilterLayer[layer];
     for (int i = 0; i < LAYER.length; i++)
-      LAYER[i] = new FilterChain<>();
+      LAYER[i] = new FilterLayer<>();
   }
 
   public void handle(HttpExchange httpExchange, Express express) throws IOException {
@@ -26,7 +27,7 @@ public class FilterLayerHandler {
     Response response = new Response(httpExchange);
 
     // First fire all middlewares, then the normal request filter
-    for (FilterChain chain : LAYER) {
+    for (FilterLayer chain : LAYER) {
       chain.filter(request, response);
 
       if (response.isClosed())
@@ -57,7 +58,7 @@ public class FilterLayerHandler {
    */
   public void combine(FilterLayerHandler filterLayerHandler) {
     if (filterLayerHandler != null) {
-      FilterChain[] chains = filterLayerHandler.getLayer();
+      FilterLayer[] chains = filterLayerHandler.getLayer();
 
       if (chains.length != LAYER.length)
         throw new ExpressException("Cannot add an filterLayerHandler with different layer sizes: " + chains.length + " != " + LAYER.length);
@@ -67,7 +68,15 @@ public class FilterLayerHandler {
     }
   }
 
-  private FilterChain[] getLayer() {
+  public void forEach(Consumer<FilterLayer> layerConsumer) {
+    if (layerConsumer == null)
+      return;
+
+    for (FilterLayer layer : LAYER)
+      layerConsumer.accept(layer);
+  }
+
+  private FilterLayer[] getLayer() {
     return LAYER;
   }
 

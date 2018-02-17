@@ -36,8 +36,10 @@ public class Request {
   private final HashMap<String, String> FORM_QUERYS;  // Form Querys (application/x-www-form-urlencoded)
 
   private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
-  private String redirect = null;
-  private boolean hadRedirect = false;
+  private String redirect = null;                     // Internal to check redirection
+  private boolean hadRedirect = false;                // Internal to check if this request had an redirect
+
+  private String routeRoot = "/";
 
   {
     this.MIDDLEWARE = new HashMap<>();
@@ -327,8 +329,7 @@ public class Request {
   }
 
   public boolean hadRedirect() {
-    if (!hadRedirect) return false;
-    return !(hadRedirect = !hadRedirect);
+    return !hadRedirect ? false : !(hadRedirect = !hadRedirect);
   }
 
   /**
@@ -337,4 +338,6 @@ public class Request {
   public Express getApp() {
     return EXPRESS;
   }
+
+
 }

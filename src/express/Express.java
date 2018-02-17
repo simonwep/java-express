@@ -154,6 +154,21 @@ public class Express extends ExpressMiddleware implements Router {
     this.WORKER.addAll(router.getWorker());
   }
 
+  /**
+   * Add an routing object with an specific root root.
+   *
+   * @param root   The root path for all request to this router.
+   * @param router The router.
+   */
+  public void use(@NotNull String root, @NotNull ExpressRouter router) {
+    router.getHandler().forEach(fl -> fl.getFilter().forEach(layer -> {
+      ((FilterImpl) layer).setRoot(root);
+    }));
+
+    this.HANDLER.combine(router.getHandler());
+    this.WORKER.addAll(router.getWorker());
+  }
+
   public void use(@NotNull HttpRequest middleware) {
     addMiddleware("*", "*", middleware);
   }

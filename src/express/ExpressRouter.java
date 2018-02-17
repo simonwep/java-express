@@ -24,10 +24,6 @@ public class ExpressRouter implements Router {
     HANDLER = new FilterLayerHandler(2);
   }
 
-  public ExpressRouter() {
-
-  }
-
   public void use(@NotNull HttpRequest middleware) {
     addMiddleware("*", "*", middleware);
   }

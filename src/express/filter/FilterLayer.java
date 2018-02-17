@@ -14,7 +14,7 @@ import java.util.ListIterator;
  * <p>
  * Iterator for ExpressFilters
  */
-public class FilterChain<T extends HttpRequest> {
+public class FilterLayer<T extends HttpRequest> {
 
   private List<T> expressFilters = Collections.synchronizedList(new ArrayList<>());
 
@@ -26,11 +26,11 @@ public class FilterChain<T extends HttpRequest> {
     this.expressFilters.add(index, expressFilter);
   }
 
-  void addAll(List<T> expressFilters) {
+  public void addAll(List<T> expressFilters) {
     this.expressFilters.addAll(expressFilters);
   }
 
-  List<T> getFilter() {
+  public List<T> getFilter() {
     return expressFilters;
   }
 
