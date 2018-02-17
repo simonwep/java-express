@@ -10,6 +10,10 @@ import express.http.response.Response;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+/**
+ * @author Simon Reinisch
+ * Handler for multiple FilterLayer.
+ */
 public class FilterLayerHandler {
 
   private FilterLayer[] LAYER;
@@ -41,6 +45,7 @@ public class FilterLayerHandler {
    * @param level   The layer.
    * @param handler The handler, will be append to the top of the layer.
    */
+  @SuppressWarnings("unchecked")
   public void add(int level, HttpRequest handler) {
 
     if (level >= LAYER.length)
@@ -56,6 +61,7 @@ public class FilterLayerHandler {
    *
    * @param filterLayerHandler The FilterLayerHandler which you want to merge with this
    */
+  @SuppressWarnings("unchecked")
   public void combine(FilterLayerHandler filterLayerHandler) {
     if (filterLayerHandler != null) {
       FilterLayer[] chains = filterLayerHandler.getLayer();
@@ -68,6 +74,11 @@ public class FilterLayerHandler {
     }
   }
 
+  /**
+   * Iterate over the different FilterLayer
+   *
+   * @param layerConsumer An consumer for the layer
+   */
   public void forEach(Consumer<FilterLayer> layerConsumer) {
     if (layerConsumer == null)
       return;

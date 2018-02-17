@@ -11,9 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Simon Reinisch
- * @implNote Core modul of express, don't change anything.
- * <p>
- * Filter to handle request handling & parsing.
+ * An http-filter to extract data and check if an context matches
+ * the request.
  */
 public class FilterImpl implements HttpRequest {
 
@@ -59,7 +58,6 @@ public class FilterImpl implements HttpRequest {
     String requestPath = req.getURI().getRawPath();
     ConcurrentHashMap<String, HttpRequest> parameterListener = req.getApp().getParameterListener();
 
-    // Check if
     if (!(REQ_ALL || REQ.equals(requestMethod))) {
       return;
     } else if (CONTEXT_ALL) {

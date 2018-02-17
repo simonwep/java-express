@@ -8,7 +8,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 
-public class RequestUtils {
+class RequestUtils {
 
   /**
    * Extract the cookies from the 'Cookie' header.
@@ -72,12 +72,12 @@ public class RequestUtils {
     boolean keyac = false;
     char c = '=';
 
-    for (int i = 0; i < chars.length; i++) {
-      c = chars[i];
+    for (char cc : chars) {
+      c = cc;
 
-      if (c == '=')
+      if (c == '=') {
         keyac = true;
-      else if (c == '&') {
+      } else if (c == '&') {
 
         try {
           querys.put(URLDecoder.decode(key.toString(), "UTF-8"), URLDecoder.decode(val.toString(), "UTF8"));
@@ -89,10 +89,11 @@ public class RequestUtils {
         key.setLength(0);
         val.setLength(0);
         keyac = false;
-      } else if (keyac)
+      } else if (keyac) {
         val.append(c);
-      else
+      } else {
         key.append(c);
+      }
     }
 
     if (c != '=' && c != '&')

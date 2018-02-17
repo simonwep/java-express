@@ -2,7 +2,7 @@ package express;
 
 /**
  * @author Simon Reinisch
- * Exception for express apps.
+ * Exception for express own errors.
  */
 public class ExpressException extends RuntimeException {
 

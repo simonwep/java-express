@@ -2,8 +2,7 @@ package express.filter;
 
 /**
  * @author Simon Reinisch
- * <p>
- * ExpressFilterTask to create express-threads
+ * Interface for filter tasks.
  */
 public interface FilterTask {
 

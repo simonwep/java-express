@@ -4,8 +4,7 @@ import express.http.HttpRequest;
 
 /**
  * @author Simon Reinisch
- * <p>
- * Class which serves middleware
+ * Class which provides middleware
  */
 public class ExpressMiddleware {
 

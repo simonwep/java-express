@@ -9,7 +9,6 @@ import express.filter.FilterLayerHandler;
 import express.filter.FilterTask;
 import express.filter.FilterWorker;
 import express.http.HttpRequest;
-import express.middleware.ExpressMiddleware;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -291,9 +290,7 @@ public class Express implements Router {
         httpServer.setExecutor(executor);
 
         // Create handler for all contexts
-        httpServer.createContext("/", httpExchange -> {
-          HANDLER.handle(httpExchange, this);
-        });
+        httpServer.createContext("/", exchange -> HANDLER.handle(exchange, this));
 
         // Start server
         httpServer.start();

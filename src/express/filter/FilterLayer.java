@@ -11,8 +11,7 @@ import java.util.ListIterator;
 
 /**
  * @author Simon Reinisch
- * <p>
- * Iterator for ExpressFilters
+ * Controller class for FilterLayer.
  */
 public class FilterLayer<T extends HttpRequest> {
 

@@ -9,8 +9,7 @@ import java.io.File;
 
 /**
  * @author Simon Reinisch
- * <p>
- * An Express-Middleware to serve static files.
+ * An middleware to provide access to static server-files.
  */
 final class ExpressStatic implements HttpRequest {
 
@@ -35,6 +34,9 @@ final class ExpressStatic implements HttpRequest {
 
       if (EXTENSIONS != null) {
         String reqEx = Utils.getExtension(reqFile);
+
+        if (reqEx == null)
+          return;
 
         for (String ex : EXTENSIONS) {
           if (reqEx.equals(ex)) {

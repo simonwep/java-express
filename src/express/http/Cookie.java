@@ -219,7 +219,7 @@ public class Cookie {
     if (name == null || value == null)
       return null;
 
-    StringBuffer b = new StringBuffer();
+    StringBuilder b = new StringBuilder();
     b.append(name).append("=").append(value);
 
     if (path != null) b.append("; Path=").append(path);

@@ -2,6 +2,10 @@ package express.http.request;
 
 import java.util.Base64;
 
+/**
+ * @author Simon Reinisch
+ * Class for an http-authorization
+ */
 public class Authorization {
 
   private final String TYPE;

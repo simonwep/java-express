@@ -2,8 +2,7 @@ package express.http;
 
 /**
  * @author Simon Reinisch
- * <p>
- * An simple SessionCookie
+ * An simple SessionCookie implenetation.
  */
 public class SessionCookie {
 

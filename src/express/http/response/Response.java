@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * @author Simon Reinisch
- * @implNote Core modul of express, don't change anything.
+ * Class for an http-response.
  */
 public class Response {
 
