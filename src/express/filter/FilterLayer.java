@@ -39,11 +39,6 @@ public class FilterLayer<T extends HttpRequest> {
 
     while (!res.isClosed() && iter.hasNext()) {
       iter.next().handle(req, res);
-
-      if (req.hadRedirect()) {
-        filter(req, res);
-        return;
-      }
     }
   }
 }

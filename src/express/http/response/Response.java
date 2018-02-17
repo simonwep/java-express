@@ -68,7 +68,7 @@ public class Response {
    *
    * @param location The location.
    */
-  public void setLocation(String location) {
+  public void redirect(String location) {
     HEADER.add("Location", location);
     setStatus(Status._302);
     send();

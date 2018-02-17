@@ -56,7 +56,7 @@ public class FilterImpl implements HttpRequest {
   @Override
   public void handle(Request req, Response res) {
     String requestMethod = req.getMethod();
-    String requestPath = req.getRedirect() != null ? req.getRedirect() : req.getURI().getRawPath();
+    String requestPath = req.getURI().getRawPath();
     ConcurrentHashMap<String, HttpRequest> parameterListener = req.getApp().getParameterListener();
 
     // Check if

@@ -36,10 +36,6 @@ public class Request {
   private final HashMap<String, String> FORM_QUERYS;  // Form Querys (application/x-www-form-urlencoded)
 
   private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
-  private String redirect = null;                     // Internal to check redirection
-  private boolean hadRedirect = false;                // Internal to check if this request had an redirect
-
-  private String routeRoot = "/";
 
   {
     this.MIDDLEWARE = new HashMap<>();
@@ -105,7 +101,8 @@ public class Request {
    * @throws IOException If an IO-Error occurs.
    */
   public void pipe(File f, int bufferSize) throws IOException {
-    if (!f.exists()) f.createNewFile();
+    if (!f.exists() && !f.createNewFile())
+      return;
     pipe(new FileOutputStream(f), bufferSize);
   }
 
@@ -285,8 +282,6 @@ public class Request {
 
   /**
    * Set the params.
-   *
-   * @param params
    */
   public void setParams(HashMap<String, String> params) {
     this.params = params;
@@ -309,27 +304,6 @@ public class Request {
    */
   public List<String> getHeader(String header) {
     return HEADERS.get(header);
-  }
-
-  /**
-   * Redirect the request to another URL.
-   *
-   * @param path The new URL.
-   */
-  public void redirect(String path) {
-    this.redirect = path;
-    this.hadRedirect = true;
-  }
-
-  /**
-   * @return The redirected path, default is null.
-   */
-  public String getRedirect() {
-    return redirect;
-  }
-
-  public boolean hadRedirect() {
-    return !hadRedirect ? false : !(hadRedirect = !hadRedirect);
   }
 
   /**
