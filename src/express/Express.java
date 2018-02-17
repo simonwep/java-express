@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  * <p>
  * Core class of java-express
  */
-public class Express extends ExpressMiddleware implements Router {
+public class Express implements Router {
 
   private final ConcurrentHashMap<String, HttpRequest> PARAMETER_LISTENER;
   private final ConcurrentHashMap<Object, Object> LOCALS;
@@ -115,7 +115,7 @@ public class Express extends ExpressMiddleware implements Router {
    * @param val The value
    * @return The last value which was attached by this key, can be null.
    */
-  public Object set(Object key, Object val) {
+  public Object set(String key, String val) {
     return LOCALS.put(key, val);
   }
 
@@ -125,7 +125,7 @@ public class Express extends ExpressMiddleware implements Router {
    * @param key The key.
    * @return The value.
    */
-  public Object get(Object key) {
+  public Object get(String key) {
     return LOCALS.get(key);
   }
 
@@ -160,7 +160,9 @@ public class Express extends ExpressMiddleware implements Router {
    * @param root   The root path for all request to this router.
    * @param router The router.
    */
+  @SuppressWarnings("unchecked")
   public void use(@NotNull String root, @NotNull ExpressRouter router) {
+
     router.getHandler().forEach(fl -> fl.getFilter().forEach(layer -> {
       ((FilterImpl) layer).setRoot(root);
     }));

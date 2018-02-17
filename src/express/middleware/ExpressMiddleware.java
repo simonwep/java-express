@@ -7,7 +7,10 @@ import express.http.HttpRequest;
  * <p>
  * Class which serves middleware
  */
-public abstract class ExpressMiddleware {
+public class ExpressMiddleware {
+
+  // Don't allow creating an instance from this class
+  private ExpressMiddleware() { }
 
   /**
    * Create an new cookie-session middleware.
