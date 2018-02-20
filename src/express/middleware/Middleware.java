@@ -7,10 +7,10 @@ import java.io.IOException;
  * @author Simon Reinisch
  * Class which provides middleware
  */
-public class ExpressMiddleware {
+public class Middleware {
 
   // Don't allow creating an instance from this class
-  private ExpressMiddleware() { }
+  private Middleware() { }
 
   /**
    * Create an new cookie-session middleware.
@@ -19,8 +19,8 @@ public class ExpressMiddleware {
    * @param cookieName An name for the session-cookie, it's recommed to use NOT SID for security reasons
    * @param maxAge     An maxage for the cookie
    */
-  public static ExpressCookieSession cookieSession(String cookieName, long maxAge) {
-    return new ExpressCookieSession(cookieName, maxAge);
+  public static CookieSession cookieSession(String cookieName, long maxAge) {
+    return new CookieSession(cookieName, maxAge);
   }
 
   /**
@@ -29,8 +29,8 @@ public class ExpressMiddleware {
    *
    * @param directoryPath The root directory
    */
-  public static ExpressStatic statics(String directoryPath) throws IOException {
-    return new ExpressStatic(directoryPath, new StaticOptions());
+  public static FileProvider statics(String directoryPath) throws IOException {
+    return new FileProvider(directoryPath, new FileProviderOptions());
   }
 
   /**
@@ -40,8 +40,8 @@ public class ExpressMiddleware {
    * @param directoryPath The root directory
    * @param staticOptions Optional options for the file serving.
    */
-  public static ExpressStatic statics(String directoryPath, StaticOptions staticOptions) throws IOException {
-    return new ExpressStatic(directoryPath, staticOptions);
+  public static FileProvider statics(String directoryPath, FileProviderOptions staticOptions) throws IOException {
+    return new FileProvider(directoryPath, staticOptions);
   }
 
 }

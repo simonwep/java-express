@@ -13,12 +13,12 @@ import java.util.Date;
  * @author Simon Reinisch
  * An middleware to provide access to static server-files.
  */
-final class ExpressStatic implements HttpRequest {
+final class FileProvider implements HttpRequest {
 
-  private StaticOptions OPTIONS;
+  private FileProviderOptions OPTIONS;
   private String ROOT;
 
-  ExpressStatic(String root, StaticOptions options) throws IOException {
+  FileProvider(String root, FileProviderOptions options) throws IOException {
     File rootDir = new File(root);
 
     if (!rootDir.exists() || !rootDir.isDirectory())

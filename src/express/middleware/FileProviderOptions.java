@@ -2,7 +2,7 @@ package express.middleware;
 
 import express.http.HttpRequest;
 
-public class StaticOptions {
+public class FileProviderOptions {
 
 
   private String[] extensions;
@@ -20,7 +20,7 @@ public class StaticOptions {
     this.maxAge = 0;
   }
 
-  public StaticOptions() { }
+  public FileProviderOptions() { }
 
   /**
    * @return The current allowed extensions.
@@ -36,7 +36,7 @@ public class StaticOptions {
    * @param extensions The extensions.
    * @return This instance.
    */
-  public StaticOptions setExtensions(String... extensions) {
+  public FileProviderOptions setExtensions(String... extensions) {
     this.extensions = extensions;
     return this;
   }
@@ -59,7 +59,7 @@ public class StaticOptions {
    * @param fallBackSearching If you want to activeate the file-fallbacksearch.
    * @return This instance.
    */
-  public StaticOptions setFallBackSearching(boolean fallBackSearching) {
+  public FileProviderOptions setFallBackSearching(boolean fallBackSearching) {
     this.fallBackSearching = fallBackSearching;
     return this;
   }
@@ -78,7 +78,7 @@ public class StaticOptions {
    * @param lastModified If you want to send the last modified date of the file on the OS.
    * @return This instance.
    */
-  public StaticOptions setLastModified(boolean lastModified) {
+  public FileProviderOptions setLastModified(boolean lastModified) {
     this.lastModified = lastModified;
     return this;
   }
@@ -98,7 +98,7 @@ public class StaticOptions {
    * @param maxAge The new maxAge value.
    * @return This instance.
    */
-  public StaticOptions setMaxAge(long maxAge) {
+  public FileProviderOptions setMaxAge(long maxAge) {
     this.maxAge = maxAge;
     return this;
   }
@@ -116,7 +116,7 @@ public class StaticOptions {
    * @param handler The HttpRequest handler.
    * @return This instance.
    */
-  public StaticOptions setHandler(HttpRequest handler) {
+  public FileProviderOptions setHandler(HttpRequest handler) {
     this.handler = handler;
     return this;
   }

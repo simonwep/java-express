@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Simon Reinisch
  * An middleware to create cookie-sessions.
  */
-final class ExpressCookieSession implements HttpRequest, Filter, FilterTask {
+final class CookieSession implements HttpRequest, Filter, FilterTask {
 
   private final static String MIDDLEWARE_NAME = "sessioncookie";
 
@@ -23,7 +23,7 @@ final class ExpressCookieSession implements HttpRequest, Filter, FilterTask {
   private final String COOKIE_NAME;
   private final long MAX_AGE;
 
-  ExpressCookieSession(String cookieName, long maxAge) {
+  CookieSession(String cookieName, long maxAge) {
     this.COOKIE_NAME = cookieName;
     this.MAX_AGE = maxAge;
   }
