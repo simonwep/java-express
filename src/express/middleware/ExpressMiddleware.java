@@ -2,6 +2,8 @@ package express.middleware;
 
 import express.http.HttpRequest;
 
+import java.io.IOException;
+
 /**
  * @author Simon Reinisch
  * Class which provides middleware
@@ -31,7 +33,7 @@ public class ExpressMiddleware {
    *
    * @param directoryPath The root directory
    */
-  public static ExpressStatic statics(String directoryPath) {
+  public static ExpressStatic statics(String directoryPath) throws IOException {
     return new ExpressStatic(directoryPath);
   }
 
@@ -45,7 +47,7 @@ public class ExpressMiddleware {
    * @param directoryPath The root directory
    * @param extensions    The allowed extensions
    */
-  public static ExpressStatic statics(String directoryPath, String... extensions) {
+  public static ExpressStatic statics(String directoryPath, String... extensions) throws IOException {
     return new ExpressStatic(directoryPath, extensions);
   }
 
@@ -60,7 +62,7 @@ public class ExpressMiddleware {
    * @param middleware    An handler which will be fired BEFORE the files will be served
    * @param extensions    The allowed extensions
    */
-  public static ExpressStatic statics(String directoryPath, HttpRequest middleware, String... extensions) {
+  public static ExpressStatic statics(String directoryPath, HttpRequest middleware, String... extensions) throws IOException {
     return new ExpressStatic(directoryPath, extensions, middleware);
   }
 }
