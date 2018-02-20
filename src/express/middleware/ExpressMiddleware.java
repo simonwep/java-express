@@ -1,6 +1,5 @@
 package express.middleware;
 
-import express.http.HttpRequest;
 
 import java.io.IOException;
 
@@ -26,43 +25,23 @@ public class ExpressMiddleware {
 
   /**
    * This class serves an entire folder which can contains static file for your
-   * web application, it automatically detect the content type and will send it to
-   * the Client.
-   * <p>
-   * To use it simply put it in the <code>app.use()</code> method!
+   * web application, You can use <code>StaticOptions</code> to add som configurations.
    *
    * @param directoryPath The root directory
    */
   public static ExpressStatic statics(String directoryPath) throws IOException {
-    return new ExpressStatic(directoryPath);
+    return new ExpressStatic(directoryPath, new StaticOptions());
   }
 
   /**
    * This class serves an entire folder which can contains static file for your
-   * web application, it automatically detect the content type and will send it to
-   * the Client.
-   * <p>
-   * To use it simply put it in the <code>app.use()</code> method!
+   * web application, You can use <code>StaticOptions</code> to add som configurations.
    *
    * @param directoryPath The root directory
-   * @param extensions    The allowed extensions
+   * @param staticOptions Optional options for the file serving.
    */
-  public static ExpressStatic statics(String directoryPath, String... extensions) throws IOException {
-    return new ExpressStatic(directoryPath, extensions);
+  public static ExpressStatic statics(String directoryPath, StaticOptions staticOptions) throws IOException {
+    return new ExpressStatic(directoryPath, staticOptions);
   }
 
-  /**
-   * This class serves an entire folder which can contains static file for your
-   * web application, it automatically detect the content type and will send it to
-   * the Client.
-   * <p>
-   * To use it simply put it in the <code>app.use()</code> method!
-   *
-   * @param directoryPath The root directory
-   * @param middleware    An handler which will be fired BEFORE the files will be served
-   * @param extensions    The allowed extensions
-   */
-  public static ExpressStatic statics(String directoryPath, HttpRequest middleware, String... extensions) throws IOException {
-    return new ExpressStatic(directoryPath, extensions, middleware);
-  }
 }

@@ -7,8 +7,20 @@ import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class Utils {
+
+  private final static SimpleDateFormat GMT_FORMAT;
+
+  static {
+
+    // Init some values
+    GMT_FORMAT = new SimpleDateFormat("yyyy MMM dd HH:mm:ss zzz");
+    GMT_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+  }
 
   /**
    * Write all data from an InputStream in an String
@@ -85,4 +97,11 @@ public class Utils {
     return path.substring(indx);
   }
 
+  /**
+   * @param date The date to format.
+   * @return The current GMT-Date.
+   */
+  public static String getGMTDate(Date date) {
+    return GMT_FORMAT.format(date);
+  }
 }
