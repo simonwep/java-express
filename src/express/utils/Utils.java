@@ -13,15 +13,6 @@ import java.util.TimeZone;
 
 public class Utils {
 
-  private final static SimpleDateFormat GMT_FORMAT;
-
-  static {
-
-    // Init some values
-    GMT_FORMAT = new SimpleDateFormat("yyyy MMM dd HH:mm:ss zzz");
-    GMT_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
-  }
-
   /**
    * Write all data from an InputStream in an String
    *
@@ -102,6 +93,8 @@ public class Utils {
    * @return The current GMT-Date.
    */
   public static String getGMTDate(Date date) {
-    return GMT_FORMAT.format(date);
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss zzz");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return sdf.format(date);
   }
 }
