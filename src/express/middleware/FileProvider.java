@@ -3,6 +3,7 @@ package express.middleware;
 import express.http.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
+import express.utils.Status;
 import express.utils.Utils;
 
 import java.io.File;
@@ -45,6 +46,17 @@ final class FileProvider implements HttpRequest {
 
     if (reqFile != null && reqFile.exists()) {
 
+      if (reqFile.getName().charAt(0) == '.') {
+        switch (OPTIONS.getDotFiles()) {
+          case IGNORE:
+            res.setStatus(Status._404);
+            return;
+          case DENY:
+            res.setStatus(Status._403);
+            return;
+        }
+      }
+
       if (OPTIONS.getExtensions() != null) {
         String reqEx = Utils.getExtension(reqFile);
 
@@ -57,6 +69,8 @@ final class FileProvider implements HttpRequest {
             break;
           }
         }
+
+        res.setStatus(Status._403);
       } else {
         finish(reqFile, req, res);
       }
@@ -114,7 +128,7 @@ final class FileProvider implements HttpRequest {
     int s = path.lastIndexOf('/');
     int e = path.lastIndexOf('.');
 
-    if (e == -1 && s <= 1)
+    if (e == -1 && s == -1)
       return "index";
 
     if (e == -1)
@@ -123,7 +137,9 @@ final class FileProvider implements HttpRequest {
     if (s == -1)
       s = 0;
 
-    return path.substring(s + 1, e);
+    String name = path.substring(s + 1, e);
+
+    return name.isEmpty() ? "index" : name;
   }
 
   /**

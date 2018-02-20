@@ -4,12 +4,12 @@ import express.http.HttpRequest;
 
 public class FileProviderOptions {
 
-
   private String[] extensions;
   private HttpRequest handler;
   private boolean fallBackSearching;
   private boolean lastModified;
   private long maxAge;
+  private DotFiles dotFiles;
 
   {
     // Initalize some values.
@@ -18,6 +18,7 @@ public class FileProviderOptions {
     this.fallBackSearching = false;
     this.lastModified = true;
     this.maxAge = 0;
+    this.dotFiles = DotFiles.IGNORE;
   }
 
   public FileProviderOptions() { }
@@ -119,5 +120,24 @@ public class FileProviderOptions {
   public FileProviderOptions setHandler(HttpRequest handler) {
     this.handler = handler;
     return this;
+  }
+
+  /**
+   * @return How Dot-files will be currently handled.
+   */
+  public DotFiles getDotFiles() {
+    return dotFiles;
+  }
+
+  /**
+   * Set how ".foo" file will be handled.
+   * Ignore: Act if these files doen't exists, response with 404
+   * Deny: Deny the file, response with 303 and do nothing.
+   * Allow: No special threadment for this files.
+   *
+   * @param dotFiles The handling type.
+   */
+  public void setDotFiles(DotFiles dotFiles) {
+    this.dotFiles = dotFiles;
   }
 }
