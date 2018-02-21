@@ -2,10 +2,14 @@ package express.utils;
 
 import com.sun.istack.internal.NotNull;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,7 +46,7 @@ public class Utils {
    * @param file The file.
    * @return The MIME-Type.
    */
-  public static MediaType getContentType(File file) {
+  public static MediaType getContentType(Path file) {
     String ex = getExtension(file);
     MediaType contentType = MediaType.getForExtension(ex);
 
@@ -79,8 +83,8 @@ public class Utils {
    * @param file The file.
    * @return The extension.
    */
-  public static String getExtension(@NotNull File file) {
-    String path = file.getAbsolutePath();
+  public static String getExtension(@NotNull Path file) {
+    String path = file.getFileName().toString();
     int indx = path.lastIndexOf('.') + 1;
     if (indx == 0)
       return null;

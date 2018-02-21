@@ -8,10 +8,10 @@ import express.utils.MediaType;
 import express.utils.Status;
 import express.utils.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 /**
@@ -180,10 +180,12 @@ public class Response {
    *
    * @param file The file.
    */
-  public void send(@NotNull File file) {
-    if (checkIfClosed()) return;
+  public void send(@NotNull Path file) {
+    if (checkIfClosed())
+      return;
+
     try {
-      this.contentLength = file.length();
+      this.contentLength = Files.size(file);
 
       // Detect content type
       MediaType mediaType = Utils.getContentType(file);
@@ -193,7 +195,7 @@ public class Response {
       sendHeaders();
 
       // Send file
-      FileInputStream fis = new FileInputStream(file);
+      InputStream fis = Files.newInputStream(file, StandardOpenOption.READ);
       byte[] buffer = new byte[1024];
       int n;
       while ((n = fis.read(buffer)) != -1) {
