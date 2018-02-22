@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 /**
  * @author Simon Reinisch
+ * <p>
  * Worker modul for FilterTasks.
  */
 public class FilterWorker extends TimerTask {

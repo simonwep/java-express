@@ -4,6 +4,7 @@ import java.util.Base64;
 
 /**
  * @author Simon Reinisch
+ * <p>
  * Class for an http-authorization
  */
 public class Authorization {
@@ -11,7 +12,7 @@ public class Authorization {
   private final String TYPE;
   private final String DATA;
 
-  public Authorization(String authHeader) {
+  Authorization(String authHeader) {
     int index = authHeader.indexOf(' ');
     this.TYPE = authHeader.substring(0, index);
     this.DATA = authHeader.substring(index + 1);

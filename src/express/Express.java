@@ -19,8 +19,6 @@ import java.util.concurrent.Executors;
 
 /**
  * @author Simon Reinisch
- * @implNote Core modul, don't change anything.
- * <p>
  * Core class of java-express
  */
 public class Express implements Router {

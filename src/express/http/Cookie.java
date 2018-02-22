@@ -5,6 +5,7 @@ import java.time.Instant;
 
 /**
  * @author Simon Reinisch
+ * Simple class which represents an HTTPCookie
  */
 public class Cookie {
 

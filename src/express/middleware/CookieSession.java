@@ -58,7 +58,8 @@ final class CookieSession implements HttpRequest, Filter, FilterTask {
   }
 
   @Override
-  public void onStart() { }
+  public void onStart() {
+  }
 
   @Override
   public void onStop() {

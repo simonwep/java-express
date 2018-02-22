@@ -11,6 +11,7 @@ import java.util.ListIterator;
 
 /**
  * @author Simon Reinisch
+ * <p>
  * Controller class for FilterLayer.
  */
 public class FilterLayer<T extends HttpRequest> {

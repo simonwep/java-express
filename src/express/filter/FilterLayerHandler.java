@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 /**
  * @author Simon Reinisch
+ * <p>
  * Handler for multiple FilterLayer.
  */
 public class FilterLayerHandler {

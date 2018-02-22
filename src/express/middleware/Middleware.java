@@ -10,7 +10,8 @@ import java.io.IOException;
 public class Middleware {
 
   // Don't allow creating an instance from this class
-  private Middleware() { }
+  private Middleware() {
+  }
 
   /**
    * Create an new cookie-session middleware.

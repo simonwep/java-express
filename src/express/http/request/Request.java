@@ -16,17 +16,19 @@ import java.util.List;
 
 /**
  * @author Simon Reinisch
+ * <p>
  * Class for http-request content.
  */
 public class Request {
 
   private final Express EXPRESS;
-  private final HttpExchange HTTP_EXCHANGE;           // The http exchange
+
   private final URI URI;                              // Request URI
   private final InputStream BODY;                     // Request body
   private final Headers HEADERS;                      // Request Headers
   private final String CONTENT_TYPE;                  // Request content-type
   private final long CONTENT_LENGTH;                  // Request content-length
+  private final String METHOD;                        // Request method
   private final Authorization AUTH;                   // Authorization header parsed
   private final InetSocketAddress INET;               // Client socket adress
 
@@ -44,7 +46,7 @@ public class Request {
 
   public Request(HttpExchange exchange, Express express) {
     this.EXPRESS = express;
-    this.HTTP_EXCHANGE = exchange;
+    this.METHOD = exchange.getRequestMethod();
     this.URI = exchange.getRequestURI();
     this.HEADERS = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
@@ -212,7 +214,7 @@ public class Request {
    * @return The request-method.
    */
   public String getMethod() {
-    return HTTP_EXCHANGE.getRequestMethod();
+    return this.METHOD;
   }
 
   /**

@@ -2,6 +2,7 @@ package express.filter;
 
 /**
  * @author Simon Reinisch
+ * <p>
  * Interface for filter tasks.
  */
 public interface FilterTask {

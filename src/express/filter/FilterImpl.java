@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Simon Reinisch
+ * <p>
  * An http-filter to extract data and check if an context matches
  * the request.
  */

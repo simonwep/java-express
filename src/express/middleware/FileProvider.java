@@ -101,7 +101,7 @@ final class FileProvider implements HttpRequest {
     }
 
     res.setHeader("Cache-Control", String.valueOf(OPTIONS.getMaxAge()));
-    res.send(file); // TODO: FIX
+    res.send(file);
   }
 
   private String getBaseName(Path path) {

@@ -2,6 +2,11 @@ package express.middleware;
 
 import express.http.HttpRequest;
 
+/**
+ * @author Simon R.
+ * <p>
+ * Options-Class for FileProvider
+ */
 public class FileProviderOptions {
 
   private String[] extensions;
@@ -21,7 +26,8 @@ public class FileProviderOptions {
     this.dotFiles = DotFiles.IGNORE;
   }
 
-  public FileProviderOptions() { }
+  public FileProviderOptions() {
+  }
 
   /**
    * @return The current allowed extensions.
