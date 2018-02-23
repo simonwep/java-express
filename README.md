@@ -1,12 +1,13 @@
 
 
-![Java Express Logo](https://image.ibb.co/mCdxtm/java_express.png)
+![Java Express Logo](https://preview.ibb.co/c1SWkx/java_express.png)
 
 
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
 
-# Getting Started
 **This project is currently in progress, feel free to [contribute](https://github.com/Simonwep/java-express/graphs/contributors) / [report](https://github.com/Simonwep/java-express/issues) issues! :)**
+
+**[0.0.7-alpha](https://github.com/Simonwep/java-express/releases/tag/0.0.7) is ready, check it out!**
 
 ```java
 Express app  = new Express();
@@ -25,21 +26,22 @@ Express app  = new Express(Utils.getYourIp());
 ```
 Default is localhost, so you can access, without setting the hostname, only from your local pc.
 
-Docs:
+Docs (v0.0.7-beta):
 * [Routing](#routing)
-	* [Direct](#direct)
-	* [With Router](#with-router)
+   * [Direct](#direct)
+   * [With Router](#with-router)
 * [URL Basics](#url-basics)
    * [URL Parameter](#url-parameter)
    * [URL Parameter Listener](#url-parameter-listener)
    * [URL Querys](#url-querys)
    * [Cookies](#cookies)
    * [Form Data](#form-data)
-* [HTTP - Request and Response](#http---request-and-response-object)
+* [HTTP - Main Classes](#http---main-classes)
    * [Response Object](#response-object)
    * [Request Object](#request-object)
 * [Middleware](#middleware)
    * [Create own middleware](#create-own-middleware)
+* [Using local variables](#local-variables)
 * [License](#license)
 
 Every following code can be also found in [this package](https://github.com/Simonwep/java-express/tree/master/src/examples).
@@ -59,7 +61,7 @@ app.get("/about", (req, res) -> res.send("About"));
 app.get("/user/login", (req, res) -> res.send("Please login!"));
 app.get("/user/register", (req, res) -> res.send("Join now!"));
 
-app.listen(); 
+app.listen();
 ```
 It also directly supports directly methods like `POST` `PATCH` `DELETE` and `PUT` others need to be created manually:
 ```java
@@ -74,7 +76,7 @@ app.put("/user", (req, res) -> res.send("Add an user!"));
 // Example fot the CONNECT method
 app.on("/user", "CONNECT", (req, res) -> res.send("Connect!"));
 
-app.listen(); 
+app.listen();
 ```
 
 ## With Router
@@ -90,14 +92,16 @@ indexRouter.get("/about", (req, res) -> res.send("About"));
 
 // Define router for user pages
 ExpressRouter userRouter = new ExpressRouter();
-userRouter.get("/user/login", (req, res) -> res.send("User Login"));
-userRouter.get("/user/register", (req, res) -> res.send("User Register"));
-userRouter.get("/user/:username", (req, res) -> res.send("You want to see: " + req.getParam("username")));
+userRouter.get("/", (req, res) -> res.send("User Page"));
+userRouter.get("/login", (req, res) ->  res.send("User Login"));
+userRouter.get("/register", (req, res) -> res.send("User Register"));
+userRouter.get("/:username", (req, res) -> res.send("You want to see: " + req.getParam("username")));
 
-// Add roter
-app.use(indexRouter);
-app.use(userRouter);
+// Add router and set root paths
+app.use("/", indexRouter);
+app.use("/user", userRouter);
 
+// Start server
 app.listen();
 ```
 
@@ -141,7 +145,7 @@ app.onParam("id", (req, res) -> {
 Now, this function will be called every time when an context is requested which contains the `id` parameter placeholder.
 
 ## URL Querys
-If you make an request which contains querys, you can access the querys over `req.getQuery(NAME)`. 
+If you make an request which contains querys, you can access the querys over `req.getQuery(NAME)`.
 
 Example request: `GET`  `/posts?page=12&from=john`:
 ```java
@@ -191,52 +195,93 @@ app.post("/register", (req, res) -> {
   String email = req.getFormQuery("email");
   String username = req.getFormQuery("username");
   // Process data
-   
+
   // Prints "E-Mail: john@gmail.com, Username: john"
-  res.send("E-Mail: " + email + ", Username: " + username); 
+  res.send("E-Mail: " + email + ", Username: " + username);
 });
 ```
 
-# HTTP - Request and Response object
+# HTTP - Main Classes
+## Express
+This class represents the entire HTTP-Server:
+```java
+app.get(String context, HttpRequest handler);                   // Add an GET request handler
+app.post(String context, HttpRequest handler);                  // Add an POST request handler
+app.patch(String context, HttpRequest handler);                 // Add an PATCH request handler
+app.put(String context, HttpRequest handler);                   // Add an PUT request handler
+app.delete(String context, HttpRequest handler);                // Add an DELETE request handler
+app.all(HttpRequest handler);                                   // Add an handler for all methods and contexts
+app.all(String context, HttpRequest handler);                   // Add an handler for all methods but for an specific context
+app.all(String context, String method, HttpRequest handler);    // Add an handler for an specific method and context
+app.use(String context, String method, HttpRequest handler);    // Add an middleware for an specific method and context
+app.use(HttpRequest handler);                                   // Add an middleware for all methods but for an specific context
+app.use(String context, HttpRequest handler);                   // Add an middleware for all methods and contexts
+app.use(String context, ExpressRouter router);                  // Add an router for an specific root context
+app.use(ExpressRouter router);                                  // Add an router for the root context (/)
+app.onParam(String name, HttpRequest handler);                  // Add an listener for an specific url parameter
+app.getParameterListener();                                     // Returns all parameterlistener
+app.get(String key);                                            // Get an environment variable
+app.set(String key, String val);                                // Set an environment variable
+app.isSecure();                                                 // Check if the server uses HTTPS
+app.setExecutor(Executor executor);                             // Set an executor service for the request
+app.listen();                                                   // Start the async server on port 80
+app.listen(ExpressListener onstart);                            // Start the async server on port 80, call the listener after starting
+app.listen(int port);                                           // Start the async server on an specific port
+app.listen(ExpressListener onstart, int port);                  // Start the async server on an specific port call the listener after starting
+app.stop();                                                     // Stop the server and all middleware worker
+```
 
 ## Response Object
 Over the response object, you have serveral possibility like setting cookies, send an file and more. Below is an short explanation what methods exists:
+(We assume that `res` is the `Response` object)
+
 ```java
-app.get("/res", (req, res) -> {
-  // res.send();                     // Send empty response
-  // res.send("Hello World");        // Send an string
-  // res.send("chart.pdf");          // Send an file
-  // setContentType(MediaType._txt); // Set the content type, default is txt/plain
-  // getContentType();               // Returns the current content type
-  // res.setStatus(Status._200);     // Set the response status
-  // res.getStatus();                // Returns the current response status
-  // res.setCookie(new Cookie(...)); // Send an cookie
-  // res.isClosed();                 // Check if already something has been send to the client
-});
+res.getContentType();                  // Returns the current content type
+res.setContentType(MediaType type);    // Set the content type with enum help
+res.setContentType(String type);       // Set the content type
+res.isClosed();                        // Check if the response is already closed
+res.getHeader(String key);             // Get the value from an header field via key
+res.setHeader(String key, String val); // Add an specific response header
+res.send(String str);                  // Send an string as response
+res.send(Path path);                   // Send an file as response
+res.send();                            // Send empty response
+res.redirect(String location);         // Redirect the request to another url
+res.setCookie(Cookie cookie);          // Add an cookie to the response
+res.sendStatus(Status status);         // Set the response status and send an empty response
+res.getStatus();                       // Returns the current status
+res.setStatus(Status status);          // Set the repose status
 ```
 The response object calls are comments because **you can only call the .send(xy) once each request!**
 
 ## Request Object
-With the request object you receive serveral data from the client which can be easily parsed by the given functions:
+Over the `Request` Object you have access to serveral request stuff (We assume that `req` is the `Request` object):
+
 ```java
-app.get("/req/", (req, res) -> {
-   // req.getURI();                        // Request URI
-   // req.getHost();                       // Request host (mostly localhost)
-   // req.getMethod();                     // Request method (here GET)
-   // req.getContentType();                // Request content description, is here null because it's an GET request
-   // req.getBody();                       // Request body inputstream
-   // req.getUserAgent();                  // Request user-agent
-   // req.getParam("parameter");           // Returns an url parameter
-   // req.getQuery("queryname");           // Returns an url query by key
-   // req.getFormQuery("formqueryname");   // Returns an form input value
-   // req.getFormQuerys();                 // Returns all form querys
-   // req.getCookie("user");               // Returns an cookie by name
-   // req.getCookies();                    // Returns all cookies
-   // req.hasAuthorization();              // Check if the request contains an authorization header
-   // req.getAuthorization();              // Returns the authorization header
-   // req.getMiddlewareContent("name");    // Returns data from middleware
-   // req.pipe(new OutputStream() {...});  // Pipe the body to an outputstream
-});
+req.getAddress();                 // Returns the INET-Adress from the client
+req.getMethod();                  // Returns the request method
+req.getPath();                    // Returns the request path
+req.getQuery(String name);        // Returns the query value by name
+req.getHost();                    // Returns the request host
+req.getContentLength();           // Returns the content length
+req.getContentType();             // Returns the content type
+req.getMiddlewareContent(String name); // Returns the content from an middleware by name
+req.getFormQuerys();              // Returns all form querys
+req.getParams();                  // Returns all params
+req.getQuerys();                  // Returns all querys
+req.getFormQuery(String name);    // Returns the form value by name
+req.getHeader(String key);        // Returns the value from an header field by name
+req.getParam(String key);         // Returns the url parameter by name
+req.getApp();                     // Returns the related express app
+req.getCookie(String name);       // Returns an cookie by his name
+req.getCookies();                 // Returns all cookies
+req.getIp();                      // Returns the client IP-Address
+req.getUserAgent();               // Returns the client user agent
+req.getURI();                     // Returns the request URI
+req.getAuthorization();           // Returns the request authorization
+req.hasAuthorization();           // Check if the request has an authorization
+req.pipe(OutputStream stream, int buffersize); // Pipe the request body to an outputstream
+req.pipe(Path path, int buffersize);           // Pipe the request body to an file
+req.getBody();                    // Returns the request inputstream
 ```
 
 # Middleware
@@ -251,21 +296,21 @@ For example an middleware for all [request-methods](https://developer.mozilla.or
 ```java
 // Global context, matches every request.
 app.use((req, res) -> {
-   // Handle data
+Handle data
 });
 ```
 You can also filter by [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts:
 ```java
 // Global context, you can also pass an context if you want
 app.use("/home", "POST", (req, res) -> {
-   // Handle request by context '/home' and method 'POST'
+Handle request by context '/home' and method 'POST'
 });
 ```
 In addition to that yo can use `*` which stands for every **context** or **request method**:
 ```java
 // Global context, you can also pass an context if you want
 app.use("/home", "*", (req, res) -> {
-   // Handle request which matches the context '/home' and all methods.
+Handle request which matches the context '/home' and all methods.
 });
 ```
 ## Create own middleware
@@ -312,24 +357,39 @@ No we can, as we learned above, include it with:
 app.use(new PortMiddleware());
 ```
 ## Existing Middlewares
-There are already some basic middlewares included, you can access these via static methods provided from `Express`.
+There are already some basic middlewares included, you can access these via static methods provided from `Middleware`.
 
-#### Static File serving
-If you want to allocate some files, like js-librarys or css files you can use the [static](https://github.com/Simonwep/java-express/blob/master/src/express/middleware/Static.java) middleware. But you can also provide other files like mp4 etc.
+#### Provide static Files
+If you want to allocate some files, like js-librarys or css files you can use the [static](https://github.com/Simonwep/java-express/blob/master/src/express/middleware/Middleware.java) middleware. But you can also provide other files like mp4 etc.
 Example:
 ```java
- app.use(Express.statics("examplepath\\test_statics"));
+ app.use(Middleware.statics("examplepath\\myfiles"));
 ```
-Now you can access every files in the `test_statics` over the root adress `\`. If you want you can specify which files can be accessed:
+Now you can access every files in the `test_statics` over the root adress `\`. I'ts also possible to set an configuration for the FileProvider:
 ```java
- app.use(Express.statics("examplepath\\test_statics", "html", "css", "js"));
+FileProviderOptionsoptions = new FileProviderOptions();
+options.setExtensions("html", "css", "js"); // By default, all are allowed.
+/*
+ * Activate the fallbacksearch.
+ * E.g. if an request to <code>/js/code.js</code> was made but the
+ * requested ressource cannot be found. It will be looked for an file called <code>code</code>
+ * and return it.
+ *
+ *  Default is false
+ */
+options.setFallBackSearching(true);
+options.setHandler((req, res) -> {...});    // Can be used to handle the request before the file will be returned.
+options.setLastModified(true);              // Send the Last-Modified header, by default true.
+options.setMaxAge(10000);                   // Send the Cache-Control header, by default 0.
+options.setDotFiles(DotFiles.DENY);         // Deny access to dot-files. Default is IGNORE.
+app.use(Middleware.statics("examplepath\\myfiles", new FileProviderOptions())); // Using with StaticOptions
 ```
 #### Cookie Session
-Java Express also includes an simple cookie-session middleware:
+There is also an simple cookie-session implementation:
 ```java
 // You should use an meaningless cookie name for serveral security reasons, here f3v4.
 // Also you can specify the maximum age of the cookie from the creation date and the file types wich are actually allowed.
-app.use(Express.cookieSession("f3v4", 9000));
+app.use(Middleware.cookieSession("f3v4", 9000));
 ```
 To use a session cookie we need to get the data from the middleware which is actually an `SessionCookie`:
 ```java
@@ -343,7 +403,7 @@ app.get("/session", (req, res) -> {
    SessionCookie sessionCookie = (SessionCookie) req.getMiddlewareContent("sessioncookie");
    int count;
    
-   // Check if the data is null, we want to implement an simple counter
+Check if the data is null, we want to implement an simple counter
    if (sessionCookie.getData() == null) {
    
       // Set the default data to 1 (first request with this session cookie)
@@ -354,11 +414,17 @@ app.get("/session", (req, res) -> {
       count = (Integer) sessionCookie.setData((Integer) sessionCookie.getData() + 1);
    }
 
-   // Send an info message
+Send an info message
    res.send("You take use of your session cookie " + count + " times.");
 });
 ```
-
+## Local Variables
+Java-express also supports to save and read local variables over the Express instance:
+Example:
+```java
+app.set("my-data", "Hello World");
+app.get("my-data"); // Returns "Hello World"
+```
 # License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://choosealicense.com/licenses/mit/) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://choosealicense.com/licenses/mit) file for details
