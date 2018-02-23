@@ -33,7 +33,6 @@ public interface Router {
    */
   void use(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest middleware);
 
-
   /**
    * Add an listener for all request methods and contexts.
    *
@@ -99,13 +98,4 @@ public interface Router {
    */
   void patch(@NotNull String context, @NotNull HttpRequest request);
 
-  /**
-   * Adds an handler for a specific context and method.
-   * You can use a star '*' to match every context / request-method.
-   *
-   * @param context       The context.
-   * @param requestMethod The request method.
-   * @param request       An listener which will be fired if the context matches the requestpath.
-   */
-  void on(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request);
 }

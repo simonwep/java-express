@@ -221,10 +221,6 @@ public class Express implements Router {
     HANDLER.add(1, new FilterImpl("PATCH", context, request));
   }
 
-  public void on(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new FilterImpl(requestMethod, context, request));
-  }
-
   /**
    * Start the HTTP-Server on port 80.
    * This method is asyncronous so be sure to add an listener or keep it in mind!

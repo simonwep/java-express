@@ -76,10 +76,6 @@ public class ExpressRouter implements Router {
     HANDLER.add(1, new FilterImpl("PATCH", context, request));
   }
 
-  public void on(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
-    HANDLER.add(1, new FilterImpl(requestMethod, context, request));
-  }
-
   ArrayList<FilterWorker> getWorker() {
     return WORKER;
   }
