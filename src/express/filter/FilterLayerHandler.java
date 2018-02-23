@@ -21,7 +21,7 @@ public class FilterLayerHandler {
 
   public FilterLayerHandler(int layer) {
 
-    // Initialize layers
+    // Create & initialize layers
     this.LAYER = new FilterLayer[layer];
     for (int i = 0; i < LAYER.length; i++)
       LAYER[i] = new FilterLayer<>();

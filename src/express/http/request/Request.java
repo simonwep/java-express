@@ -7,10 +7,14 @@ import express.filter.Filter;
 import express.http.Cookie;
 import express.utils.Utils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
@@ -102,10 +106,12 @@ public class Request {
    * @param bufferSize Buffersize, eg. 4096.
    * @throws IOException If an IO-Error occurs.
    */
-  public void pipe(File f, int bufferSize) throws IOException {
-    if (!f.exists() && !f.createNewFile())
+  public void pipe(Path f, int bufferSize) throws IOException {
+    if (Files.exists(f))
       return;
-    pipe(new FileOutputStream(f), bufferSize);
+
+    Files.createFile(f);
+    pipe(Files.newOutputStream(f), bufferSize);
   }
 
   /**
