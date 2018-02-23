@@ -70,7 +70,7 @@ public class Response {
    *
    * @param location The location.
    */
-  public void redirect(String location) {
+  public void redirect(@NotNull String location) {
     HEADER.add("Location", location);
     setStatus(Status._302);
     send();
@@ -82,7 +82,7 @@ public class Response {
    * @param cookie The cookie.
    * @return This Response instance.
    */
-  public Response setCookie(Cookie cookie) {
+  public Response setCookie(@NotNull Cookie cookie) {
     if (checkIfClosed()) return this;
     this.HEADER.add("Set-Cookie", cookie.toString());
     return this;
@@ -131,7 +131,7 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(MediaType contentType) {
+  public void setContentType(@NotNull MediaType contentType) {
     this.contentType = contentType.getMIME();
   }
 
@@ -140,7 +140,7 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(String contentType) {
+  public void setContentType(@NotNull String contentType) {
     this.contentType = contentType;
   }
 
@@ -160,6 +160,11 @@ public class Response {
    * @param s The string.
    */
   public void send(String s) {
+    if (s == null) {
+      send();
+      return;
+    }
+
     if (checkIfClosed()) return;
     byte[] data = s.getBytes();
 
@@ -183,7 +188,7 @@ public class Response {
    * @param file The file.
    */
   public void send(@NotNull Path file) {
-    if (checkIfClosed())
+    if (checkIfClosed() || !Files.isRegularFile(file))
       return;
 
     try {
