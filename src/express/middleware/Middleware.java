@@ -7,7 +7,7 @@ import java.io.IOException;
  * @author Simon Reinisch
  * Class which provides middleware
  */
-public class Middleware {
+public final class Middleware {
 
   // Don't allow creating an instance from this class
   private Middleware() {

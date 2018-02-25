@@ -369,6 +369,7 @@ Now you can access every files in the `test_statics` over the root adress `\`. I
 ```java
 FileProviderOptionsoptions = new FileProviderOptions();
 options.setExtensions("html", "css", "js"); // By default, all are allowed.
+
 /*
  * Activate the fallbacksearch.
  * E.g. if an request to <code>/js/code.js</code> was made but the

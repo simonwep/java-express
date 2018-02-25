@@ -15,7 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class Utils {
+public final class Utils {
+
+  private Utils() {}
 
   /**
    * Write all data from an InputStream in an String
