@@ -22,7 +22,7 @@ app.listen(); // Port 80 is default
 When you create an new Express instance you can add an additional host name for example, your local network:
 ```java
 // Will bind the server to your ip-adress
-Express app  = new Express(Utils.getYourIp());
+Express app = new Express(Utils.getYourIp());
 ```
 Default is localhost, so you can access, without setting the hostname, only from your local pc.
 
@@ -203,7 +203,7 @@ app.post("/register", (req, res) -> {
 
 # HTTP - Main Classes
 ## Express
-This class represents the entire HTTP-Server:
+This class represents the entire HTTP-Server, the available methods are:
 ```java
 app.get(String context, HttpRequest handler);                   // Add an GET request handler
 app.post(String context, HttpRequest handler);                  // Add an POST request handler
