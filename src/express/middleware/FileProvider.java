@@ -12,6 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Simon Reinisch
@@ -19,6 +22,7 @@ import java.util.Date;
  */
 final class FileProvider implements HttpRequest {
 
+  private final Logger LOGGER;
   private FileProviderOptions OPTIONS;
   private String ROOT;
 
@@ -30,6 +34,7 @@ final class FileProvider implements HttpRequest {
 
     this.ROOT = rootDir.getAbsolutePath();
     this.OPTIONS = options;
+    this.LOGGER = Logger.getLogger(this.getClass().getSimpleName());
   }
 
   @Override
@@ -49,9 +54,13 @@ final class FileProvider implements HttpRequest {
       String name = reqFile.getFileName().toString();
 
       try {
-        reqFile = Files.walk(reqFile.getParent()).filter(sub -> getBaseName(sub).equals(name)).findFirst().get();
+        Optional<Path> founded = Files.walk(reqFile.getParent()).filter(sub -> getBaseName(sub).equals(name)).findFirst();
+
+        if (founded.isPresent())
+          reqFile = founded.get();
+
       } catch (IOException e) {
-        // TODO: Handle error
+        this.LOGGER.log(Level.WARNING, "Cannot walg file tree.", e);
       }
     }
 
@@ -93,11 +102,14 @@ final class FileProvider implements HttpRequest {
       OPTIONS.getHandler().handle(req, res);
 
     try {
+
       // Apply header
       if (OPTIONS.isLastModified())
         res.setHeader("Last-Modified", Utils.getGMTDate(new Date(Files.getLastModifiedTime(file).toMillis())));
     } catch (IOException e) {
-      // TODO: Handle error
+      res.sendStatus(Status._500);
+      this.LOGGER.log(Level.WARNING, "Cannot read LastModifiedTime from file " + file.toString(), e);
+      return;
     }
 
     res.setHeader("Cache-Control", String.valueOf(OPTIONS.getMaxAge()));
@@ -108,5 +120,12 @@ final class FileProvider implements HttpRequest {
     String name = path.getFileName().toString();
     int index = name.lastIndexOf('.');
     return index == -1 ? name : name.substring(0, index);
+  }
+
+  /**
+   * @return The logger from this FileProvider instance.
+   */
+  public Logger getLogger() {
+    return LOGGER;
   }
 }

@@ -294,7 +294,6 @@ public class Express implements Router {
           onStart.action();
 
       } catch (IOException e) {
-        // TODO: Handle errors
         e.printStackTrace();
       }
     }).start();

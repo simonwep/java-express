@@ -10,7 +10,6 @@ public class ExpressException extends RuntimeException {
    * Constructs a new exception with {@code null} as its detail message.
    */
   public ExpressException() {
-    super();
   }
 
   /**

@@ -8,7 +8,9 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 
-class RequestUtils {
+final class RequestUtils {
+
+  private RequestUtils() {}
 
   /**
    * Extract the cookies from the 'Cookie' header.
@@ -20,7 +22,7 @@ class RequestUtils {
     HashMap<String, Cookie> cookieList = new HashMap<>();
     List<String> headerCookies = headers.get("Cookie");
 
-    if (headerCookies == null || headerCookies.size() == 0) {
+    if (headerCookies == null || headerCookies.isEmpty()) {
       return cookieList;
     }
 
