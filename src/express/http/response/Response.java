@@ -83,7 +83,7 @@ public class Response {
    * @return This Response instance.
    */
   public Response setCookie(@NotNull Cookie cookie) {
-    if (checkIfClosed()) return this;
+    if (isClosed()) return this;
     this.HEADER.add("Set-Cookie", cookie.toString());
     return this;
   }
@@ -103,7 +103,7 @@ public class Response {
    * @return This Response instance.
    */
   public Response setStatus(@NotNull Status status) {
-    if (checkIfClosed()) return this;
+    if (isClosed()) return this;
     this.status = status.getCode();
     return this;
   }
@@ -114,7 +114,7 @@ public class Response {
    * @param status The response status.
    */
   public void sendStatus(@NotNull Status status) {
-    if (checkIfClosed()) return;
+    if (isClosed()) return;
     this.status = status.getCode();
     send();
   }
@@ -148,7 +148,7 @@ public class Response {
    * Send an empty response (Content-Length = 0)
    */
   public void send() {
-    if (checkIfClosed()) return;
+    if (isClosed()) return;
     this.contentLength = 0;
     sendHeaders();
     close();
@@ -165,7 +165,7 @@ public class Response {
       return;
     }
 
-    if (checkIfClosed()) return;
+    if (isClosed()) return;
     byte[] data = s.getBytes();
 
     this.contentLength = data.length;
@@ -188,7 +188,7 @@ public class Response {
    * @param file The file.
    */
   public void send(@NotNull Path file) {
-    if (checkIfClosed() || !Files.isRegularFile(file))
+    if (isClosed() || !Files.isRegularFile(file))
       return;
 
     try {
@@ -226,13 +226,6 @@ public class Response {
     return this.isClose;
   }
 
-  private boolean checkIfClosed() {
-    if (isClose) {
-      System.err.println("Response is already closed.");
-      return true;
-    }
-    return false;
-  }
 
   private void sendHeaders() {
     try {
