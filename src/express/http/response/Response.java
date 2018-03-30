@@ -185,6 +185,23 @@ public class Response {
   }
 
   /**
+   * Sets the 'Content-Disposition' header to 'attachment' and his
+   * Content-Disposition "filename=" parameter to the file name.
+   * Normally this triggers an download event client-side.
+   *
+   * @param file The file which will be send as attachment.
+   */
+  public void sendAttachment(@NotNull Path file) {
+    if (isClosed() || !Files.isRegularFile(file))
+      return;
+
+    String dispo = "attachment; filename=\"" + file.getFileName() + "\"";
+    setHeader("Content-Disposition", dispo);
+
+    send(file);
+  }
+
+  /**
    * Send an entire file as response
    * The mime type will be automatically detected.
    *

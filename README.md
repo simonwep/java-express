@@ -7,7 +7,7 @@
 
 **This project is currently in progress, feel free to [contribute](https://github.com/Simonwep/java-express/graphs/contributors) / [report](https://github.com/Simonwep/java-express/issues) issues! :)**
 
-**[0.0.7-alpha](https://github.com/Simonwep/java-express/releases/tag/0.0.7) is ready, check it out!**
+**[0.0.8-alpha](https://github.com/Simonwep/java-express/releases/tag/0.0.8) is ready, check it out!**
 
 ```java
 Express app  = new Express();
@@ -242,6 +242,7 @@ res.setContentType(String type);       // Set the content type
 res.isClosed();                        // Check if the response is already closed
 res.getHeader(String key);             // Get the value from an header field via key
 res.setHeader(String key, String val); // Add an specific response header
+res.sendAttachment(Path file)          // Sends an file as attachment
 res.send(String str);                  // Send an string as response
 res.send(Path path);                   // Send an file as response
 res.send();                            // Send empty response
@@ -277,6 +278,11 @@ req.getCookies();                 // Returns all cookies
 req.getIp();                      // Returns the client IP-Address
 req.getUserAgent();               // Returns the client user agent
 req.getURI();                     // Returns the request URI
+req.isFresh();                    // Returns true if the connection is fresh, false otherwise (see code inline-doc)
+req.isStale();                    // Returns the opposite of req.fresh;
+req.isSecure();                   // Returns true when the connection is over HTTPS, false otherwise
+req.isXHR();                      // Returns true if the 'X-Requested-With' header field is 'XMLHttpRequest'
+req.getProtocol();                // Returns the connection protocol
 req.getAuthorization();           // Returns the request authorization
 req.hasAuthorization();           // Check if the request has an authorization
 req.pipe(OutputStream stream, int buffersize); // Pipe the request body to an outputstream

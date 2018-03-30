@@ -2,6 +2,7 @@ package express.http.request;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpsExchange;
 import express.Express;
 import express.filter.Filter;
 import express.http.Cookie;
@@ -15,6 +16,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,9 +30,11 @@ public class Request {
 
   private final Express EXPRESS;
 
+  private final String PROTOCOL;                      // Request protocoll
   private final URI URI;                              // Request URI
   private final InputStream BODY;                     // Request body
   private final Headers HEADERS;                      // Request Headers
+  private final boolean SECURE;
   private final String CONTENT_TYPE;                  // Request content-type
   private final long CONTENT_LENGTH;                  // Request content-length
   private final String METHOD;                        // Request method
@@ -55,6 +60,9 @@ public class Request {
     this.HEADERS = exchange.getRequestHeaders();
     this.BODY = exchange.getRequestBody();
     this.INET = exchange.getRemoteAddress();
+
+    this.PROTOCOL = exchange.getProtocol();
+    this.SECURE = exchange instanceof HttpsExchange; // Can be suckered?
 
     // Parse content length
     String contentLength = HEADERS.get("Content-Length") != null ? HEADERS.get("Content-Length").get(0) : null;
@@ -224,6 +232,89 @@ public class Request {
   }
 
   /**
+   * Checks if the connection is 'fresh'
+   * It is true if the cache-control request header doesn’t have a no-cache directive, the if-modified-since request header is specified
+   * and last-modified request header is equal to or earlier than the modified response header or if-none-match request header is *.
+   *
+   * @return True if the connection is fresh, false otherwise.
+   */
+  public boolean isFresh() {
+
+    if (HEADERS.containsKey("cache-control") && HEADERS.get("cache-control").get(0) != null && HEADERS.get("cache-control").get(0).equals("no-cache"))
+      return true;
+
+    if (HEADERS.containsKey("if-none-match") && HEADERS.get("if-none-match").get(0) != null && HEADERS.get("if-none-match").equals("*"))
+      return true;
+
+    if (HEADERS.containsKey("if-modified-since") && HEADERS.containsKey("last-modified") && HEADERS.containsKey("modified")) {
+      List<String> lmlist = HEADERS.get("last-modified");
+      List<String> mlist = HEADERS.get("modified");
+
+      // Check lists
+      if (lmlist.isEmpty() || mlist.isEmpty())
+        return false;
+
+      String lm = lmlist.get(0);
+      String m = mlist.get(0);
+
+      // Check header
+      if (lm != null && m != null) {
+        try {
+
+          // Try to convert it
+          Instant lmi = Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse(lm));
+          Instant mi = Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse(m));
+
+          if (lmi.isBefore(mi) || lmi.equals(mi)) {
+            return true;
+          }
+
+        } catch (Exception ignored) {
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Indicates whether the request is “stale,” and is the opposite of req.fresh
+   *
+   * @return The opposite of req.fresh;
+   */
+  public boolean isStale() {
+    return !isFresh();
+  }
+
+  /**
+   * Returns whenever the connection is over HTTPS.
+   *
+   * @return True when the connection is over HTTPS, false otherwise.
+   */
+  public boolean isSecure() {
+    return SECURE;
+  }
+
+  /**
+   * Returns true if the 'X-Requested-With' header field is 'XMLHttpRequest'.
+   * Indicating that the request was made by a client library such as jQuery.
+   *
+   * @return True if the 'X-Requested-With' header field is 'XMLHttpRequest'.
+   */
+  public boolean isXHR() {
+    return HEADERS.containsKey("X-Requested-With") && !HEADERS.get("X-Requested-With").isEmpty() && HEADERS.get("X-Requested-With").get(0).equals("XMLHttpRequest");
+  }
+
+  /**
+   * The connection protocol HTTP/1.0, HTTP/1.1 etc.
+   *
+   * @return The connection protocol.
+   */
+  public String getProtocol() {
+    return PROTOCOL;
+  }
+
+  /**
    * If there is an Authorization header, it was parsed and saved
    * in a Authorization Object.
    *
@@ -320,6 +411,5 @@ public class Request {
   public Express getApp() {
     return EXPRESS;
   }
-
 
 }
