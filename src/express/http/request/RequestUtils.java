@@ -83,10 +83,7 @@ final class RequestUtils {
 
         try {
           querys.put(URLDecoder.decode(key.toString(), "UTF-8"), URLDecoder.decode(val.toString(), "UTF8"));
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-          // TODO: Handle error
-        }
+        } catch (UnsupportedEncodingException ignored) {}
 
         key.setLength(0);
         val.setLength(0);

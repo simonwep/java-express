@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Simon Reinisch
@@ -25,6 +27,7 @@ public class Response {
   private final HttpExchange HTTP_EXCHANGE;
   private final OutputStream BODY;
   private final Headers HEADER;
+  private final Logger LOGGER;
 
   private String contentType;
   private boolean isClose;
@@ -37,6 +40,7 @@ public class Response {
     isClose = false;
     contentLength = 0;
     status = 200;
+    LOGGER = Logger.getLogger(getClass().getSimpleName());
   }
 
   public Response(HttpExchange exchange) {
@@ -174,8 +178,7 @@ public class Response {
     try {
       this.BODY.write(s.getBytes());
     } catch (IOException e) {
-      // TODO: Handle error
-      e.printStackTrace();
+      LOGGER.log(Level.INFO, "Failed to write charsequence to client.", e);
     }
 
     close();
@@ -212,8 +215,7 @@ public class Response {
       fis.close();
 
     } catch (IOException e) {
-      // TODO: Handle error
-      e.printStackTrace();
+      LOGGER.log(Level.INFO, "Failed to pipe file to outputstream.", e);
     }
 
     close();
@@ -236,8 +238,7 @@ public class Response {
       this.HEADER.set("Content-Type", contentType);
       this.HTTP_EXCHANGE.sendResponseHeaders(status, contentLength);
     } catch (IOException e) {
-      // TODO: Handle error
-      e.printStackTrace();
+      LOGGER.log(Level.INFO, "Failed to send headers.", e);
     }
   }
 
@@ -246,8 +247,7 @@ public class Response {
       this.BODY.close();
       this.isClose = true;
     } catch (IOException e) {
-      // TODO: Handle error
-      e.printStackTrace();
+      LOGGER.log(Level.INFO, "Failed to close outputstream.", e);
     }
   }
 
