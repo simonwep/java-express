@@ -54,13 +54,18 @@ final class FileProvider implements HttpRequest {
       String name = reqFile.getFileName().toString();
 
       try {
-        Optional<Path> founded = Files.walk(reqFile.getParent()).filter(sub -> getBaseName(sub).equals(name)).findFirst();
+        Path parent = reqFile.getParent();
 
-        if (founded.isPresent())
-          reqFile = founded.get();
+        // Check if reading is allowed
+        if (Files.isReadable(parent)) {
 
+          Optional<Path> founded = Files.walk(parent).filter(sub -> getBaseName(sub).equals(name)).findFirst();
+
+          if (founded.isPresent())
+            reqFile = founded.get();
+        }
       } catch (IOException e) {
-        this.LOGGER.log(Level.WARNING, "Cannot walg file tree.", e);
+        this.LOGGER.log(Level.WARNING, "Cannot walk file tree.", e);
       }
     }
 

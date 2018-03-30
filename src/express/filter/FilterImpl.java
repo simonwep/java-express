@@ -40,7 +40,7 @@ public class FilterImpl implements HttpRequest {
   }
 
   public void setRoot(String root) {
-    if (root == null || root.length() == 0)
+    if (root == null || root.isEmpty())
       return;
 
     if (root.charAt(0) != '/')

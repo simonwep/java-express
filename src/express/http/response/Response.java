@@ -226,7 +226,6 @@ public class Response {
     return this.isClose;
   }
 
-
   private void sendHeaders() {
     try {
 
