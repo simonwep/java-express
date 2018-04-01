@@ -49,21 +49,21 @@ public class FileProviderOptions {
   }
 
   /**
-   * @return If the fallbacksearch is activated.
+   * @return If the fallback-search is activated.
    */
   public boolean isFallBackSearching() {
     return fallBackSearching;
   }
 
   /**
-   * Activate the fallbacksearch.
+   * Activate the fallback-search.
    * E.g. if an request to <code>/js/code.js</code> was made but the
-   * requested ressource cannot be found. It will be looked for an file called <code>code</code>
+   * requested resource cannot be found. It will be looked for an file called <code>code</code>
    * and return it.
    * <p>
    * Default is false.
    *
-   * @param fallBackSearching If you want to activeate the file-fallbacksearch.
+   * @param fallBackSearching If you want to activate the file-fallback-search.
    * @return This instance.
    */
   public FileProviderOptions setFallBackSearching(boolean fallBackSearching) {
@@ -111,7 +111,7 @@ public class FileProviderOptions {
   }
 
   /**
-   * @return The current correspondending handler.
+   * @return The current corresponding handler.
    */
   HttpRequest getHandler() {
     return handler;
@@ -137,9 +137,9 @@ public class FileProviderOptions {
 
   /**
    * Set how ".foo" file will be handled.
-   * Ignore: Act if these files doen't exists, response with 404
+   * Ignore: Act if these files don't exists, response with 404
    * Deny: Deny the file, response with 303 and do nothing.
-   * Allow: No special threadment for this files.
+   * Allow: No special treatment for this files.
    *
    * @param dotFiles The handling type.
    */

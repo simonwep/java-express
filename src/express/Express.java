@@ -1,6 +1,5 @@
 package express;
 
-import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
@@ -52,7 +51,7 @@ public class Express implements Router {
    *
    * @param hostname The host name
    */
-  public Express(@NotNull String hostname) {
+  public Express(String hostname) {
     this.hostname = hostname;
   }
 
@@ -61,7 +60,7 @@ public class Express implements Router {
    *
    * @param httpsConfigurator The HttpsConfigurator for https
    */
-  public Express(@NotNull HttpsConfigurator httpsConfigurator) {
+  public Express(HttpsConfigurator httpsConfigurator) {
     this.httpsConfigurator = httpsConfigurator;
   }
 
@@ -72,7 +71,7 @@ public class Express implements Router {
    * @param hostname          The host name
    * @param httpsConfigurator The HttpsConfigurator for https
    */
-  public Express(@NotNull String hostname, HttpsConfigurator httpsConfigurator) {
+  public Express(String hostname, HttpsConfigurator httpsConfigurator) {
     this.hostname = hostname;
     this.httpsConfigurator = httpsConfigurator;
   }
@@ -96,7 +95,7 @@ public class Express implements Router {
    * @param param   The parameter name.
    * @param request An request handler.
    */
-  public void onParam(@NotNull String param, @NotNull HttpRequest request) {
+  public void onParam(String param, HttpRequest request) {
     PARAMETER_LISTENER.put(param, request);
   }
 
@@ -133,7 +132,7 @@ public class Express implements Router {
    * @param executor The new executor.
    * @throws IOException If the server is currently running
    */
-  public void setExecutor(@NotNull Executor executor) throws IOException {
+  public void setExecutor(Executor executor) throws IOException {
     if (httpServer != null) {
       throw new IOException("Cannot set the executor after the server has starderd!");
     } else {
@@ -146,7 +145,7 @@ public class Express implements Router {
    *
    * @param router The router.
    */
-  public void use(@NotNull ExpressRouter router) {
+  public void use(ExpressRouter router) {
     this.HANDLER.combine(router.getHandler());
     this.WORKER.addAll(router.getWorker());
   }
@@ -158,7 +157,7 @@ public class Express implements Router {
    * @param router The router.
    */
   @SuppressWarnings("unchecked")
-  public void use(@NotNull String root, @NotNull ExpressRouter router) {
+  public void use(String root, ExpressRouter router) {
 
     router.getHandler().forEach(fl -> fl.getFilter().forEach(layer -> {
       ((FilterImpl) layer).setRoot(root);
@@ -168,20 +167,20 @@ public class Express implements Router {
     this.WORKER.addAll(router.getWorker());
   }
 
-  public void use(@NotNull HttpRequest middleware) {
+  public void use(HttpRequest middleware) {
     addMiddleware("*", "*", middleware);
   }
 
-  public void use(@NotNull String context, @NotNull HttpRequest middleware) {
+  public void use(String context, HttpRequest middleware) {
     addMiddleware("*", context, middleware);
   }
 
-  public void use(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest middleware) {
+  public void use(String context, String requestMethod, HttpRequest middleware) {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
   }
 
   // Internal service to handle middleware
-  private void addMiddleware(@NotNull String requestMethod, @NotNull String context, HttpRequest middleware) {
+  private void addMiddleware(String requestMethod, String context, HttpRequest middleware) {
     if (middleware instanceof FilterTask) {
       WORKER.add(new FilterWorker((FilterTask) middleware));
     }
@@ -189,79 +188,74 @@ public class Express implements Router {
     HANDLER.add(0, new FilterImpl(requestMethod, context, middleware));
   }
 
-  public void all(@NotNull HttpRequest request) {
+  public void all(HttpRequest request) {
     HANDLER.add(1, new FilterImpl("*", "*", request));
   }
 
-  public void all(@NotNull String context, @NotNull HttpRequest request) {
+  public void all(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("*", context, request));
   }
 
-  public void all(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
+  public void all(String context, String requestMethod, HttpRequest request) {
     HANDLER.add(1, new FilterImpl(requestMethod, context, request));
   }
 
-  public void get(@NotNull String context, @NotNull HttpRequest request) {
+  public void get(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("GET", context, request));
   }
 
-  public void post(@NotNull String context, @NotNull HttpRequest request) {
+  public void post(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("POST", context, request));
   }
 
-  public void put(@NotNull String context, @NotNull HttpRequest request) {
+  public void put(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("PUT", context, request));
   }
 
-  public void delete(@NotNull String context, @NotNull HttpRequest request) {
+  public void delete(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("DELETE", context, request));
   }
 
-  public void patch(@NotNull String context, @NotNull HttpRequest request) {
+  public void patch(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("PATCH", context, request));
   }
 
   /**
    * Start the HTTP-Server on port 80.
-   * This method is asyncronous so be sure to add an listener or keep it in mind!
-   *
-   * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
+   * This method is asynchronous so be sure to add an listener or keep it in mind!
    */
-  public void listen() throws IOException {
+  public void listen() {
     listen(null, 80);
   }
 
   /**
    * Start the HTTP-Server on a specific port
-   * This method is asyncronous so be sure to add an listener or keep it in mind!
+   * This method is asynchronous so be sure to add an listener or keep it in mind!
    *
    * @param port The port.
-   * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
    */
-  public void listen(int port) throws IOException {
+  public void listen(int port) {
     listen(null, port);
   }
 
   /**
    * Start the HTTP-Server on port 80.
-   * This method is asyncronous so be sure to add an listener or keep it in mind!
+   * This method is asynchronous so be sure to add an listener or keep it in mind!
    *
    * @param onStart An listener which will be fired after the server is stardet.
-   * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
    */
-  public void listen(ExpressListener onStart) throws IOException {
+  public void listen(ExpressListener onStart) {
     listen(onStart, 80);
   }
 
   /**
    * Start the HTTP-Server on a specific port.
-   * This method is asyncronous so be sure to add an listener or keep it in mind!
+   * This method is asynchronous so be sure to add an listener or keep it in mind!
    *
    * @param onStart An listener which will be fired after the server is stardet.
    * @param port    The port.
-   * @throws IOException - If an IO-Error occurs, eg. the port is already in use.
    */
-  public void listen(ExpressListener onStart, int port) throws IOException {
+  public void listen(ExpressListener onStart, int port) {
     new Thread(() -> {
       try {
         // Fire worker threads

@@ -7,7 +7,6 @@ import express.http.HttpRequest;
 import express.http.request.Request;
 import express.http.response.Response;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
@@ -17,7 +16,7 @@ import java.util.function.Consumer;
  */
 public class FilterLayerHandler {
 
-  private FilterLayer[] LAYER;
+  private final FilterLayer[] LAYER;
 
   public FilterLayerHandler(int layer) {
 
@@ -27,11 +26,11 @@ public class FilterLayerHandler {
       LAYER[i] = new FilterLayer<>();
   }
 
-  public void handle(HttpExchange httpExchange, Express express) throws IOException {
+  public void handle(HttpExchange httpExchange, Express express) {
     Request request = new Request(httpExchange, express);
     Response response = new Response(httpExchange);
 
-    // First fire all middlewares, then the normal request filter
+    // First fire all middleware's, then the normal request filter
     for (FilterLayer chain : LAYER) {
       chain.filter(request, response);
 

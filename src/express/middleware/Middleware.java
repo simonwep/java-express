@@ -17,8 +17,8 @@ public final class Middleware {
    * Create an new cookie-session middleware.
    * You can access and edit to session-cookie data via request.getMiddlewareContent('SessionCookie').
    *
-   * @param cookieName An name for the session-cookie, it's recommed to use NOT SID for security reasons
-   * @param maxAge     An maxage for the cookie
+   * @param cookieName An name for the session-cookie, it's recommend to use NOT SID for security reasons
+   * @param maxAge     An max-age for the cookie
    */
   public static CookieSession cookieSession(String cookieName, long maxAge) {
     return new CookieSession(cookieName, maxAge);

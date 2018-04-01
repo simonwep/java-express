@@ -27,7 +27,7 @@ public class Cookie {
   public Cookie(String name, String value) {
     name = name.trim();
 
-    if (name.length() == 0 || name.charAt(0) == '$')
+    if (name.isEmpty() || name.charAt(0) == '$')
       throw new IllegalArgumentException("Illegal cookie name");
 
     this.name = name;

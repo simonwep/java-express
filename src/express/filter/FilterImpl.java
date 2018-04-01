@@ -31,7 +31,7 @@ public class FilterImpl implements HttpRequest {
     this.REQUEST = httpRequest;
     this.CONTEXT = normalizePath(context);
 
-    // Save some informations which don't need to be processed again
+    // Save some information's which don't need to be processed again
     this.REQ_ALL = requestMethod.equals("*");
     this.CONTEXT_ALL = context.equals("*");
 
@@ -74,12 +74,12 @@ public class FilterImpl implements HttpRequest {
     // Save parameter to request object
     req.setParams(params);
 
-    // Check parameter lsitener
+    // Check parameter listener
     params.forEach((s, s2) -> {
-      HttpRequest hreq = parameterListener.get(s);
+      HttpRequest request = parameterListener.get(s);
 
-      if (hreq != null)
-        hreq.handle(req, res);
+      if (request != null)
+        request.handle(req, res);
     });
 
     // Check if the response is closed

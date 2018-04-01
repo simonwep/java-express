@@ -7,7 +7,9 @@ import java.util.HashMap;
  * @author Simon Reinisch
  * An CookieFactory to parse an string which represents an cookie.
  */
-public class CookieFactory {
+public final class CookieFactory {
+
+  private CookieFactory() {}
 
   /**
    * Parse an cookie string.

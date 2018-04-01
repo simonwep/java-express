@@ -16,26 +16,30 @@ import java.util.ListIterator;
  */
 public class FilterLayer<T extends HttpRequest> {
 
-  private List<T> expressFilters = Collections.synchronizedList(new ArrayList<>());
+  private final List<T> FILTER;
+
+  {
+    this.FILTER = Collections.synchronizedList(new ArrayList<>());
+  }
 
   public void add(T expressFilter) {
-    this.expressFilters.add(expressFilter);
+    this.FILTER.add(expressFilter);
   }
 
   public void add(int index, T expressFilter) {
-    this.expressFilters.add(index, expressFilter);
+    this.FILTER.add(index, expressFilter);
   }
 
   public void addAll(List<T> expressFilters) {
-    this.expressFilters.addAll(expressFilters);
+    this.FILTER.addAll(expressFilters);
   }
 
   public List<T> getFilter() {
-    return expressFilters;
+    return FILTER;
   }
 
   void filter(Request req, Response res) {
-    ListIterator<T> iter = this.expressFilters.listIterator();
+    ListIterator<T> iter = this.FILTER.listIterator();
 
     while (!res.isClosed() && iter.hasNext()) {
       iter.next().handle(req, res);

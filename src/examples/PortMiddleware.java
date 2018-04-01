@@ -23,7 +23,7 @@ public class PortMiddleware implements HttpRequest, Filter {
     // Add the port to the request middleware map
     req.addMiddlewareContent(this, port);
 
-    /**
+    /*
      * After that you can use this middleware by call:
      *	app.use(new PortMiddleware());
      *

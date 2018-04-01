@@ -1,6 +1,5 @@
 package express;
 
-import com.sun.istack.internal.NotNull;
 import express.http.HttpRequest;
 
 /**
@@ -10,43 +9,43 @@ import express.http.HttpRequest;
 public interface Router {
 
   /**
-   * Add an middleware which will be called berfore each request-type listener will be fired.
+   * Add an middleware which will be called before each request-type listener will be fired.
    *
-   * @param middleware An middleware which will be fired on every equestmethod- and  path.
+   * @param middleware An middleware which will be fired on every request-method and  path.
    */
-  void use(@NotNull HttpRequest middleware);
+  void use(HttpRequest middleware);
 
   /**
-   * Add an middleware which will be called berfore each request-type listener will be fired.
+   * Add an middleware which will be called before each request-type listener will be fired.
    *
    * @param context    The context where the middleware should listen.
-   * @param middleware An middleware which will be fired if the context matches the requestpath.
+   * @param middleware An middleware which will be fired if the context matches the request-path.
    */
-  void use(@NotNull String context, @NotNull HttpRequest middleware);
+  void use(String context, HttpRequest middleware);
 
   /**
-   * Add an middleware which will be called berfore each request-type listener will be fired.
+   * Add an middleware which will be called before each request-type listener will be fired.
    *
    * @param context       The context where the middleware should listen for the request handler..
    * @param requestMethod And type of request-method eg. GET, POST etc.
-   * @param middleware    An middleware which will be fired if the context matches the requestmethod- and  path.
+   * @param middleware    An middleware which will be fired if the context matches the request-method- and  path.
    */
-  void use(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest middleware);
+  void use(String context, String requestMethod, HttpRequest middleware);
 
   /**
    * Add an listener for all request methods and contexts.
    *
    * @param request Will be fired on all requests.
    */
-  void all(@NotNull HttpRequest request);
+  void all(HttpRequest request);
 
   /**
    * Adds an handler for a specific context.
    *
    * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
+   * @param request An listener which will be fired if the context matches the request-path.
    */
-  void all(@NotNull String context, @NotNull HttpRequest request);
+  void all(String context, HttpRequest request);
 
   /**
    * Adds an handler for a specific context and method.
@@ -54,48 +53,48 @@ public interface Router {
    *
    * @param context       The context.
    * @param requestMethod The request method.
-   * @param request       An listener which will be fired if the context matches the requestpath.
+   * @param request       An listener which will be fired if the context matches the request-path.
    */
-  void all(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request);
+  void all(String context, String requestMethod, HttpRequest request);
 
   /**
    * Add an listener for GET request's.
    *
    * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
+   * @param request An listener which will be fired if the context matches the request-path.
    */
-  void get(@NotNull String context, @NotNull HttpRequest request);
+  void get(String context, HttpRequest request);
 
   /**
    * Add an listener for POST request's.
    *
    * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
+   * @param request An listener which will be fired if the context matches the request-path.
    */
-  void post(@NotNull String context, @NotNull HttpRequest request);
+  void post(String context, HttpRequest request);
 
   /**
    * Add an listener for PUT request's.
    *
    * @param context The context for the request handler..
-   * @param request An listener which will be fired if the context matches the requestpath.
+   * @param request An listener which will be fired if the context matches the request-path.
    */
-  void put(@NotNull String context, @NotNull HttpRequest request);
+  void put(String context, HttpRequest request);
 
   /**
    * Add an listener for DELETE request's.
    *
    * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
+   * @param request An listener which will be fired if the context matches the request-path.
    */
-  void delete(@NotNull String context, @NotNull HttpRequest request);
+  void delete(String context, HttpRequest request);
 
   /**
    * Add an listener for PATCH request's.
    *
    * @param context The context.
-   * @param request An listener which will be fired if the context matches the requestpath.
+   * @param request An listener which will be fired if the context matches the request-path.
    */
-  void patch(@NotNull String context, @NotNull HttpRequest request);
+  void patch(String context, HttpRequest request);
 
 }

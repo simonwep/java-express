@@ -1,6 +1,5 @@
 package express.http.response;
 
-import com.sun.istack.internal.NotNull;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import express.http.Cookie;
@@ -74,7 +73,7 @@ public class Response {
    *
    * @param location The location.
    */
-  public void redirect(@NotNull String location) {
+  public void redirect(String location) {
     HEADER.add("Location", location);
     setStatus(Status._302);
     send();
@@ -86,7 +85,7 @@ public class Response {
    * @param cookie The cookie.
    * @return This Response instance.
    */
-  public Response setCookie(@NotNull Cookie cookie) {
+  public Response setCookie(Cookie cookie) {
     if (isClosed()) return this;
     this.HEADER.add("Set-Cookie", cookie.toString());
     return this;
@@ -106,7 +105,7 @@ public class Response {
    * @param status The response status.
    * @return This Response instance.
    */
-  public Response setStatus(@NotNull Status status) {
+  public Response setStatus(Status status) {
     if (isClosed()) return this;
     this.status = status.getCode();
     return this;
@@ -117,7 +116,7 @@ public class Response {
    *
    * @param status The response status.
    */
-  public void sendStatus(@NotNull Status status) {
+  public void sendStatus(Status status) {
     if (isClosed()) return;
     this.status = status.getCode();
     send();
@@ -135,7 +134,7 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(@NotNull MediaType contentType) {
+  public void setContentType(MediaType contentType) {
     this.contentType = contentType.getMIME();
   }
 
@@ -144,7 +143,7 @@ public class Response {
    *
    * @param contentType - The contentType
    */
-  public void setContentType(@NotNull String contentType) {
+  public void setContentType(String contentType) {
     this.contentType = contentType;
   }
 
@@ -191,7 +190,7 @@ public class Response {
    *
    * @param file The file which will be send as attachment.
    */
-  public void sendAttachment(@NotNull Path file) {
+  public void sendAttachment(Path file) {
     if (isClosed() || !Files.isRegularFile(file))
       return;
 
@@ -207,7 +206,7 @@ public class Response {
    *
    * @param file The file.
    */
-  public void send(@NotNull Path file) {
+  public void send(Path file) {
     if (isClosed() || !Files.isRegularFile(file))
       return;
 

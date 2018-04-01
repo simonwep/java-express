@@ -693,12 +693,12 @@ public enum MediaType {
   _dmg("dmg", "application/x-apple-diskimage"),
   _xww("form", "application/x-www-form-urlencoded");
 
-  private String MIME;
-  private String extension;
+  private final String MIME;
+  private final String EXTENSION;
 
   MediaType(String extension, String mime) {
     this.MIME = mime;
-    this.extension = extension;
+    this.EXTENSION = extension;
   }
 
   public static MediaType getForExtension(String extension) {
@@ -2082,6 +2082,6 @@ public enum MediaType {
   }
 
   public String getExtension() {
-    return extension;
+    return EXTENSION;
   }
 }

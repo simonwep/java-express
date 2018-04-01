@@ -1,7 +1,5 @@
 package express.utils;
 
-import com.sun.istack.internal.NotNull;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +20,7 @@ public final class Utils {
   /**
    * Write all data from an InputStream in an String
    *
-   * @param is The source inputstream
+   * @param is The source InputStream
    * @return The data as string
    */
   public static String streamToString(InputStream is) {
@@ -85,7 +83,7 @@ public final class Utils {
    * @param file The file.
    * @return The extension.
    */
-  public static String getExtension(@NotNull Path file) {
+  public static String getExtension(Path file) {
     String path = file.getFileName().toString();
     int indx = path.lastIndexOf('.') + 1;
     if (indx == 0)

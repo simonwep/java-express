@@ -82,7 +82,7 @@ public class Examples {
 
     app.get("/session", (req, res) -> {
 
-      /**
+      /*
        * CookieSession named his data "Session Cookie" which is
        * an SessionCookie so we can Cast it.
        */

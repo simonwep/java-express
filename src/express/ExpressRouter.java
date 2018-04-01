@@ -1,6 +1,5 @@
 package express;
 
-import com.sun.istack.internal.NotNull;
 import express.filter.FilterImpl;
 import express.filter.FilterLayerHandler;
 import express.filter.FilterTask;
@@ -24,19 +23,19 @@ public class ExpressRouter implements Router {
     HANDLER = new FilterLayerHandler(2);
   }
 
-  public void use(@NotNull HttpRequest middleware) {
+  public void use(HttpRequest middleware) {
     addMiddleware("*", "*", middleware);
   }
 
-  public void use(@NotNull String context, @NotNull HttpRequest middleware) {
+  public void use(String context, HttpRequest middleware) {
     addMiddleware("*", context, middleware);
   }
 
-  public void use(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest middleware) {
+  public void use(String context, String requestMethod, HttpRequest middleware) {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
   }
 
-  private void addMiddleware(@NotNull String requestMethod, @NotNull String context, HttpRequest middleware) {
+  private void addMiddleware(String requestMethod, String context, HttpRequest middleware) {
     if (middleware instanceof FilterTask) {
       WORKER.add(new FilterWorker((FilterTask) middleware));
     }
@@ -44,35 +43,35 @@ public class ExpressRouter implements Router {
     HANDLER.add(0, new FilterImpl(requestMethod, context, middleware));
   }
 
-  public void all(@NotNull HttpRequest request) {
+  public void all(HttpRequest request) {
     HANDLER.add(1, new FilterImpl("*", "*", request));
   }
 
-  public void all(@NotNull String context, @NotNull HttpRequest request) {
+  public void all(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("*", context, request));
   }
 
-  public void all(@NotNull String context, @NotNull String requestMethod, @NotNull HttpRequest request) {
+  public void all(String context, String requestMethod, HttpRequest request) {
     HANDLER.add(1, new FilterImpl(requestMethod, context, request));
   }
 
-  public void get(@NotNull String context, @NotNull HttpRequest request) {
+  public void get(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("GET", context, request));
   }
 
-  public void post(@NotNull String context, @NotNull HttpRequest request) {
+  public void post(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("POST", context, request));
   }
 
-  public void put(@NotNull String context, @NotNull HttpRequest request) {
+  public void put(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("PUT", context, request));
   }
 
-  public void delete(@NotNull String context, @NotNull HttpRequest request) {
+  public void delete(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("DELETE", context, request));
   }
 
-  public void patch(@NotNull String context, @NotNull HttpRequest request) {
+  public void patch(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("PATCH", context, request));
   }
 

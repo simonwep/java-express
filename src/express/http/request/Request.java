@@ -30,7 +30,7 @@ public class Request {
 
   private final Express EXPRESS;
 
-  private final String PROTOCOL;                      // Request protocoll
+  private final String PROTOCOL;                      // Request protocol
   private final URI URI;                              // Request URI
   private final InputStream BODY;                     // Request body
   private final Headers HEADERS;                      // Request Headers
@@ -39,12 +39,12 @@ public class Request {
   private final long CONTENT_LENGTH;                  // Request content-length
   private final String METHOD;                        // Request method
   private final Authorization AUTH;                   // Authorization header parsed
-  private final InetSocketAddress INET;               // Client socket adress
+  private final InetSocketAddress INET;               // Client socket address
 
   private final HashMap<String, Object> MIDDLEWARE;   // Middleware Data
   private final HashMap<String, Cookie> COOKIES;      // Request cookies
-  private final HashMap<String, String> QUERYS;       // URL Querys
-  private final HashMap<String, String> FORM_QUERYS;  // Form Querys (application/x-www-form-urlencoded)
+  private final HashMap<String, String> QUERYS;       // URL Query's
+  private final HashMap<String, String> FORM_QUERYS;  // Form Query's (application/x-www-form-urlencoded)
 
   private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
 
@@ -95,7 +95,7 @@ public class Request {
    * Pipe the body from this request to an OutputStream.
    *
    * @param os         The OutputStream.
-   * @param bufferSize Buffersize, eg. 4096.
+   * @param bufferSize Buffer-size, eg. 4096.
    * @throws IOException If an IO-Error occurs.
    */
   public void pipe(OutputStream os, int bufferSize) throws IOException {
@@ -111,7 +111,7 @@ public class Request {
    * If the file not exists, it will be created.
    *
    * @param f          The target file
-   * @param bufferSize Buffersize, eg. 4096.
+   * @param bufferSize Buffer-size, eg. 4096.
    * @throws IOException If an IO-Error occurs.
    */
   public void pipe(Path f, int bufferSize) throws IOException {
@@ -177,18 +177,18 @@ public class Request {
   }
 
   /**
-   * Returns the InetAdress from the client.
+   * Returns the InetAddress from the client.
    *
-   * @return The InetAdress.
+   * @return The InetAddress.
    */
   public InetAddress getAddress() {
     return INET.getAddress();
   }
 
   /**
-   * Returns the IP-Adress from the client.
+   * Returns the IP-Address from the client.
    *
-   * @return The IP-Adress.
+   * @return The IP-Address.
    */
   public String getIp() {
     return INET.getAddress().getHostAddress();
@@ -233,7 +233,7 @@ public class Request {
 
   /**
    * Checks if the connection is 'fresh'
-   * It is true if the cache-control request header doesn’t have a no-cache directive, the if-modified-since request header is specified
+   * It is true if the cache-control request header doesn't have a no-cache directive, the if-modified-since request header is specified
    * and last-modified request header is equal to or earlier than the modified response header or if-none-match request header is *.
    *
    * @return True if the connection is fresh, false otherwise.
@@ -243,7 +243,7 @@ public class Request {
     if (HEADERS.containsKey("cache-control") && HEADERS.get("cache-control").get(0) != null && HEADERS.get("cache-control").get(0).equals("no-cache"))
       return true;
 
-    if (HEADERS.containsKey("if-none-match") && HEADERS.get("if-none-match").get(0) != null && HEADERS.get("if-none-match").equals("*"))
+    if (HEADERS.containsKey("if-none-match") && HEADERS.get("if-none-match").get(0) != null && HEADERS.get("if-none-match").get(0).equals("*"))
       return true;
 
     if (HEADERS.containsKey("if-modified-since") && HEADERS.containsKey("last-modified") && HEADERS.containsKey("modified")) {
@@ -278,7 +278,7 @@ public class Request {
   }
 
   /**
-   * Indicates whether the request is “stale,” and is the opposite of req.fresh
+   * Indicates whether the request is "stale" and is the opposite of req.fresh
    *
    * @return The opposite of req.fresh;
    */
@@ -362,7 +362,7 @@ public class Request {
   }
 
   /**
-   * Returns all querys from an x-www-form-urlencoded body.
+   * Returns all query's from an x-www-form-urlencoded body.
    *
    * @return An entire list of key-values
    */
@@ -387,7 +387,7 @@ public class Request {
   }
 
   /**
-   * Return all url-querys.
+   * Return all url-query's.
    *
    * @return An entire list of key-values
    */
