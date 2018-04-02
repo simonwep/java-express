@@ -4,6 +4,7 @@
 
 
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
+[![Build Status](https://travis-ci.org/Simonwep/java-express.svg?branch=master)](https://travis-ci.org/Simonwep/java-express)
 
 **This project is currently in progress, feel free to [contribute](https://github.com/Simonwep/java-express/graphs/contributors) / [report](https://github.com/Simonwep/java-express/issues) issues! :)**
 
