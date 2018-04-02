@@ -26,7 +26,7 @@ Express app = new Express(Utils.getYourIp());
 ```
 Default is localhost, so you can access, without setting the hostname, only from your local pc.
 
-Docs (v0.0.7-alpha):
+Docs (lastest version):
 * [Routing](#routing)
    * [Direct](#direct)
    * [With Router](#with-router)
