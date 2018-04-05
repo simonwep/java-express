@@ -38,13 +38,6 @@ app.get("/", (req, res) -> {
 app.listen(); // Will listen on port 80 which is set as default
 ```
 
-When you create an new Express instance you can add an additional host name for example, your local network:
-```java
-// Will bind the server to your ip-address
-Express app = new Express(Utils.getYourIp());
-```
-Default is localhost, so you can access, without setting the hostname, only from your local machine.
-
 # Docs:
 * [Routing](#routing)
    * [Direct](#direct)

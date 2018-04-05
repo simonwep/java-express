@@ -42,7 +42,6 @@ public class Express implements Router {
     HANDLER = new FilterLayerHandler(2);
 
     executor = Executors.newCachedThreadPool();
-    hostname = "localhost";
   }
 
   /**
@@ -258,11 +257,11 @@ public class Express implements Router {
   public void listen(ExpressListener onStart, int port) {
     new Thread(() -> {
       try {
+
         // Fire worker threads
         WORKER.forEach(FilterWorker::start);
 
-        InetSocketAddress socketAddress = new InetSocketAddress(this.hostname, port);
-
+        InetSocketAddress socketAddress = this.hostname == null ? new InetSocketAddress(port) : new InetSocketAddress(this.hostname, port);
         if (httpsConfigurator != null) {
 
           // Create https server
