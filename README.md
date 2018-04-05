@@ -1,15 +1,33 @@
 
+<h1 align="center">
+	<img alt="Logo" src="https://image.ibb.co/jyxDzx/java_express.png">
+</h1>
 
-![Java Express Logo](https://preview.ibb.co/c1SWkx/java_express.png)
+<h3 align="center">
+	Simple and fast HTTP-Framework with the touch of expressjs
+</h3>
 
+<p align="center">
+	<a href="https://choosealicense.com/licenses/gpl-3.0/"><img
+		alt="License GNU GPLv3"
+		src="https://img.shields.io/badge/licence-GNU%20GPLv3-blue.svg"></a>
+	<a href="https://github.com/Simonwep/java-express/releases"><img
+		alt="Java 8"
+		src="https://img.shields.io/badge/Java-8-E76E0D.svg"></a>
+	<a href="https://docs.oracle.com/javase/8/"><img
+		alt="Current version"
+		src="https://img.shields.io/badge/version-0.0.8%20beta-EB4D5C.svg"></a>
+	<a href="https://gradle.org/"><img
+		alt="Build with gradle"
+		src="https://img.shields.io/badge/build%20with-gradle-006533.svg"></a>
+	<a href="https://travis-ci.org/Simonwep/java-express"><img
+		alt="Build Status"
+		src="https://travis-ci.org/Simonwep/java-express.svg?branch=master"></a>
+</p>
 
-[![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
-[![Build Status](https://travis-ci.org/Simonwep/java-express.svg?branch=master)](https://travis-ci.org/Simonwep/java-express)
+<br>
 
-**This project is currently in progress, feel free to [contribute](https://github.com/Simonwep/java-express/graphs/contributors) / [report](https://github.com/Simonwep/java-express/issues) issues! :)**
-
-**[0.0.8-alpha](https://github.com/Simonwep/java-express/releases/tag/0.0.8) is ready, check it out!**
-
+# Quick Start
 ```java
 Express app  = new Express();
 
@@ -17,17 +35,17 @@ app.get("/", (req, res) -> {
    res.send("Hello World");
 });
 
-app.listen(); // Port 80 is default
+app.listen(); // Will listen on port 80 which is set as default
 ```
 
 When you create an new Express instance you can add an additional host name for example, your local network:
 ```java
-// Will bind the server to your ip-adress
+// Will bind the server to your ip-address
 Express app = new Express(Utils.getYourIp());
 ```
-Default is localhost, so you can access, without setting the hostname, only from your local pc.
+Default is localhost, so you can access, without setting the hostname, only from your local machine.
 
-Docs (lastest version):
+# Docs:
 * [Routing](#routing)
    * [Direct](#direct)
    * [With Router](#with-router)
@@ -435,4 +453,4 @@ app.get("my-data"); // Returns "Hello World"
 ```
 # License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://choosealicense.com/licenses/mit) file for details
+This project is licensed under the GNU GPLv3 License - see the [LICENSE](https://github.com/Simonwep/java-express/blob/master/LICENSE) file for details
