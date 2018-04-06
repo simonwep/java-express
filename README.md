@@ -27,9 +27,9 @@
 
 <br>
 
-# Quick Start
+# Getting Stardet
 ```java
-Express app  = new Express();
+Express app = new Express();
 
 app.get("/", (req, res) -> {
    res.send("Hello World");
@@ -37,6 +37,9 @@ app.get("/", (req, res) -> {
 
 app.listen(); // Will listen on port 80 which is set as default
 ```
+
+# Why?
+The aim of this project is to allow everybody to create, in a short time, an small and fast HTTP-Server. It's based on [expressjs](https://github.com/expressjs/express) which is really easy to use and also very small and especially fast. The Documentation is currently in progress an will be outsurced when i've got time for this. Therefore any contributions would be great. 
 
 # Docs:
 * [Routing](#routing)
