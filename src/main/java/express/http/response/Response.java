@@ -189,15 +189,17 @@ public class Response {
    * Normally this triggers an download event client-side.
    *
    * @param file The file which will be send as attachment.
+   * @return True if the file was successfully send, false if the file doesn't exists or the respose is already closed.
    */
-  public void sendAttachment(Path file) {
+  public boolean sendAttachment(Path file) {
     if (isClosed() || !Files.isRegularFile(file))
-      return;
+      return false;
 
     String dispo = "attachment; filename=\"" + file.getFileName() + "\"";
     setHeader("Content-Disposition", dispo);
 
     send(file);
+    return true;
   }
 
   /**
@@ -205,10 +207,11 @@ public class Response {
    * The mime type will be automatically detected.
    *
    * @param file The file.
+   * @return True if the file was successfully send, false if the file doesn't exists or the respose is already closed.
    */
-  public void send(Path file) {
+  public boolean send(Path file) {
     if (isClosed() || !Files.isRegularFile(file))
-      return;
+      return false;
 
     try {
       this.contentLength = Files.size(file);
@@ -235,6 +238,7 @@ public class Response {
     }
 
     close();
+    return true;
   }
 
   /**
@@ -242,6 +246,13 @@ public class Response {
    */
   public boolean isClosed() {
     return this.isClose;
+  }
+
+  /**
+   * @return The logger from this reponse object.
+   */
+  public Logger getLogger() {
+    return LOGGER;
   }
 
   private void sendHeaders() {

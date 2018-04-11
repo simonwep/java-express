@@ -249,7 +249,7 @@ public class Express implements Router {
 
   /**
    * Start the HTTP-Server on a specific port.
-   * This method is asynchronous so be sure to add an listener or keep it in mind!
+   * This method is asynchronous so be sure to add an listener or keep it in mind.
    *
    * @param onStart An listener which will be fired after the server is stardet.
    * @param port    The port.
