@@ -35,11 +35,12 @@ public class Response {
 
   {
     // Initialize with default data
-    contentType = MediaType._txt.getMIME();
-    isClose = false;
-    contentLength = 0;
-    status = 200;
-    LOGGER = Logger.getLogger(getClass().getSimpleName());
+    this.contentType = MediaType._txt.getMIME();
+    this.isClose = false;
+    this.contentLength = 0;
+    this.status = 200;
+    this.LOGGER = Logger.getLogger(getClass().getSimpleName());
+    this.LOGGER.setUseParentHandlers(false); // Disable default console log
   }
 
   public Response(HttpExchange exchange) {
@@ -198,8 +199,7 @@ public class Response {
     String dispo = "attachment; filename=\"" + file.getFileName() + "\"";
     setHeader("Content-Disposition", dispo);
 
-    send(file);
-    return true;
+    return send(file);
   }
 
   /**
@@ -235,6 +235,8 @@ public class Response {
 
     } catch (IOException e) {
       LOGGER.log(Level.INFO, "Failed to pipe file to outputstream.", e);
+      close();
+      return false;
     }
 
     close();
@@ -249,7 +251,10 @@ public class Response {
   }
 
   /**
-   * @return The logger from this reponse object.
+   * Returns the logger which is concered for this Response object.
+   * There is no default-handler active, if you want to log it you need to set an handler.
+   *
+   * @return The logger from this Response object.
    */
   public Logger getLogger() {
     return LOGGER;

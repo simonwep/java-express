@@ -26,6 +26,11 @@ final class FileProvider implements HttpRequest {
   private FileProviderOptions OPTIONS;
   private String ROOT;
 
+  {
+    this.LOGGER = Logger.getLogger(this.getClass().getSimpleName());
+    this.LOGGER.setUseParentHandlers(false);  // Disable default console log
+  }
+
   FileProvider(String root, FileProviderOptions options) throws IOException {
     File rootDir = new File(root);
 
@@ -34,7 +39,6 @@ final class FileProvider implements HttpRequest {
 
     this.ROOT = rootDir.getAbsolutePath();
     this.OPTIONS = options;
-    this.LOGGER = Logger.getLogger(this.getClass().getSimpleName());
   }
 
   @Override
@@ -127,8 +131,12 @@ final class FileProvider implements HttpRequest {
     return index == -1 ? name : name.substring(0, index);
   }
 
+
   /**
-   * @return The logger from this FileProvider instance.
+   * Returns the logger which is concered for this FileProvilder object.
+   * There is no default-handler active, if you want to log it you need to set an handler.
+   *
+   * @return The logger from this FileProvilder object.
    */
   public Logger getLogger() {
     return LOGGER;
