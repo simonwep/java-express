@@ -78,7 +78,7 @@ app.get("/user/register", (req, res) -> res.send("Join now!"));
 
 app.listen();
 ```
-It also directly supports directly methods like `POST` `PATCH` `DELETE` and `PUT` others need to be created manually:
+Directly it also supports methods like `POST` `PATCH` `DELETE` and `PUT`, others need to be created manually:
 ```java
 Express app = new Express();
 
@@ -133,7 +133,8 @@ app.post("/login", (req, res) -> {
 ```
 
 ## URL Parameter
-Sometime you want to create dynamic URL where some parts of the URL's are not static.
+Sometimes you want to create dynamic URL where some parts of the URL's are not static.
+With the `:` operator you can create variables in the URL which will be saved later in a HashMap.
 
 Example request: `GET`  `/posts/john/all`:
 ```java
@@ -145,7 +146,8 @@ app.get("/posts/:user/:description", (req, res) -> {
 ```
 
 ### URL Parameter Listener
-You can also add an event listener when the user called an route which contains an certain parameter:
+You can also add an event listener when the user called an route which contains an certain parameter.
+
 ```java
 app.get("/posts/:user/:id", (req, res) -> {
   // Code
@@ -306,7 +308,7 @@ req.getBody();                    // Returns the request inputstream
 ```
 
 # Middleware
-Middleware are one of the most important functions of JavaExpress, with middleware you can handle a request before it reaches any request handler. To create an own middleware you have serveral interfaces:
+Middleware are one of the most important features of JavaExpress, with middleware you can handle a request before it reaches any other request handler. To create an own middleware you have serveral interfaces:
 * `HttpRequest`  - Is **required** to handle an request.
 * `ExpressFilter` - Is **required** to put data on the request listener.
 * `ExpressFilterTask` - Can be used for middleware which needs an background thread.
@@ -317,26 +319,26 @@ For example an middleware for all [request-methods](https://developer.mozilla.or
 ```java
 // Global context, matches every request.
 app.use((req, res) -> {
-Handle data
+  // Handle data
 });
 ```
 You can also filter by [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts:
 ```java
 // Global context, you can also pass an context if you want
 app.use("/home", "POST", (req, res) -> {
-Handle request by context '/home' and method 'POST'
+  // Handle request by context '/home' and method 'POST'
 });
 ```
-In addition to that yo can use `*` which stands for every **context** or **request method**:
+In addition to that yo can use `*` which stands for every **context** or **request-method**:
 ```java
 // Global context, you can also pass an context if you want
 app.use("/home", "*", (req, res) -> {
-Handle request which matches the context '/home' and all methods.
+  // Handle request which matches the context '/home' and all methods.
 });
 ```
 ## Create own middleware
 
-Now we take a look how we can create own middlewares. Here we create an simple PortParser which parse / extract the port-number for us:
+Now we take a look how we can create own middlewares. Here we create an simple PortParser which parse / extract the port-number for us. We only used `HttpRequest` and `ExpressFilter` because we don't need any background thread.
 ```java
 public class PortMiddleware implements HttpRequest, ExpressFilter {
 
@@ -372,16 +374,30 @@ public class PortMiddleware implements HttpRequest, ExpressFilter {
    }
 }
 ```
+
 No we can, as we learned above, include it with:
 ```java
 // Global context, you can also pass an context if you want
 app.use(new PortMiddleware());
 ```
+
+And use it:
+```java
+app.get("/port-test", (req, res) -> {
+  
+  // Get the content from the PortParser which we create above
+  int port = (Integer) req.getMiddlewareContent("PortParser");
+   
+  // Return it to the client:
+  res.send("Port: " + port);
+});
+```
+
 ## Existing Middlewares
 There are already some basic middlewares included, you can access these via static methods provided from `Middleware`.
 
 #### Provide static Files
-If you want to allocate some files, like js-librarys or css files you can use the [static](https://github.com/Simonwep/java-express/blob/master/src/express/middleware/Middleware.java) middleware. But you can also provide other files like mp4 etc.
+If you want to allocate some files, like librarys, css, images etc. you can use the [static](https://github.com/Simonwep/java-express/blob/master/src/express/middleware/Middleware.java) middleware. But you can also provide other files like mp4 etc.
 Example:
 ```java
  app.use(Middleware.statics("examplepath\\myfiles"));
@@ -448,5 +464,4 @@ app.set("my-data", "Hello World");
 app.get("my-data"); // Returns "Hello World"
 ```
 # License
-
-This project is licensed under the GNU GPLv3 License - see the [LICENSE](https://github.com/Simonwep/java-express/blob/master/LICENSE) file for details
+This project is licensed under the GNU GPLv3 License - see the [LICENSE](https://github.com/Simonwep/java-express/blob/master/LICENSE) file for details.
