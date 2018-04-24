@@ -16,7 +16,7 @@
 		src="https://img.shields.io/badge/Java-8-E76E0D.svg"></a>
 	<a href="https://docs.oracle.com/javase/8/"><img
 		alt="Current version"
-		src="https://img.shields.io/badge/version-0.0.8%20beta-EB4D5C.svg"></a>
+		src="https://img.shields.io/badge/version-0.0.9%20alpha-EB4D5C.svg"></a>
 	<a href="https://gradle.org/"><img
 		alt="Build with gradle"
 		src="https://img.shields.io/badge/build%20with-gradle-006533.svg"></a>
