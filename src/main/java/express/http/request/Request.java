@@ -47,6 +47,7 @@ public class Request {
   private final HashMap<String, String> FORM_QUERYS;  // Form Query's (application/x-www-form-urlencoded)
 
   private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
+  private String context;                             // Context which matched
 
   {
     this.MIDDLEWARE = new HashMap<>();
@@ -384,6 +385,24 @@ public class Request {
    */
   public void setParams(HashMap<String, String> params) {
     this.params = params;
+  }
+
+  /**
+   * Returns the corresponding context.
+   *
+   * @return The corresponding context.
+   */
+  public String getContext() {
+    return context;
+  }
+
+  /**
+   * Set the corresponding context.
+   *
+   * @param context The corresponding context.
+   */
+  public void setContext(String context) {
+    this.context = context;
   }
 
   /**

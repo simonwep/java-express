@@ -62,6 +62,7 @@ public class FilterImpl implements HttpRequest {
     if (!(REQ_ALL || REQ.equals(requestMethod))) {
       return;
     } else if (CONTEXT_ALL) {
+      req.setContext(CONTEXT);
       REQUEST.handle(req, res);
       return;
     }
@@ -87,6 +88,7 @@ public class FilterImpl implements HttpRequest {
       return;
 
     // Handle request
+    req.setContext(CONTEXT);
     REQUEST.handle(req, res);
   }
 

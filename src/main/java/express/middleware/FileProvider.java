@@ -6,7 +6,6 @@ import express.http.response.Response;
 import express.utils.Status;
 import express.utils.Utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
  * @author Simon Reinisch
  * An middleware to provide access to static server-files.
  */
-final class FileProvider implements HttpRequest {
+public final class FileProvider implements HttpRequest {
 
   private final Logger LOGGER;
   private FileProviderOptions OPTIONS;
@@ -32,12 +31,12 @@ final class FileProvider implements HttpRequest {
   }
 
   FileProvider(String root, FileProviderOptions options) throws IOException {
-    File rootDir = new File(root);
+    Path rootDir = Paths.get(root);
 
-    if (!rootDir.exists() || !rootDir.isDirectory())
+    if (!Files.exists(rootDir) || !Files.isDirectory(rootDir))
       throw new IOException(rootDir + " does not exists or isn't an directory.");
 
-    this.ROOT = rootDir.getAbsolutePath();
+    this.ROOT = rootDir.toAbsolutePath().toString();
     this.OPTIONS = options;
   }
 
@@ -45,6 +44,13 @@ final class FileProvider implements HttpRequest {
   public void handle(Request req, Response res) {
     String path = req.getURI().getPath();
 
+    // Check context
+    String context = req.getContext();
+    if (path.indexOf(context) == 0) {
+      path = path.substring(context.length());
+    }
+
+    // If the path is empty try index.html
     if (path.length() <= 1)
       path = "index.html";
 
