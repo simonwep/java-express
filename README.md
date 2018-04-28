@@ -97,27 +97,28 @@ app.listen();
 ## With Router
 But it's better to split your code, right? With the `ExpressRouter` you can create routes and add it later to the `Express` object:
 ```java
-Express app = new Express();
+Express app = new Express() {{
 
-// Define router for index sites
-ExpressRouter indexRouter = new ExpressRouter();
-indexRouter.get("/", (req, res) -> res.send("Hello World!"));
-indexRouter.get("/index", (req, res) -> res.send("Index"));
-indexRouter.get("/about", (req, res) -> res.send("About"));
+  // Define root greeting
+  get("/", (req, res) -> res.send("Hello World!"));
 
-// Define router for user pages
-ExpressRouter userRouter = new ExpressRouter();
-userRouter.get("/", (req, res) -> res.send("User Page"));
-userRouter.get("/login", (req, res) ->  res.send("User Login"));
-userRouter.get("/register", (req, res) -> res.send("User Register"));
-userRouter.get("/:username", (req, res) -> res.send("You want to see: " + req.getParam("username")));
+  // Define home routes
+  use("/home", new ExpressRouter(){{
+    get("/about", (req, res) -> res.send("About page"));
+    get("/impressum", (req, res) -> res.send("Impressum page"));
+    get("/sponsors", (req, res) -> res.send("Sponsors page"));
+  }});
 
-// Add router and set root paths
-app.use("/", indexRouter);
-app.use("/user", userRouter);
+  // Define root routes
+  use("/", new ExpressRouter(){{
+    get("/login", (req, res) -> res.send("Login page"));
+    get("/register", (req, res) -> res.send("Register page"));
+    get("/contact", (req, res) -> res.send("Contact page"));
+  }});
 
-// Start server
-app.listen();
+  // Start server
+  listen();
+}};
 ```
 
 # URL Basics
@@ -278,6 +279,7 @@ Over the `Request` Object you have access to serveral request stuff (We assume t
 req.getAddress();                 // Returns the INET-Adress from the client
 req.getMethod();                  // Returns the request method
 req.getPath();                    // Returns the request path
+req.getContext();                 // Returns the corresponding context
 req.getQuery(String name);        // Returns the query value by name
 req.getHost();                    // Returns the request host
 req.getContentLength();           // Returns the content length
