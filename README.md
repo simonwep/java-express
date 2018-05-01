@@ -27,7 +27,7 @@
 
 <br>
 
-# Getting Stardet
+# Getting Started
 ```java
 Express app = new Express();
 
