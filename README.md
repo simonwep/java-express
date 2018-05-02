@@ -38,9 +38,6 @@ app.get("/", (req, res) -> {
 app.listen(); // Will listen on port 80 which is set as default
 ```
 
-# Why?
-The aim of this project is to allow everybody to create, in a short time, an small and fast HTTP-Server. It's based on [expressjs](https://github.com/expressjs/express) which is really easy to use and also very small and especially fast. The Documentation is currently in progress an will be outsurced when i've got time for this. Therefore any contributions would be great. 
-
 # Docs:
 * [Routing](#routing)
    * [Direct](#direct)
@@ -58,8 +55,7 @@ The aim of this project is to allow everybody to create, in a short time, an sma
    * [Create own middleware](#create-own-middleware)
 * [Using local variables](#local-variables)
 * [License](#license)
-
-Every following code can be also found in [this package](https://github.com/Simonwep/java-express/tree/master/src/examples).
+* [Examples](#examples)
 
 # Routing
 ## Direct
@@ -465,5 +461,47 @@ Example:
 app.set("my-data", "Hello World");
 app.get("my-data"); // Returns "Hello World"
 ```
+
+## Examples
+### Very simple static-website
+```java
+
+// Create instance
+new Express() {{
+  
+  // Define middleware-route for static site
+  use("/", Middleware.statics("my-website-folder/"));
+}};
+```
+
+### File download
+```java
+
+// Your file
+Path downloadFile = Paths.get("my-big-file");
+
+// Create instance
+new Express() {{
+
+  // Create get-route where the file can be downloaded
+  get("/download-me", (req, res) -> res.sendAttachment(downloadFile));
+}};
+```
+### Send cookies 
+```java
+new Express() {{
+
+  // Define route
+  get("/give-me-cookies", (req, res) -> {
+  
+    // Set an cookie (you can call setCookie how often you want)
+    res.setCookie(new Cookie("my-cookie", "Hello World!"));
+    
+    // Send text
+    res.send("Your cookie has been set!");
+  });
+}};
+```
+
 # License
 This project is licensed under the GNU GPLv3 License - see the [LICENSE](https://github.com/Simonwep/java-express/blob/master/LICENSE) file for details.
