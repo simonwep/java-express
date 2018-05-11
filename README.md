@@ -53,7 +53,7 @@ app.listen(); // Will listen on port 80 which is set as default
    * [Request Object](#request-object)
 * [Middleware](#middleware)
    * [Create own middleware](#create-own-middleware)
-* [Using local variables](#local-variables)
+* [Using global variables](#global-variables)
 * [License](#license)
 * [Examples](#examples)
 
@@ -454,8 +454,8 @@ Send an info message
    res.send("You take use of your session cookie " + count + " times.");
 });
 ```
-## Local Variables
-Java-express also supports to save and read local variables over the Express instance:
+## Global Variables
+Java-express also supports to save and read global variables over the Express instance:
 Example:
 ```java
 app.set("my-data", "Hello World");
