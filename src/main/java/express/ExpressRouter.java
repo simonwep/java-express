@@ -23,16 +23,19 @@ public class ExpressRouter implements Router {
     HANDLER = new FilterLayerHandler(2);
   }
 
-  public void use(HttpRequest middleware) {
+  public ExpressRouter use(HttpRequest middleware) {
     addMiddleware("*", "*", middleware);
+    return this;
   }
 
-  public void use(String context, HttpRequest middleware) {
+  public ExpressRouter use(String context, HttpRequest middleware) {
     addMiddleware("*", context, middleware);
+    return this;
   }
 
-  public void use(String context, String requestMethod, HttpRequest middleware) {
+  public ExpressRouter use(String context, String requestMethod, HttpRequest middleware) {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
+    return this;
   }
 
   private void addMiddleware(String requestMethod, String context, HttpRequest middleware) {
@@ -43,36 +46,44 @@ public class ExpressRouter implements Router {
     HANDLER.add(0, new FilterImpl(requestMethod, context, middleware));
   }
 
-  public void all(HttpRequest request) {
+  public ExpressRouter all(HttpRequest request) {
     HANDLER.add(1, new FilterImpl("*", "*", request));
+    return this;
   }
 
-  public void all(String context, HttpRequest request) {
+  public ExpressRouter all(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("*", context, request));
+    return this;
   }
 
-  public void all(String context, String requestMethod, HttpRequest request) {
+  public ExpressRouter all(String context, String requestMethod, HttpRequest request) {
     HANDLER.add(1, new FilterImpl(requestMethod, context, request));
+    return this;
   }
 
-  public void get(String context, HttpRequest request) {
+  public ExpressRouter get(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("GET", context, request));
+    return this;
   }
 
-  public void post(String context, HttpRequest request) {
+  public ExpressRouter post(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("POST", context, request));
+    return this;
   }
 
-  public void put(String context, HttpRequest request) {
+  public ExpressRouter put(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("PUT", context, request));
+    return this;
   }
 
-  public void delete(String context, HttpRequest request) {
+  public ExpressRouter delete(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("DELETE", context, request));
+    return this;
   }
 
-  public void patch(String context, HttpRequest request) {
+  public ExpressRouter patch(String context, HttpRequest request) {
     HANDLER.add(1, new FilterImpl("PATCH", context, request));
+    return this;
   }
 
   ArrayList<FilterWorker> getWorker() {

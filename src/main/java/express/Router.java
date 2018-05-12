@@ -11,17 +11,20 @@ public interface Router {
   /**
    * Add an middleware which will be called before each request-type listener will be fired.
    *
-   * @param middleware An middleware which will be fired on every request-method and  path.
+   * @param middleware An middleware which will be fired on every request-method and path.
+   * @return The router itself to allow method call chaining.
    */
-  void use(HttpRequest middleware);
+  Router use(HttpRequest middleware);
 
   /**
    * Add an middleware which will be called before each request-type listener will be fired.
    *
    * @param context    The context where the middleware should listen.
    * @param middleware An middleware which will be fired if the context matches the request-path.
+   *
+   * @return The router itself to allow method call chaining.
    */
-  void use(String context, HttpRequest middleware);
+  Router use(String context, HttpRequest middleware);
 
   /**
    * Add an middleware which will be called before each request-type listener will be fired.
@@ -29,23 +32,29 @@ public interface Router {
    * @param context       The context where the middleware should listen for the request handler..
    * @param requestMethod And type of request-method eg. GET, POST etc.
    * @param middleware    An middleware which will be fired if the context matches the request-method- and  path.
+   *
+   * @return The router itself to allow method call chaining.
    */
-  void use(String context, String requestMethod, HttpRequest middleware);
+  Router use(String context, String requestMethod, HttpRequest middleware);
 
   /**
    * Add an listener for all request methods and contexts.
    *
    * @param request Will be fired on all requests.
+   *
+   * @return        The router itself to allow method call chaining.
    */
-  void all(HttpRequest request);
+  Router all(HttpRequest request);
 
   /**
    * Adds an handler for a specific context.
    *
    * @param context The context.
    * @param request An listener which will be fired if the context matches the request-path.
+   *
+   * @return        The router itself to allow method call chaining.
    */
-  void all(String context, HttpRequest request);
+  Router all(String context, HttpRequest request);
 
   /**
    * Adds an handler for a specific context and method.
@@ -54,47 +63,59 @@ public interface Router {
    * @param context       The context.
    * @param requestMethod The request method.
    * @param request       An listener which will be fired if the context matches the request-path.
+   *
+   * @return              The router itself to allow method call chaining.
    */
-  void all(String context, String requestMethod, HttpRequest request);
+  Router all(String context, String requestMethod, HttpRequest request);
 
   /**
    * Add an listener for GET request's.
    *
    * @param context The context.
    * @param request An listener which will be fired if the context matches the request-path.
+   *
+   * @return        The router itself to allow method call chaining.
    */
-  void get(String context, HttpRequest request);
+  Router get(String context, HttpRequest request);
 
   /**
    * Add an listener for POST request's.
    *
    * @param context The context.
    * @param request An listener which will be fired if the context matches the request-path.
+   *
+   * @return        The router itself to allow method call chaining.
    */
-  void post(String context, HttpRequest request);
+  Router post(String context, HttpRequest request);
 
   /**
    * Add an listener for PUT request's.
    *
    * @param context The context for the request handler..
    * @param request An listener which will be fired if the context matches the request-path.
+   *
+   * @return        The router itself to allow method call chaining.
    */
-  void put(String context, HttpRequest request);
+  Router put(String context, HttpRequest request);
 
   /**
    * Add an listener for DELETE request's.
    *
    * @param context The context.
    * @param request An listener which will be fired if the context matches the request-path.
+   *
+   * @return        The router itself to allow method call chaining.
    */
-  void delete(String context, HttpRequest request);
+  Router delete(String context, HttpRequest request);
 
   /**
    * Add an listener for PATCH request's.
    *
    * @param context The context.
    * @param request An listener which will be fired if the context matches the request-path.
+   *
+   * @return        The router itself to allow method call chaining.
    */
-  void patch(String context, HttpRequest request);
+  Router patch(String context, HttpRequest request);
 
 }
