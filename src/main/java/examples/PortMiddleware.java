@@ -1,11 +1,11 @@
 package examples;
 
 import express.filter.Filter;
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 import express.http.request.Request;
 import express.http.response.Response;
 
-public class PortMiddleware implements HttpRequest, Filter {
+public class PortMiddleware implements HttpRequestHandler, Filter {
 
 
   /**

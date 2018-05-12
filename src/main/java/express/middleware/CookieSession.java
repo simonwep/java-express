@@ -3,7 +3,7 @@ package express.middleware;
 import express.filter.Filter;
 import express.filter.FilterTask;
 import express.http.Cookie;
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 import express.http.SessionCookie;
 import express.http.request.Request;
 import express.http.response.Response;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Simon Reinisch
  * An middleware to create cookie-sessions.
  */
-final class CookieSession implements HttpRequest, Filter, FilterTask {
+final class CookieSession implements HttpRequestHandler, Filter, FilterTask {
 
   private final static String MIDDLEWARE_NAME = "sessioncookie";
 

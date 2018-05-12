@@ -3,7 +3,7 @@ package express.filter;
 import com.sun.net.httpserver.HttpExchange;
 import express.Express;
 import express.ExpressException;
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 import express.http.request.Request;
 import express.http.response.Response;
 
@@ -46,7 +46,7 @@ public class FilterLayerHandler {
    * @param handler The handler, will be append to the top of the layer.
    */
   @SuppressWarnings("unchecked")
-  public void add(int level, HttpRequest handler) {
+  public void add(int level, HttpRequestHandler handler) {
 
     if (level >= LAYER.length)
       throw new IndexOutOfBoundsException("Out of bounds: " + level + " > " + LAYER.length);

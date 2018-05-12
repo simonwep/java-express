@@ -1,6 +1,6 @@
 package express.filter;
 
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 import express.http.request.Request;
 import express.http.response.Response;
 
@@ -14,7 +14,7 @@ import java.util.ListIterator;
  * <p>
  * Controller class for FilterLayer.
  */
-public class FilterLayer<T extends HttpRequest> {
+public class FilterLayer<T extends HttpRequestHandler> {
 
   private final List<T> FILTER;
 

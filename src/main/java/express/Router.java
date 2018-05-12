@@ -1,6 +1,6 @@
 package express;
 
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 
 /**
  * @author Simon Reinisch
@@ -14,7 +14,7 @@ public interface Router {
    * @param middleware An middleware which will be fired on every request-method and path.
    * @return The router itself to allow method call chaining.
    */
-  Router use(HttpRequest middleware);
+  Router use(HttpRequestHandler middleware);
 
   /**
    * Add an middleware which will be called before each request-type listener will be fired.
@@ -24,7 +24,7 @@ public interface Router {
    *
    * @return The router itself to allow method call chaining.
    */
-  Router use(String context, HttpRequest middleware);
+  Router use(String context, HttpRequestHandler middleware);
 
   /**
    * Add an middleware which will be called before each request-type listener will be fired.
@@ -35,7 +35,7 @@ public interface Router {
    *
    * @return The router itself to allow method call chaining.
    */
-  Router use(String context, String requestMethod, HttpRequest middleware);
+  Router use(String context, String requestMethod, HttpRequestHandler middleware);
 
   /**
    * Add an listener for all request methods and contexts.
@@ -44,7 +44,7 @@ public interface Router {
    *
    * @return        The router itself to allow method call chaining.
    */
-  Router all(HttpRequest request);
+  Router all(HttpRequestHandler request);
 
   /**
    * Adds an handler for a specific context.
@@ -54,7 +54,7 @@ public interface Router {
    *
    * @return        The router itself to allow method call chaining.
    */
-  Router all(String context, HttpRequest request);
+  Router all(String context, HttpRequestHandler request);
 
   /**
    * Adds an handler for a specific context and method.
@@ -66,7 +66,7 @@ public interface Router {
    *
    * @return              The router itself to allow method call chaining.
    */
-  Router all(String context, String requestMethod, HttpRequest request);
+  Router all(String context, String requestMethod, HttpRequestHandler request);
 
   /**
    * Add an listener for GET request's.
@@ -76,7 +76,7 @@ public interface Router {
    *
    * @return        The router itself to allow method call chaining.
    */
-  Router get(String context, HttpRequest request);
+  Router get(String context, HttpRequestHandler request);
 
   /**
    * Add an listener for POST request's.
@@ -86,7 +86,7 @@ public interface Router {
    *
    * @return        The router itself to allow method call chaining.
    */
-  Router post(String context, HttpRequest request);
+  Router post(String context, HttpRequestHandler request);
 
   /**
    * Add an listener for PUT request's.
@@ -96,7 +96,7 @@ public interface Router {
    *
    * @return        The router itself to allow method call chaining.
    */
-  Router put(String context, HttpRequest request);
+  Router put(String context, HttpRequestHandler request);
 
   /**
    * Add an listener for DELETE request's.
@@ -106,7 +106,7 @@ public interface Router {
    *
    * @return        The router itself to allow method call chaining.
    */
-  Router delete(String context, HttpRequest request);
+  Router delete(String context, HttpRequestHandler request);
 
   /**
    * Add an listener for PATCH request's.
@@ -116,6 +116,6 @@ public interface Router {
    *
    * @return        The router itself to allow method call chaining.
    */
-  Router patch(String context, HttpRequest request);
+  Router patch(String context, HttpRequestHandler request);
 
 }

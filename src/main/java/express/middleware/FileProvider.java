@@ -1,6 +1,6 @@
 package express.middleware;
 
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 import express.http.request.Request;
 import express.http.response.Response;
 import express.utils.Status;
@@ -19,7 +19,8 @@ import java.util.logging.Logger;
  * @author Simon Reinisch
  * An middleware to provide access to static server-files.
  */
-public final class FileProvider implements HttpRequest {
+public final class FileProvider implements HttpRequestHandler
+{
 
   private final Logger LOGGER;
   private FileProviderOptions OPTIONS;

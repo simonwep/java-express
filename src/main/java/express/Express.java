@@ -7,7 +7,7 @@ import express.filter.FilterImpl;
 import express.filter.FilterLayerHandler;
 import express.filter.FilterTask;
 import express.filter.FilterWorker;
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
  */
 public class Express implements Router {
 
-  private final ConcurrentHashMap<String, HttpRequest> parameterListener;
+  private final ConcurrentHashMap<String, HttpRequestHandler> parameterListener;
   private final ConcurrentHashMap<Object, Object> locals;
 
   private final ArrayList<FilterWorker> worker;
@@ -94,12 +94,12 @@ public class Express implements Router {
    * @param param   The parameter name.
    * @param request An request handler.
    */
-  public Express onParam(String param, HttpRequest request) {
+  public Express onParam(String param, HttpRequestHandler request) {
     parameterListener.put(param, request);
     return this;
   }
 
-  public ConcurrentHashMap<String, HttpRequest> getParameterListener() {
+  public ConcurrentHashMap<String, HttpRequestHandler> getParameterListener() {
     return parameterListener;
   }
 
@@ -170,23 +170,23 @@ public class Express implements Router {
     return this;
   }
 
-  public Express use(HttpRequest middleware) {
+  public Express use(HttpRequestHandler middleware) {
     addMiddleware("*", "*", middleware);
     return this;
   }
 
-  public Express use(String context, HttpRequest middleware) {
+  public Express use(String context, HttpRequestHandler middleware) {
     addMiddleware("*", context, middleware);
     return this;
   }
 
-  public Express use(String context, String requestMethod, HttpRequest middleware) {
+  public Express use(String context, String requestMethod, HttpRequestHandler middleware) {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
     return this;
   }
 
   // Internal service to handle middleware
-  private void addMiddleware(String requestMethod, String context, HttpRequest middleware) {
+  private void addMiddleware(String requestMethod, String context, HttpRequestHandler middleware) {
     if (middleware instanceof FilterTask) {
       worker.add(new FilterWorker((FilterTask) middleware));
     }
@@ -194,42 +194,42 @@ public class Express implements Router {
     handler.add(0, new FilterImpl(requestMethod, context, middleware));
   }
 
-  public Express all(HttpRequest request) {
+  public Express all(HttpRequestHandler request) {
     handler.add(1, new FilterImpl("*", "*", request));
     return this;
   }
 
-  public Express all(String context, HttpRequest request) {
+  public Express all(String context, HttpRequestHandler request) {
     handler.add(1, new FilterImpl("*", context, request));
     return this;
   }
 
-  public Express all(String context, String requestMethod, HttpRequest request) {
+  public Express all(String context, String requestMethod, HttpRequestHandler request) {
     handler.add(1, new FilterImpl(requestMethod, context, request));
     return this;
   }
 
-  public Express get(String context, HttpRequest request) {
+  public Express get(String context, HttpRequestHandler request) {
     handler.add(1, new FilterImpl("GET", context, request));
     return this;
   }
 
-  public Express post(String context, HttpRequest request) {
+  public Express post(String context, HttpRequestHandler request) {
     handler.add(1, new FilterImpl("POST", context, request));
     return this;
   }
 
-  public Express put(String context, HttpRequest request) {
+  public Express put(String context, HttpRequestHandler request) {
     handler.add(1, new FilterImpl("PUT", context, request));
     return this;
   }
 
-  public Express delete(String context, HttpRequest request) {
+  public Express delete(String context, HttpRequestHandler request) {
     handler.add(1, new FilterImpl("DELETE", context, request));
     return this;
   }
 
-  public Express patch(String context, HttpRequest request) {
+  public Express patch(String context, HttpRequestHandler request) {
     handler.add(1, new FilterImpl("PATCH", context, request));
     return this;
   }
