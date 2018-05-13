@@ -16,14 +16,14 @@ import java.util.function.Consumer;
  */
 public class FilterLayerHandler {
 
-  private final FilterLayer[] LAYER;
+  private final FilterLayer[] layers;
 
-  public FilterLayerHandler(int layer) {
+  public FilterLayerHandler(int layers) {
 
     // Create & initialize layers
-    this.LAYER = new FilterLayer[layer];
-    for (int i = 0; i < LAYER.length; i++)
-      LAYER[i] = new FilterLayer<>();
+    this.layers = new FilterLayer[layers];
+    for (int i = 0; i < this.layers.length; i++)
+      this.layers[i] = new FilterLayer<>();
   }
 
   public void handle(HttpExchange httpExchange, Express express) {
@@ -31,7 +31,7 @@ public class FilterLayerHandler {
     Response response = new Response(httpExchange);
 
     // First fire all middleware's, then the normal request filter
-    for (FilterLayer chain : LAYER) {
+    for (FilterLayer chain : layers) {
       chain.filter(request, response);
 
       if (response.isClosed())
@@ -40,20 +40,20 @@ public class FilterLayerHandler {
   }
 
   /**
-   * Add an new handler for an specific handler layer.
+   * Add an new handler for an specific handler layers.
    *
-   * @param level   The layer.
-   * @param handler The handler, will be append to the top of the layer.
+   * @param level   The layers.
+   * @param handler The handler, will be append to the top of the layers.
    */
   @SuppressWarnings("unchecked")
   public void add(int level, HttpRequestHandler handler) {
 
-    if (level >= LAYER.length)
-      throw new IndexOutOfBoundsException("Out of bounds: " + level + " > " + LAYER.length);
+    if (level >= layers.length)
+      throw new IndexOutOfBoundsException("Out of bounds: " + level + " > " + layers.length);
     if (level < 0)
       throw new IndexOutOfBoundsException("Cannot be under zero: " + level + " < 0");
 
-    LAYER[level].add(handler);
+    layers[level].add(handler);
   }
 
   /**
@@ -64,31 +64,31 @@ public class FilterLayerHandler {
   @SuppressWarnings("unchecked")
   public void combine(FilterLayerHandler filterLayerHandler) {
     if (filterLayerHandler != null) {
-      FilterLayer[] chains = filterLayerHandler.getLayer();
+      FilterLayer[] chains = filterLayerHandler.getLayers();
 
-      if (chains.length != LAYER.length)
-        throw new ExpressException("Cannot add an filterLayerHandler with different layer sizes: " + chains.length + " != " + LAYER.length);
+      if (chains.length != layers.length)
+        throw new ExpressException("Cannot add an filterLayerHandler with different layers sizes: " + chains.length + " != " + layers.length);
 
       for (int i = 0; i < chains.length; i++)
-        LAYER[i].addAll(chains[i].getFilter());
+        layers[i].addAll(chains[i].getFilter());
     }
   }
 
   /**
    * Iterate over the different FilterLayer
    *
-   * @param layerConsumer An consumer for the layer
+   * @param layerConsumer An consumer for the layers
    */
   public void forEach(Consumer<FilterLayer> layerConsumer) {
     if (layerConsumer == null)
       return;
 
-    for (FilterLayer layer : LAYER)
+    for (FilterLayer layer : layers)
       layerConsumer.accept(layer);
   }
 
-  private FilterLayer[] getLayer() {
-    return LAYER;
+  private FilterLayer[] getLayers() {
+    return layers;
   }
 
 }

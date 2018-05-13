@@ -17,37 +17,37 @@ public class Authorization {
   
   public static final String HEADER_NAME = "Authorization";
   
-  private final String TYPE;
-  private final String DATA;
+  private final String type;
+  private final String data;
   
-  Authorization(String authHeader) {
+  public Authorization(String authHeader) {
     String[] parts = Stream.of(authHeader.split(" "))
         .filter(s -> !s.isEmpty())
         .toArray(String[]::new);
     
-    this.TYPE = parts[0];
-    this.DATA = parts[1];
+    this.type = parts[0];
+    this.data = parts[1];
   }
   
   /**
    * @return The Authorization type
    */
   public String getType() {
-    return TYPE;
+    return type;
   }
   
   /**
    * @return The Authorization data
    */
   public String getData() {
-    return DATA;
+    return data;
   }
   
   /**
    * @return The Authorization data base64 decoded
    */
   public String getDataBase64Decoded() {
-    return new String(Base64.getDecoder().decode(DATA));
+    return new String(Base64.getDecoder().decode(data));
   }
   
   /**

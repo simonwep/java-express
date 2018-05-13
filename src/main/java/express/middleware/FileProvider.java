@@ -21,14 +21,13 @@ import java.util.logging.Logger;
  */
 public final class FileProvider implements HttpRequestHandler
 {
-
-  private final Logger LOGGER;
-  private FileProviderOptions OPTIONS;
-  private String ROOT;
+  private final Logger logger;
+  private FileProviderOptions options;
+  private String root;
 
   {
-    this.LOGGER = Logger.getLogger(this.getClass().getSimpleName());
-    this.LOGGER.setUseParentHandlers(false);  // Disable default console log
+    this.logger = Logger.getLogger(this.getClass().getSimpleName());
+    this.logger.setUseParentHandlers(false);  // Disable default console log
   }
 
   FileProvider(String root, FileProviderOptions options) throws IOException {
@@ -37,8 +36,8 @@ public final class FileProvider implements HttpRequestHandler
     if (!Files.exists(rootDir) || !Files.isDirectory(rootDir))
       throw new IOException(rootDir + " does not exists or isn't an directory.");
 
-    this.ROOT = rootDir.toAbsolutePath().toString();
-    this.OPTIONS = options;
+    this.root = rootDir.toAbsolutePath().toString();
+    this.options = options;
   }
 
   @Override
@@ -55,13 +54,13 @@ public final class FileProvider implements HttpRequestHandler
     if (path.length() <= 1)
       path = "index.html";
 
-    Path reqFile = Paths.get(ROOT + "\\" + path);
+    Path reqFile = Paths.get(root + "\\" + path);
 
     /*
      * If the file wasn't found, it will search in the target-directory for
      * the file by the raw-name without extension.
      */
-    if (OPTIONS.isFallBackSearching() && !Files.exists(reqFile) && !Files.isDirectory(reqFile)) {
+    if (options.isFallBackSearching() && !Files.exists(reqFile) && !Files.isDirectory(reqFile)) {
       String name = reqFile.getFileName().toString();
 
       try {
@@ -76,14 +75,14 @@ public final class FileProvider implements HttpRequestHandler
             reqFile = founded.get();
         }
       } catch (IOException e) {
-        this.LOGGER.log(Level.WARNING, "Cannot walk file tree.", e);
+        this.logger.log(Level.WARNING, "Cannot walk file tree.", e);
       }
     }
 
     if (Files.exists(reqFile) && Files.isRegularFile(reqFile)) {
 
       if (reqFile.getFileName().toString().charAt(0) == '.') {
-        switch (OPTIONS.getDotFiles()) {
+        switch (options.getDotFiles()) {
           case IGNORE:
             res.setStatus(Status._404);
             return;
@@ -93,13 +92,13 @@ public final class FileProvider implements HttpRequestHandler
         }
       }
 
-      if (OPTIONS.getExtensions() != null) {
+      if (options.getExtensions() != null) {
         String reqEx = Utils.getExtension(reqFile);
 
         if (reqEx == null)
           return;
 
-        for (String ex : OPTIONS.getExtensions()) {
+        for (String ex : options.getExtensions()) {
           if (reqEx.equals(ex)) {
             finish(reqFile, req, res);
             break;
@@ -114,21 +113,21 @@ public final class FileProvider implements HttpRequestHandler
   }
 
   private void finish(Path file, Request req, Response res) {
-    if (OPTIONS.getHandler() != null)
-      OPTIONS.getHandler().handle(req, res);
+    if (options.getHandler() != null)
+      options.getHandler().handle(req, res);
 
     try {
 
       // Apply header
-      if (OPTIONS.isLastModified())
+      if (options.isLastModified())
         res.setHeader("Last-Modified", Utils.getGMTDate(new Date(Files.getLastModifiedTime(file).toMillis())));
     } catch (IOException e) {
       res.sendStatus(Status._500);
-      this.LOGGER.log(Level.WARNING, "Cannot read LastModifiedTime from file " + file.toString(), e);
+      this.logger.log(Level.WARNING, "Cannot read LastModifiedTime from file " + file.toString(), e);
       return;
     }
 
-    res.setHeader("Cache-Control", String.valueOf(OPTIONS.getMaxAge()));
+    res.setHeader("Cache-Control", String.valueOf(options.getMaxAge()));
     res.send(file);
   }
 
@@ -146,6 +145,6 @@ public final class FileProvider implements HttpRequestHandler
    * @return The logger from this FileProvilder object.
    */
   public Logger getLogger() {
-    return LOGGER;
+    return logger;
   }
 }

@@ -48,7 +48,7 @@ public final class Utils {
    */
   public static MediaType getContentType(Path file) {
     String ex = getExtension(file);
-    MediaType contentType = MediaType.getForExtension(ex);
+    MediaType contentType = MediaType.getByExtension(ex);
 
     if (contentType == null)
       return MediaType._bin;

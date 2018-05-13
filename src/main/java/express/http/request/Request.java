@@ -30,68 +30,68 @@ import java.util.Optional;
  */
 public class Request {
 
-  private final Express EXPRESS;
+  private final Express express;
 
-  private final String PROTOCOL;                      // Request protocol
-  private final URI URI;                              // Request URI
-  private final InputStream BODY;                     // Request body
-  private final Headers HEADERS;                      // Request Headers
-  private final boolean SECURE;
-  private final String CONTENT_TYPE;                  // Request content-type
-  private final long CONTENT_LENGTH;                  // Request content-length
-  private final String METHOD;                        // Request method
-  private final Authorization AUTH;                   // Authorization header parsed
-  private final InetSocketAddress INET;               // Client socket address
+  private final String protocol;                      // Request protocol
+  private final URI uri;                              // Request uri
+  private final InputStream body;                     // Request body
+  private final Headers headers;                      // Request Headers
+  private final boolean secure;
+  private final String contentType;                   // Request content-type
+  private final long contentLength;                   // Request content-length
+  private final String method;                        // Request method
+  private final List<Authorization> auth;             // Authorization header parsed
+  private final InetSocketAddress inet;               // Client socket address
 
-  private final HashMap<String, Object> MIDDLEWARE;   // Middleware Data
-  private final HashMap<String, Cookie> COOKIES;      // Request cookies
-  private final HashMap<String, String> QUERIES;      // URL Query parameters
-  private final HashMap<String, String> FORM_QUERIES; // Form query parameters (application/x-www-form-urlencoded)
+  private final HashMap<String, Object> middleware;   // Middleware Data
+  private final HashMap<String, Cookie> cookies;      // Request cookies
+  private final HashMap<String, String> queries;      // URL Query parameters
+  private final HashMap<String, String> formQueries; // Form query parameters (application/x-www-form-urlencoded)
 
   private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
   private String context;                             // Context which matched
 
   {
-    this.MIDDLEWARE = new HashMap<>();
+    this.middleware = new HashMap<>();
     this.params = new HashMap<>();
   }
 
   public Request(HttpExchange exchange, Express express) {
-    this.EXPRESS = express;
-    this.METHOD = exchange.getRequestMethod();
-    this.URI = exchange.getRequestURI();
-    this.HEADERS = exchange.getRequestHeaders();
-    this.BODY = exchange.getRequestBody();
-    this.INET = exchange.getRemoteAddress();
+    this.express = express;
+    this.method = exchange.getRequestMethod();
+    this.uri = exchange.getRequestURI();
+    this.headers = exchange.getRequestHeaders();
+    this.body = exchange.getRequestBody();
+    this.inet = exchange.getRemoteAddress();
 
-    this.PROTOCOL = exchange.getProtocol();
-    this.SECURE = exchange instanceof HttpsExchange; // Can be suckered?
+    this.protocol = exchange.getProtocol();
+    this.secure = exchange instanceof HttpsExchange; // Can be suckered?
 
     // Parse content length
-    String contentLength = HEADERS.get("Content-Length") != null ? HEADERS.get("Content-Length").get(0) : null;
-    this.CONTENT_LENGTH = contentLength != null ? Long.parseLong(contentLength) : -1;
+    String contentLength = headers.get("Content-Length") != null ? headers.get("Content-Length").get(0) : null;
+    this.contentLength = contentLength != null ? Long.parseLong(contentLength) : -1;
 
     // Check if the request contains an body-content
-    this.CONTENT_TYPE = HEADERS.get("Content-Type") == null ? "" : HEADERS.get("Content-Type").get(0);
+    this.contentType = headers.get("Content-Type") == null ? "" : headers.get("Content-Type").get(0);
 
     // Check if the request has an Authorization header
-    this.AUTH = HEADERS.get("Authorization") == null ? null : new Authorization(HEADERS.get("Authorization").get(0));
+    this.auth = Authorization.get(this);
 
     // Check if the request contains x-www-form-urlencoded form data
-    this.FORM_QUERIES = CONTENT_TYPE.startsWith("application/x-www-form-urlencoded")
-        ? RequestUtils.parseRawQuery(Utils.streamToString(BODY))
+    this.formQueries = contentType.startsWith("application/x-www-form-urlencoded")
+        ? RequestUtils.parseRawQuery(Utils.streamToString(body))
         : new HashMap<>();
 
     // Parse query and cookies, both returns not null if there is nothing
-    this.QUERIES = RequestUtils.parseRawQuery(exchange.getRequestURI().getRawQuery());
-    this.COOKIES = RequestUtils.parseCookies(HEADERS);
+    this.queries = RequestUtils.parseRawQuery(exchange.getRequestURI().getRawQuery());
+    this.cookies = RequestUtils.parseCookies(headers);
   }
 
   /**
    * @return The request body as InputStream
    */
   public InputStream getBody() {
-    return BODY;
+    return body;
   }
 
   /**
@@ -104,7 +104,7 @@ public class Request {
   public void pipe(OutputStream os, int bufferSize) throws IOException {
     byte[] buffer = new byte[bufferSize];
     int n;
-    while ((n = BODY.read(buffer)) != -1)
+    while ((n = body.read(buffer)) != -1)
       os.write(buffer, 0, n);
     os.close();
   }
@@ -132,7 +132,7 @@ public class Request {
    * @return The cookie, null if there is no cookie with this name.
    */
   public Cookie getCookie(String name) {
-    return COOKIES.get(name);
+    return cookies.get(name);
   }
 
   /**
@@ -141,7 +141,7 @@ public class Request {
    * @return All cookies.
    */
   public HashMap<String, Cookie> getCookies() {
-    return COOKIES;
+    return cookies;
   }
 
   /**
@@ -151,7 +151,7 @@ public class Request {
    * @param middlewareData The data from the middleware
    */
   public void addMiddlewareContent(Filter middleware, Object middlewareData) {
-    MIDDLEWARE.put(middleware.getName(), middlewareData);
+    this.middleware.put(middleware.getName(), middlewareData);
   }
 
   /**
@@ -162,21 +162,21 @@ public class Request {
    * @return The middleware object
    */
   public Object getMiddlewareContent(String name) {
-    return MIDDLEWARE.get(name);
+    return middleware.get(name);
   }
 
   /**
    * @return The request user-agent.
    */
   public String getUserAgent() {
-    return HEADERS.get("User-agent").get(0);
+    return headers.get("User-agent").get(0);
   }
 
   /**
    * @return The request host.
    */
   public String getHost() {
-    return HEADERS.get("Host").get(0);
+    return headers.get("Host").get(0);
   }
 
   /**
@@ -185,7 +185,7 @@ public class Request {
    * @return The InetAddress.
    */
   public InetAddress getAddress() {
-    return INET.getAddress();
+    return inet.getAddress();
   }
 
   /**
@@ -194,14 +194,14 @@ public class Request {
    * @return The IP-Address.
    */
   public String getIp() {
-    return INET.getAddress().getHostAddress();
+    return inet.getAddress().getHostAddress();
   }
 
   /**
    * @return The request content-type.
    */
   public String getContentType() {
-    return CONTENT_TYPE;
+    return contentType;
   }
 
   /**
@@ -210,28 +210,28 @@ public class Request {
    * @return The content-length, -1 if the header was invalid.
    */
   public long getContentLength() {
-    return CONTENT_LENGTH;
+    return contentLength;
   }
 
   /**
    * @return The request path.
    */
   public String getPath() {
-    return this.URI.getPath();
+    return this.uri.getPath();
   }
 
   /**
-   * @return The original request URI.
+   * @return The original request uri.
    */
   public URI getURI() {
-    return this.URI;
+    return this.uri;
   }
 
   /**
    * @return The request-method.
    */
   public String getMethod() {
-    return this.METHOD;
+    return this.method;
   }
 
   /**
@@ -243,15 +243,15 @@ public class Request {
    */
   public boolean isFresh() {
 
-    if (HEADERS.containsKey("cache-control") && HEADERS.get("cache-control").get(0) != null && HEADERS.get("cache-control").get(0).equals("no-cache"))
+    if (headers.containsKey("cache-control") && headers.get("cache-control").get(0) != null && headers.get("cache-control").get(0).equals("no-cache"))
       return true;
 
-    if (HEADERS.containsKey("if-none-match") && HEADERS.get("if-none-match").get(0) != null && HEADERS.get("if-none-match").get(0).equals("*"))
+    if (headers.containsKey("if-none-match") && headers.get("if-none-match").get(0) != null && headers.get("if-none-match").get(0).equals("*"))
       return true;
 
-    if (HEADERS.containsKey("if-modified-since") && HEADERS.containsKey("last-modified") && HEADERS.containsKey("modified")) {
-      List<String> lmlist = HEADERS.get("last-modified");
-      List<String> mlist = HEADERS.get("modified");
+    if (headers.containsKey("if-modified-since") && headers.containsKey("last-modified") && headers.containsKey("modified")) {
+      List<String> lmlist = headers.get("last-modified");
+      List<String> mlist = headers.get("modified");
 
       // Check lists
       if (lmlist.isEmpty() || mlist.isEmpty())
@@ -295,7 +295,7 @@ public class Request {
    * @return True when the connection is over HTTPS, false otherwise.
    */
   public boolean isSecure() {
-    return SECURE;
+    return secure;
   }
 
   /**
@@ -305,7 +305,7 @@ public class Request {
    * @return True if the 'X-Requested-With' header field is 'XMLHttpRequest'.
    */
   public boolean isXHR() {
-    return HEADERS.containsKey("X-Requested-With") && !HEADERS.get("X-Requested-With").isEmpty() && HEADERS.get("X-Requested-With").get(0).equals("XMLHttpRequest");
+    return headers.containsKey("X-Requested-With") && !headers.get("X-Requested-With").isEmpty() && headers.get("X-Requested-With").get(0).equals("XMLHttpRequest");
   }
 
   /**
@@ -314,24 +314,21 @@ public class Request {
    * @return The connection protocol.
    */
   public String getProtocol() {
-    return PROTOCOL;
+    return protocol;
   }
-
+  
   /**
-   * If there is an Authorization header, it was parsed and saved
-   * in a Authorization Object.
-   *
-   * @return The Authorization object or null if there was no Authorization header present.
+   * @return A list of authorization options in this request
    */
-  public Authorization getAuthorization() {
-    return AUTH;
+  public List<Authorization> getAuthorization() {
+    return Collections.unmodifiableList(auth);
   }
-
+  
   /**
    * @return True if there was an Authorization header and the Authorization object was successfully created.
    */
   public boolean hasAuthorization() {
-    return AUTH != null;
+    return !auth.isEmpty();
   }
 
   /**
@@ -341,7 +338,7 @@ public class Request {
    * @return The value, null if there is none.
    */
   public String getFormQuery(String name) {
-    return FORM_QUERIES.get(name);
+    return formQueries.get(name);
   }
 
   /**
@@ -361,7 +358,7 @@ public class Request {
    * @return The value, null if there is none.
    */
   public String getQuery(String name) {
-    return QUERIES.get(name);
+    return queries.get(name);
   }
 
   /**
@@ -370,7 +367,7 @@ public class Request {
    * @return An entire list of key-values
    */
   public HashMap<String, String> getFormQuerys() {
-    return FORM_QUERIES;
+    return formQueries;
   }
 
   /**
@@ -413,7 +410,7 @@ public class Request {
    * @return An entire list of key-values
    */
   public HashMap<String, String> getQuerys() {
-    return QUERIES;
+    return queries;
   }
 
   /**
@@ -423,14 +420,14 @@ public class Request {
    * @return A list with values.
    */
   public List<String> getHeader(String header) {
-    return Optional.ofNullable(HEADERS.get(header)).orElse(Collections.emptyList());
+    return Optional.ofNullable(headers.get(header)).orElse(Collections.emptyList());
   }
 
   /**
    * @return The corresponding express object.
    */
   public Express getApp() {
-    return EXPRESS;
+    return express;
   }
 
 }
