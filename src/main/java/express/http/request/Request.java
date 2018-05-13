@@ -18,13 +18,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Simon Reinisch
  * <p>
- * Class for http-request content.
+ * Class encapsulating HTTP request data
  */
 public class Request {
 
@@ -43,8 +45,8 @@ public class Request {
 
   private final HashMap<String, Object> MIDDLEWARE;   // Middleware Data
   private final HashMap<String, Cookie> COOKIES;      // Request cookies
-  private final HashMap<String, String> QUERYS;       // URL Query's
-  private final HashMap<String, String> FORM_QUERYS;  // Form Query's (application/x-www-form-urlencoded)
+  private final HashMap<String, String> QUERIES;      // URL Query parameters
+  private final HashMap<String, String> FORM_QUERIES; // Form query parameters (application/x-www-form-urlencoded)
 
   private HashMap<String, String> params;             // URL Params, would be added in ExpressFilterImpl
   private String context;                             // Context which matched
@@ -76,12 +78,12 @@ public class Request {
     this.AUTH = HEADERS.get("Authorization") == null ? null : new Authorization(HEADERS.get("Authorization").get(0));
 
     // Check if the request contains x-www-form-urlencoded form data
-    this.FORM_QUERYS = CONTENT_TYPE.startsWith("application/x-www-form-urlencoded")
+    this.FORM_QUERIES = CONTENT_TYPE.startsWith("application/x-www-form-urlencoded")
         ? RequestUtils.parseRawQuery(Utils.streamToString(BODY))
         : new HashMap<>();
 
     // Parse query and cookies, both returns not null if there is nothing
-    this.QUERYS = RequestUtils.parseRawQuery(exchange.getRequestURI().getRawQuery());
+    this.QUERIES = RequestUtils.parseRawQuery(exchange.getRequestURI().getRawQuery());
     this.COOKIES = RequestUtils.parseCookies(HEADERS);
   }
 
@@ -339,7 +341,7 @@ public class Request {
    * @return The value, null if there is none.
    */
   public String getFormQuery(String name) {
-    return FORM_QUERYS.get(name);
+    return FORM_QUERIES.get(name);
   }
 
   /**
@@ -359,7 +361,7 @@ public class Request {
    * @return The value, null if there is none.
    */
   public String getQuery(String name) {
-    return QUERYS.get(name);
+    return QUERIES.get(name);
   }
 
   /**
@@ -368,7 +370,7 @@ public class Request {
    * @return An entire list of key-values
    */
   public HashMap<String, String> getFormQuerys() {
-    return FORM_QUERYS;
+    return FORM_QUERIES;
   }
 
   /**
@@ -411,17 +413,17 @@ public class Request {
    * @return An entire list of key-values
    */
   public HashMap<String, String> getQuerys() {
-    return QUERYS;
+    return QUERIES;
   }
 
   /**
    * Returns an header value.
    *
    * @param header The header name
-   * @return An list with values.
+   * @return A list with values.
    */
   public List<String> getHeader(String header) {
-    return HEADERS.get(header);
+    return Optional.ofNullable(HEADERS.get(header)).orElse(Collections.emptyList());
   }
 
   /**
