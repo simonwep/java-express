@@ -7,7 +7,8 @@ import express.http.response.Response;
  * @author Simon Reinisch
  * Interface to handle an http-request
  */
-public interface HttpRequest {
+@FunctionalInterface
+public interface HttpRequestHandler {
 
   /**
    * Handle an http-request

@@ -3,7 +3,7 @@ package express.middleware;
 import express.filter.Filter;
 import express.filter.FilterTask;
 import express.http.Cookie;
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 import express.http.SessionCookie;
 import express.http.request.Request;
 import express.http.response.Response;
@@ -15,38 +15,38 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Simon Reinisch
  * An middleware to create cookie-sessions.
  */
-final class CookieSession implements HttpRequest, Filter, FilterTask {
+final class CookieSession implements HttpRequestHandler, Filter, FilterTask {
 
   private final static String MIDDLEWARE_NAME = "sessioncookie";
 
-  private final ConcurrentHashMap<String, SessionCookie> COOKIES = new ConcurrentHashMap<>();
-  private final String COOKIE_NAME;
-  private final long MAX_AGE;
+  private final ConcurrentHashMap<String, SessionCookie> cookies = new ConcurrentHashMap<>();
+  private final String cookieName;
+  private final long maxAge;
 
   CookieSession(String cookieName, long maxAge) {
-    this.COOKIE_NAME = cookieName;
-    this.MAX_AGE = maxAge;
+    this.cookieName = cookieName;
+    this.maxAge = maxAge;
   }
 
   @SuppressWarnings("SuspiciousMethodCalls")
   @Override
   public void handle(Request req, Response res) {
-    Cookie cookie = req.getCookie(COOKIE_NAME);
+    Cookie cookie = req.getCookie(cookieName);
 
-    if (cookie != null && COOKIES.containsKey(cookie.getValue())) {
-      req.addMiddlewareContent(this, COOKIES.get(cookie.getValue()));
+    if (cookie != null && cookies.containsKey(cookie.getValue())) {
+      req.addMiddlewareContent(this, cookies.get(cookie.getValue()));
     } else {
       String token;
 
       do {
         token = Utils.randomToken(32, 16);
-      } while (COOKIES.contains(token));
+      } while (cookies.contains(token));
 
-      cookie = new Cookie(COOKIE_NAME, token).setMaxAge(MAX_AGE);
+      cookie = new Cookie(cookieName, token).setMaxAge(maxAge);
       res.setCookie(cookie);
 
-      SessionCookie sessionCookie = new SessionCookie(MAX_AGE);
-      COOKIES.put(token, sessionCookie);
+      SessionCookie sessionCookie = new SessionCookie(maxAge);
+      cookies.put(token, sessionCookie);
 
       req.addMiddlewareContent(this, sessionCookie);
     }
@@ -63,7 +63,7 @@ final class CookieSession implements HttpRequest, Filter, FilterTask {
 
   @Override
   public void onStop() {
-    COOKIES.clear();
+    cookies.clear();
   }
 
   @Override
@@ -75,9 +75,9 @@ final class CookieSession implements HttpRequest, Filter, FilterTask {
   public void onUpdate() {
     long current = System.currentTimeMillis();
 
-    COOKIES.forEach((cookieHash, cookie) -> {
+    cookies.forEach((cookieHash, cookie) -> {
       if (current > cookie.getCreated() + cookie.getMaxAge())
-        COOKIES.remove(cookieHash);
+        cookies.remove(cookieHash);
     });
   }
 

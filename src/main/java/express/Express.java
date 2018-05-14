@@ -7,7 +7,7 @@ import express.filter.FilterImpl;
 import express.filter.FilterLayerHandler;
 import express.filter.FilterTask;
 import express.filter.FilterWorker;
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,11 +22,11 @@ import java.util.concurrent.Executors;
  */
 public class Express implements Router {
 
-  private final ConcurrentHashMap<String, HttpRequest> PARAMETER_LISTENER;
-  private final ConcurrentHashMap<Object, Object> LOCALS;
+  private final ConcurrentHashMap<String, HttpRequestHandler> parameterListener;
+  private final ConcurrentHashMap<Object, Object> locals;
 
-  private final ArrayList<FilterWorker> WORKER;
-  private final FilterLayerHandler HANDLER;
+  private final ArrayList<FilterWorker> worker;
+  private final FilterLayerHandler handler;
 
   private Executor executor;
   private String hostname;
@@ -35,11 +35,11 @@ public class Express implements Router {
 
   {
     // Initialize
-    PARAMETER_LISTENER = new ConcurrentHashMap<>();
-    LOCALS = new ConcurrentHashMap<>();
+    parameterListener = new ConcurrentHashMap<>();
+    locals = new ConcurrentHashMap<>();
 
-    WORKER = new ArrayList<>();
-    HANDLER = new FilterLayerHandler(2);
+    worker = new ArrayList<>();
+    handler = new FilterLayerHandler(2);
 
     executor = Executors.newCachedThreadPool();
   }
@@ -89,17 +89,18 @@ public class Express implements Router {
   }
 
   /**
-   * Add an listener which will be called when an url with this parameter is called.
+   * Add a listener which will be called when an url with this parameter is called.
    *
    * @param param   The parameter name.
    * @param request An request handler.
    */
-  public void onParam(String param, HttpRequest request) {
-    PARAMETER_LISTENER.put(param, request);
+  public Express onParam(String param, HttpRequestHandler request) {
+    parameterListener.put(param, request);
+    return this;
   }
 
-  public ConcurrentHashMap<String, HttpRequest> getParameterListener() {
-    return PARAMETER_LISTENER;
+  public ConcurrentHashMap<String, HttpRequestHandler> getParameterListener() {
+    return parameterListener;
   }
 
   /**
@@ -111,7 +112,7 @@ public class Express implements Router {
    * @return The last value which was attached by this key, can be null.
    */
   public Object set(String key, String val) {
-    return LOCALS.put(key, val);
+    return locals.put(key, val);
   }
 
   /**
@@ -121,7 +122,7 @@ public class Express implements Router {
    * @return The value.
    */
   public Object get(String key) {
-    return LOCALS.get(key);
+    return locals.get(key);
   }
 
   /**
@@ -144,9 +145,10 @@ public class Express implements Router {
    *
    * @param router The router.
    */
-  public void use(ExpressRouter router) {
-    this.HANDLER.combine(router.getHandler());
-    this.WORKER.addAll(router.getWorker());
+  public Express use(ExpressRouter router) {
+    this.handler.combine(router.getHandler());
+    this.worker.addAll(router.getWorker());
+    return this;
   }
 
   /**
@@ -156,67 +158,80 @@ public class Express implements Router {
    * @param router The router.
    */
   @SuppressWarnings("unchecked")
-  public void use(String root, ExpressRouter router) {
+  public Express use(String root, ExpressRouter router) {
 
     router.getHandler().forEach(fl -> fl.getFilter().forEach(layer -> {
       ((FilterImpl) layer).setRoot(root);
     }));
 
-    this.HANDLER.combine(router.getHandler());
-    this.WORKER.addAll(router.getWorker());
+    this.handler.combine(router.getHandler());
+    this.worker.addAll(router.getWorker());
+  
+    return this;
   }
 
-  public void use(HttpRequest middleware) {
+  public Express use(HttpRequestHandler middleware) {
     addMiddleware("*", "*", middleware);
+    return this;
   }
 
-  public void use(String context, HttpRequest middleware) {
+  public Express use(String context, HttpRequestHandler middleware) {
     addMiddleware("*", context, middleware);
+    return this;
   }
 
-  public void use(String context, String requestMethod, HttpRequest middleware) {
+  public Express use(String context, String requestMethod, HttpRequestHandler middleware) {
     addMiddleware(requestMethod.toUpperCase(), context, middleware);
+    return this;
   }
 
   // Internal service to handle middleware
-  private void addMiddleware(String requestMethod, String context, HttpRequest middleware) {
+  private void addMiddleware(String requestMethod, String context, HttpRequestHandler middleware) {
     if (middleware instanceof FilterTask) {
-      WORKER.add(new FilterWorker((FilterTask) middleware));
+      worker.add(new FilterWorker((FilterTask) middleware));
     }
 
-    HANDLER.add(0, new FilterImpl(requestMethod, context, middleware));
+    handler.add(0, new FilterImpl(requestMethod, context, middleware));
   }
 
-  public void all(HttpRequest request) {
-    HANDLER.add(1, new FilterImpl("*", "*", request));
+  public Express all(HttpRequestHandler request) {
+    handler.add(1, new FilterImpl("*", "*", request));
+    return this;
   }
 
-  public void all(String context, HttpRequest request) {
-    HANDLER.add(1, new FilterImpl("*", context, request));
+  public Express all(String context, HttpRequestHandler request) {
+    handler.add(1, new FilterImpl("*", context, request));
+    return this;
   }
 
-  public void all(String context, String requestMethod, HttpRequest request) {
-    HANDLER.add(1, new FilterImpl(requestMethod, context, request));
+  public Express all(String context, String requestMethod, HttpRequestHandler request) {
+    handler.add(1, new FilterImpl(requestMethod, context, request));
+    return this;
   }
 
-  public void get(String context, HttpRequest request) {
-    HANDLER.add(1, new FilterImpl("GET", context, request));
+  public Express get(String context, HttpRequestHandler request) {
+    handler.add(1, new FilterImpl("GET", context, request));
+    return this;
   }
 
-  public void post(String context, HttpRequest request) {
-    HANDLER.add(1, new FilterImpl("POST", context, request));
+  public Express post(String context, HttpRequestHandler request) {
+    handler.add(1, new FilterImpl("POST", context, request));
+    return this;
   }
 
-  public void put(String context, HttpRequest request) {
-    HANDLER.add(1, new FilterImpl("PUT", context, request));
+  public Express put(String context, HttpRequestHandler request) {
+    handler.add(1, new FilterImpl("PUT", context, request));
+    return this;
   }
 
-  public void delete(String context, HttpRequest request) {
-    HANDLER.add(1, new FilterImpl("DELETE", context, request));
+  public Express delete(String context, HttpRequestHandler request) {
+    handler.add(1, new FilterImpl("DELETE", context, request));
+    return this;
   }
 
-  public void patch(String context, HttpRequest request) {
-    HANDLER.add(1, new FilterImpl("PATCH", context, request));
+  public Express patch(String context, HttpRequestHandler request) {
+    handler.add(1, new FilterImpl("PATCH", context, request));
+    return this;
   }
 
   /**
@@ -259,7 +274,7 @@ public class Express implements Router {
       try {
 
         // Fire worker threads
-        WORKER.forEach(FilterWorker::start);
+        worker.forEach(FilterWorker::start);
 
         InetSocketAddress socketAddress = this.hostname == null ? new InetSocketAddress(port) : new InetSocketAddress(this.hostname, port);
         if (httpsConfigurator != null) {
@@ -277,7 +292,7 @@ public class Express implements Router {
         httpServer.setExecutor(executor);
 
         // Create handler for all contexts
-        httpServer.createContext("/", exchange -> HANDLER.handle(exchange, this));
+        httpServer.createContext("/", exchange -> handler.handle(exchange, this));
 
         // Start server
         httpServer.start();
@@ -302,7 +317,7 @@ public class Express implements Router {
       httpServer.stop(0);
 
       // Stop worker threads
-      WORKER.forEach(FilterWorker::stop);
+      worker.forEach(FilterWorker::stop);
     }
   }
 }

@@ -23,10 +23,10 @@ import java.util.logging.Logger;
  */
 public class Response {
 
-  private final HttpExchange HTTP_EXCHANGE;
-  private final OutputStream BODY;
-  private final Headers HEADER;
-  private final Logger LOGGER;
+  private final HttpExchange httpExchange;
+  private final OutputStream body;
+  private final Headers headers;
+  private final Logger logger;
 
   private String contentType;
   private boolean isClose;
@@ -39,14 +39,14 @@ public class Response {
     this.isClose = false;
     this.contentLength = 0;
     this.status = 200;
-    this.LOGGER = Logger.getLogger(getClass().getSimpleName());
-    this.LOGGER.setUseParentHandlers(false); // Disable default console log
+    this.logger = Logger.getLogger(getClass().getSimpleName());
+    this.logger.setUseParentHandlers(false); // Disable default console log
   }
 
   public Response(HttpExchange exchange) {
-    this.HTTP_EXCHANGE = exchange;
-    this.HEADER = exchange.getResponseHeaders();
-    this.BODY = exchange.getResponseBody();
+    this.httpExchange = exchange;
+    this.headers = exchange.getResponseHeaders();
+    this.body = exchange.getResponseBody();
   }
 
   /**
@@ -57,7 +57,7 @@ public class Response {
    * @return This Response instance.
    */
   public Response setHeader(String key, String value) {
-    HEADER.add(key, value);
+    headers.add(key, value);
     return this;
   }
 
@@ -66,7 +66,7 @@ public class Response {
    * @return The values which are associated with this key.
    */
   public List<String> getHeader(String key) {
-    return HEADER.get(key);
+    return headers.get(key);
   }
 
   /**
@@ -75,7 +75,7 @@ public class Response {
    * @param location The location.
    */
   public void redirect(String location) {
-    HEADER.add("Location", location);
+    headers.add("Location", location);
     setStatus(Status._302);
     send();
   }
@@ -88,7 +88,7 @@ public class Response {
    */
   public Response setCookie(Cookie cookie) {
     if (isClosed()) return this;
-    this.HEADER.add("Set-Cookie", cookie.toString());
+    this.headers.add("Set-Cookie", cookie.toString());
     return this;
   }
 
@@ -176,9 +176,9 @@ public class Response {
     sendHeaders();
 
     try {
-      this.BODY.write(s.getBytes());
+      this.body.write(s.getBytes());
     } catch (IOException e) {
-      LOGGER.log(Level.INFO, "Failed to write charsequence to client.", e);
+      logger.log(Level.INFO, "Failed to write charsequence to client.", e);
     }
 
     close();
@@ -228,13 +228,13 @@ public class Response {
       byte[] buffer = new byte[1024];
       int n;
       while ((n = fis.read(buffer)) != -1) {
-        this.BODY.write(buffer, 0, n);
+        this.body.write(buffer, 0, n);
       }
 
       fis.close();
 
     } catch (IOException e) {
-      LOGGER.log(Level.INFO, "Failed to pipe file to outputstream.", e);
+      logger.log(Level.INFO, "Failed to pipe file to outputstream.", e);
       close();
       return false;
     }
@@ -257,7 +257,7 @@ public class Response {
    * @return The logger from this Response object.
    */
   public Logger getLogger() {
-    return LOGGER;
+    return logger;
   }
 
   private void sendHeaders() {
@@ -267,19 +267,19 @@ public class Response {
       String contentType = getContentType() == null ? MediaType._bin.getExtension() : getContentType();
 
       // Set header and send response
-      this.HEADER.set("Content-Type", contentType);
-      this.HTTP_EXCHANGE.sendResponseHeaders(status, contentLength);
+      this.headers.set("Content-Type", contentType);
+      this.httpExchange.sendResponseHeaders(status, contentLength);
     } catch (IOException e) {
-      LOGGER.log(Level.INFO, "Failed to send headers.", e);
+      logger.log(Level.INFO, "Failed to send headers.", e);
     }
   }
 
   private void close() {
     try {
-      this.BODY.close();
+      this.body.close();
       this.isClose = true;
     } catch (IOException e) {
-      LOGGER.log(Level.INFO, "Failed to close outputstream.", e);
+      logger.log(Level.INFO, "Failed to close outputstream.", e);
     }
   }
 

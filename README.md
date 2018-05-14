@@ -33,9 +33,7 @@ Express app = new Express();
 
 app.get("/", (req, res) -> {
    res.send("Hello World");
-});
-
-app.listen(); // Will listen on port 80 which is set as default
+}).listen(); // Will listen on port 80 which is set as default
 ```
 
 # Docs:

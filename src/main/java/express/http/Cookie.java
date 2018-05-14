@@ -203,9 +203,7 @@ public class Cookie {
       if (!other.getExpire().equals(this.getExpire())) return false;
       if (other.getMaxAge() != this.getMaxAge()) return false;
       if (!other.getSameSite().equals(this.getSameSite())) return false;
-      if (!other.getPath().equals(this.getPath())) return false;
-
-      return true;
+	    return other.getPath().equals(this.getPath());
     }
     return super.equals(obj);
   }

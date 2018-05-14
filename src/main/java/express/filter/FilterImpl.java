@@ -1,6 +1,6 @@
 package express.filter;
 
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 import express.http.request.Request;
 import express.http.response.Response;
 
@@ -15,28 +15,29 @@ import java.util.concurrent.ConcurrentHashMap;
  * An http-filter to extract data and check if an context matches
  * the request.
  */
-public class FilterImpl implements HttpRequest {
+public class FilterImpl implements HttpRequestHandler
+{
 
-  private final HttpRequest REQUEST;
-  private final String REQ;
-  private final String CONTEXT;
-  private final boolean REQ_ALL;
-  private final boolean CONTEXT_ALL;
+  private final HttpRequestHandler request;
+  private final String req;
+  private final String context;
+  private final boolean reqAll;
+  private final boolean contextAll;
 
   private String root;
   private String fullContext;
 
-  public FilterImpl(String requestMethod, String context, HttpRequest httpRequest) {
-    this.REQ = requestMethod;
-    this.REQUEST = httpRequest;
-    this.CONTEXT = normalizePath(context);
+  public FilterImpl(String requestMethod, String context, HttpRequestHandler httpRequest) {
+    this.req = requestMethod;
+    this.request = httpRequest;
+    this.context = normalizePath(context);
 
     // Save some information's which don't need to be processed again
-    this.REQ_ALL = requestMethod.equals("*");
-    this.CONTEXT_ALL = context.equals("*");
+    this.reqAll = requestMethod.equals("*");
+    this.contextAll = context.equals("*");
 
     this.root = "/";
-    this.fullContext = this.CONTEXT;
+    this.fullContext = this.context;
   }
 
   public void setRoot(String root) {
@@ -50,20 +51,20 @@ public class FilterImpl implements HttpRequest {
       root += '/';
 
     this.root = normalizePath(root);
-    this.fullContext = normalizePath(this.root + CONTEXT);
+    this.fullContext = normalizePath(this.root + context);
   }
 
   @Override
   public void handle(Request req, Response res) {
     String requestMethod = req.getMethod();
     String requestPath = req.getURI().getRawPath();
-    ConcurrentHashMap<String, HttpRequest> parameterListener = req.getApp().getParameterListener();
+    ConcurrentHashMap<String, HttpRequestHandler> parameterListener = req.getApp().getParameterListener();
 
-    if (!(REQ_ALL || REQ.equals(requestMethod))) {
+    if (!(reqAll || this.req.equals(requestMethod))) {
       return;
-    } else if (CONTEXT_ALL) {
-      req.setContext(CONTEXT);
-      REQUEST.handle(req, res);
+    } else if (contextAll) {
+      req.setContext(context);
+      request.handle(req, res);
       return;
     }
 
@@ -77,7 +78,7 @@ public class FilterImpl implements HttpRequest {
 
     // Check parameter listener
     params.forEach((s, s2) -> {
-      HttpRequest request = parameterListener.get(s);
+      HttpRequestHandler request = parameterListener.get(s);
 
       if (request != null)
         request.handle(req, res);
@@ -88,8 +89,8 @@ public class FilterImpl implements HttpRequest {
       return;
 
     // Handle request
-    req.setContext(CONTEXT);
-    REQUEST.handle(req, res);
+    req.setContext(context);
+    request.handle(req, res);
   }
 
   /**

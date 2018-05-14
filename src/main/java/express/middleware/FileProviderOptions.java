@@ -1,6 +1,6 @@
 package express.middleware;
 
-import express.http.HttpRequest;
+import express.http.HttpRequestHandler;
 
 /**
  * @author Simon R.
@@ -10,7 +10,7 @@ import express.http.HttpRequest;
 public class FileProviderOptions {
 
   private String[] extensions;
-  private HttpRequest handler;
+  private HttpRequestHandler handler;
   private boolean fallBackSearching;
   private boolean lastModified;
   private long maxAge;
@@ -113,7 +113,7 @@ public class FileProviderOptions {
   /**
    * @return The current corresponding handler.
    */
-  HttpRequest getHandler() {
+  HttpRequestHandler getHandler() {
     return handler;
   }
 
@@ -123,7 +123,7 @@ public class FileProviderOptions {
    * @param handler The HttpRequest handler.
    * @return This instance.
    */
-  public FileProviderOptions setHandler(HttpRequest handler) {
+  public FileProviderOptions setHandler(HttpRequestHandler handler) {
     this.handler = handler;
     return this;
   }

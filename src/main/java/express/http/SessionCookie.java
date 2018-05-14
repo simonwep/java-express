@@ -6,28 +6,28 @@ package express.http;
  */
 public class SessionCookie {
 
-  private final long MAX_AGE;
-  private final long CREATED;
+  private final long maxAge;
+  private final long created;
 
   private Object data;
 
   public SessionCookie(long maxAge) {
-    this.MAX_AGE = maxAge;
-    this.CREATED = System.currentTimeMillis();
+    this.maxAge = maxAge;
+    this.created = System.currentTimeMillis();
   }
 
   /**
    * @return Max age from this cookie
    */
   public long getMaxAge() {
-    return MAX_AGE;
+    return maxAge;
   }
 
   /**
    * @return Create date from the cookie
    */
   public long getCreated() {
-    return CREATED;
+    return created;
   }
 
   /**

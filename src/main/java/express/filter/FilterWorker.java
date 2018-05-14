@@ -10,24 +10,24 @@ import java.util.TimerTask;
  */
 public class FilterWorker extends TimerTask {
 
-  private final FilterTask MW;
+  private final FilterTask middlewareWorker;
   private Timer timer;
 
   public FilterWorker(FilterTask middlewareWorker) {
-    this.MW = middlewareWorker;
+    this.middlewareWorker = middlewareWorker;
   }
 
   public void start() {
     if (this.timer == null) {
-      MW.onStart();
+      middlewareWorker.onStart();
       this.timer = new Timer();
-      this.timer.scheduleAtFixedRate(this, 0, MW.getDelay());
+      this.timer.scheduleAtFixedRate(this, 0, middlewareWorker.getDelay());
     }
   }
 
   public void stop() {
     if (timer != null) {
-      MW.onStop();
+      middlewareWorker.onStop();
       this.timer.cancel();
       this.timer = null;
     }
@@ -39,6 +39,6 @@ public class FilterWorker extends TimerTask {
 
   @Override
   public void run() {
-    MW.onUpdate();
+    middlewareWorker.onUpdate();
   }
 }
