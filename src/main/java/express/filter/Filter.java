@@ -7,10 +7,10 @@ package express.filter;
  */
 public interface Filter {
 
-  /**
-   * Identifier for the middleware
-   *
-   * @return The filter name
-   */
-  String getName();
+    /**
+     * Identifier for the middleware
+     *
+     * @return The filter name
+     */
+    String getName();
 }

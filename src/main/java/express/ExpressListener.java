@@ -5,7 +5,7 @@ package express;
  * Listener for express actions
  */
 public interface ExpressListener {
-  
-  void action();
-  
+
+    void action();
+
 }

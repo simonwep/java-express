@@ -10,11 +10,11 @@ import express.http.response.Response;
 @FunctionalInterface
 public interface HttpRequestHandler {
 
-  /**
-   * Handle an http-request
-   *
-   * @param req - The request object
-   * @param res - The response object
-   */
-  void handle(Request req, Response res);
+    /**
+     * Handle an http-request
+     *
+     * @param req - The request object
+     * @param res - The response object
+     */
+    void handle(Request req, Response res);
 }
