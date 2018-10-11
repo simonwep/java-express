@@ -27,8 +27,9 @@ public class Cookie {
     public Cookie(String name, String value) {
         name = name.trim();
 
-        if (name.isEmpty() || name.charAt(0) == '$')
+        if (name.isEmpty() || name.charAt(0) == '$') {
             throw new IllegalArgumentException("Illegal cookie name");
+        }
 
         this.name = name;
         this.value = value;
@@ -203,6 +204,7 @@ public class Cookie {
             if (!other.getExpire().equals(this.getExpire())) return false;
             if (other.getMaxAge() != this.getMaxAge()) return false;
             if (!other.getSameSite().equals(this.getSameSite())) return false;
+
             return other.getPath().equals(this.getPath());
         }
         return super.equals(obj);

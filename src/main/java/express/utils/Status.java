@@ -84,8 +84,9 @@ public enum Status {
 
         // Check values
         for (Status s : values()) {
-            if (s.name().charAt(0) != '_')
+            if (s.name().charAt(0) != '_') {
                 throw new IllegalStateException("Status code '" + s + "' need to start with underscore.");
+            }
         }
     }
 
@@ -99,7 +100,9 @@ public enum Status {
 
     public static Status valueOf(int code) {
         for (Status status : values()) {
-            if (status.code == code) return status;
+            if (status.code == code) {
+                return status;
+            }
         }
         return null;
     }

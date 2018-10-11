@@ -126,7 +126,7 @@ public class Request {
     }
 
     /**
-     * Get an request cookie by name.
+     * Get a request cookie by name.
      *
      * @param name The cookie name.
      * @return The cookie, null if there is no cookie with this name.
@@ -145,7 +145,7 @@ public class Request {
     }
 
     /**
-     * Add an the content from an middleware
+     * Add a the content from a middleware
      *
      * @param middleware     The middleware
      * @param middlewareData The data from the middleware

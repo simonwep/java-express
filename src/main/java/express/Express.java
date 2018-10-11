@@ -138,7 +138,7 @@ public class Express implements Router {
      */
     public void setExecutor(Executor executor) throws IOException {
         if (httpServer != null) {
-            throw new IOException("Cannot set the executor after the server has starderd!");
+            throw new IOException("Cannot set executor after the server has stardet!");
         } else {
             this.executor = executor;
         }
@@ -371,8 +371,9 @@ public class Express implements Router {
                 httpServer.start();
 
                 // Fire listener
-                if (onStart != null)
+                if (onStart != null) {
                     onStart.action();
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();

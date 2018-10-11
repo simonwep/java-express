@@ -30,6 +30,49 @@ public class Authorization {
     }
 
     /**
+     * @return A list of authorization options that are contained in the given request.
+     * Authorization options can be separated by a comma in the Authorization header.
+     */
+    public static List<Authorization> get(Request req) {
+        List<String> headerVals = req.getHeader(HEADER_NAME);
+
+        if (!headerVals.isEmpty()) {
+            String authHeader = headerVals.get(0);
+            return Collections.unmodifiableList(Stream.of(authHeader.split(","))
+                    .map(Authorization::new).collect(Collectors.toList()));
+        }
+
+        return Collections.emptyList();
+    }
+
+    /**
+     * Validates the given request authentication using each of the given predicates.
+     * If any of the predicates returns <code>true</code>, the request is counted as
+     * validly authorized and the method returns <code>true</code>.
+     */
+    @SafeVarargs
+    public static boolean validate(Request req, Predicate<Authorization>... validators) {
+        for (Authorization auth : get(req)) {
+            for (Predicate<Authorization> validator : validators) {
+                if (validator.test(auth)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param type The expected type of the authorization
+     * @param data The expected data of the authorization
+     * @return A predicate that can be used with {@link Authorization#validate(Request, Predicate...)}
+     * to test for a single type of authorization
+     */
+    public static Predicate<Authorization> validator(String type, String data) {
+        return (auth -> auth.getType().equals(type) && auth.getData().equals(data));
+    }
+
+    /**
      * @return The Authorization type
      */
     public String getType() {
@@ -48,44 +91,5 @@ public class Authorization {
      */
     public String getDataBase64Decoded() {
         return new String(Base64.getDecoder().decode(data));
-    }
-
-    /**
-     * @return A list of authorization options that are contained in the given request.
-     * Authorization options can be separated by a comma in the Authorization header.
-     */
-    public static List<Authorization> get(Request req) {
-        List<String> headerVals = req.getHeader(HEADER_NAME);
-        if (!headerVals.isEmpty()) {
-            String authHeader = headerVals.get(0);
-            return Collections.unmodifiableList(Stream.of(authHeader.split(","))
-                    .map(Authorization::new).collect(Collectors.toList()));
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Validates the given request authentication using each of the given predicates.
-     * If any of the predicates returns <code>true</code>, the request is counted as
-     * validly authorized and the method returns <code>true</code>.
-     */
-    @SafeVarargs
-    public static boolean validate(Request req, Predicate<Authorization>... validators) {
-        for (Authorization auth : get(req)) {
-            for (Predicate<Authorization> validator : validators) {
-                if (validator.test(auth)) return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param type The expected type of the authorization
-     * @param data The expected data of the authorization
-     * @return A predicate that can be used with {@link Authorization#validate(Request, Predicate...)}
-     * to test for a single type of authorization
-     */
-    public static Predicate<Authorization> validator(String type, String data) {
-        return (auth -> auth.getType().equals(type) && auth.getData().equals(data));
     }
 }

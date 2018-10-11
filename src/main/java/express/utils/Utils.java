@@ -33,9 +33,7 @@ public final class Utils {
                 sb.append(line);
 
             return sb.toString();
-        } catch (IOException e) {
-            // TODO: Handle error
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
         return null;
     }
@@ -50,8 +48,9 @@ public final class Utils {
         String ex = getExtension(file);
         MediaType contentType = MediaType.getByExtension(ex);
 
-        if (contentType == null)
+        if (contentType == null) {
             return MediaType._bin;
+        }
 
         return contentType;
     }
@@ -86,8 +85,11 @@ public final class Utils {
     public static String getExtension(Path file) {
         String path = file.getFileName().toString();
         int indx = path.lastIndexOf('.') + 1;
-        if (indx == 0)
+
+        // No extension present
+        if (indx == 0) {
             return null;
+        }
 
         return path.substring(indx);
     }

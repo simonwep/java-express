@@ -22,8 +22,9 @@ public class FilterLayerHandler {
 
         // Create & initialize layers
         this.layers = new FilterLayer[layers];
-        for (int i = 0; i < this.layers.length; i++)
+        for (int i = 0; i < this.layers.length; i++) {
             this.layers[i] = new FilterLayer<>();
+        }
     }
 
     public void handle(HttpExchange httpExchange, Express express) {
@@ -34,8 +35,9 @@ public class FilterLayerHandler {
         for (FilterLayer chain : layers) {
             chain.filter(request, response);
 
-            if (response.isClosed())
+            if (response.isClosed()) {
                 return;
+            }
         }
     }
 
@@ -48,10 +50,13 @@ public class FilterLayerHandler {
     @SuppressWarnings("unchecked")
     public void add(int level, HttpRequestHandler handler) {
 
-        if (level >= layers.length)
+        if (level >= layers.length) {
             throw new IndexOutOfBoundsException("Out of bounds: " + level + " > " + layers.length);
-        if (level < 0)
+        }
+
+        if (level < 0) {
             throw new IndexOutOfBoundsException("Cannot be under zero: " + level + " < 0");
+        }
 
         layers[level].add(handler);
     }
@@ -66,11 +71,13 @@ public class FilterLayerHandler {
         if (filterLayerHandler != null) {
             FilterLayer[] chains = filterLayerHandler.getLayers();
 
-            if (chains.length != layers.length)
+            if (chains.length != layers.length) {
                 throw new ExpressException("Cannot add an filterLayerHandler with different layers sizes: " + chains.length + " != " + layers.length);
+            }
 
-            for (int i = 0; i < chains.length; i++)
+            for (int i = 0; i < chains.length; i++) {
                 layers[i].addAll(chains[i].getFilter());
+            }
         }
     }
 
@@ -80,11 +87,13 @@ public class FilterLayerHandler {
      * @param layerConsumer An consumer for the layers
      */
     public void forEach(Consumer<FilterLayer> layerConsumer) {
-        if (layerConsumer == null)
+        if (layerConsumer == null) {
             return;
+        }
 
-        for (FilterLayer layer : layers)
+        for (FilterLayer layer : layers) {
             layerConsumer.accept(layer);
+        }
     }
 
     private FilterLayer[] getLayers() {

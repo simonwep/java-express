@@ -32,8 +32,9 @@ public final class FileProvider implements HttpRequestHandler {
     FileProvider(String root, FileProviderOptions options) throws IOException {
         Path rootDir = Paths.get(root);
 
-        if (!Files.exists(rootDir) || !Files.isDirectory(rootDir))
+        if (!Files.exists(rootDir) || !Files.isDirectory(rootDir)) {
             throw new IOException(rootDir + " does not exists or isn't an directory.");
+        }
 
         this.root = rootDir.toAbsolutePath().toString();
         this.options = options;
@@ -50,8 +51,9 @@ public final class FileProvider implements HttpRequestHandler {
         }
 
         // If the path is empty try index.html
-        if (path.length() <= 1)
+        if (path.length() <= 1) {
             path = "index.html";
+        }
 
         Path reqFile = Paths.get(root + "\\" + path);
 
@@ -70,8 +72,9 @@ public final class FileProvider implements HttpRequestHandler {
 
                     Optional<Path> founded = Files.walk(parent).filter(sub -> getBaseName(sub).equals(name)).findFirst();
 
-                    if (founded.isPresent())
+                    if (founded.isPresent()) {
                         reqFile = founded.get();
+                    }
                 }
             } catch (IOException e) {
                 this.logger.log(Level.WARNING, "Cannot walk file tree.", e);
@@ -91,11 +94,13 @@ public final class FileProvider implements HttpRequestHandler {
                 }
             }
 
+            // Check if extension is present
             if (options.getExtensions() != null) {
                 String reqEx = Utils.getExtension(reqFile);
 
-                if (reqEx == null)
+                if (reqEx == null) {
                     return;
+                }
 
                 for (String ex : options.getExtensions()) {
                     if (reqEx.equals(ex)) {
@@ -118,8 +123,10 @@ public final class FileProvider implements HttpRequestHandler {
         try {
 
             // Apply header
-            if (options.isLastModified())
+            if (options.isLastModified()) {
                 res.setHeader("Last-Modified", Utils.getGMTDate(new Date(Files.getLastModifiedTime(file).toMillis())));
+            }
+
         } catch (IOException e) {
             res.sendStatus(Status._500);
             this.logger.log(Level.WARNING, "Cannot read LastModifiedTime from file " + file.toString(), e);

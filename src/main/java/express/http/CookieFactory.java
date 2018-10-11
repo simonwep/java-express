@@ -56,13 +56,16 @@ public final class CookieFactory {
     public static HashMap<String, Cookie> fromStrings(String[] stringCookies) {
         HashMap<String, Cookie> cookies = new HashMap<>();
 
-        if (stringCookies == null || stringCookies.length == 0)
+        if (stringCookies == null || stringCookies.length == 0) {
             return cookies;
+        }
 
         for (String s : stringCookies) {
             Cookie cookie = fromString(s);
-            if (cookie != null)
+
+            if (cookie != null) {
                 cookies.put(cookie.getName(), cookie);
+            }
         }
 
         return cookies;
@@ -109,8 +112,9 @@ public final class CookieFactory {
     private static boolean isInteger(String str) {
         char[] chars = str.toCharArray();
 
-        for (char c : chars)
+        for (char c : chars) {
             if (c < 48 || c > 57) return false;
+        }
 
         return true;
     }

@@ -703,7 +703,9 @@ public enum MediaType {
 
     public static MediaType getByExtension(String extension) {
         for (MediaType type : values()) {
-            if (type.extension.equals(extension)) return type;
+            if (type.extension.equals(extension)) {
+                return type;
+            }
         }
         return null;
     }

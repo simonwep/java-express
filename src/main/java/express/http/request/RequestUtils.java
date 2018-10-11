@@ -65,8 +65,10 @@ final class RequestUtils {
     static HashMap<String, String> parseRawQuery(String rawQuery) {
         HashMap<String, String> querys = new HashMap<>();
 
-        if (rawQuery == null)
+        // Return empty map on null
+        if (rawQuery == null) {
             return querys;
+        }
 
         StringBuilder key = new StringBuilder();
         StringBuilder val = new StringBuilder();
@@ -96,8 +98,9 @@ final class RequestUtils {
             }
         }
 
-        if (c != '=' && c != '&')
+        if (c != '=' && c != '&') {
             querys.put(key.toString(), val.toString());
+        }
 
         return querys;
     }

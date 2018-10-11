@@ -40,14 +40,19 @@ public class FilterImpl implements HttpRequestHandler {
     }
 
     public void setRoot(String root) {
-        if (root == null || root.isEmpty())
+
+        // Ignore empty root
+        if (root == null || root.isEmpty()) {
             return;
+        }
 
-        if (root.charAt(0) != '/')
+        if (root.charAt(0) != '/') {
             root = '/' + root;
+        }
 
-        if (root.charAt(root.length() - 1) != '/')
+        if (root.charAt(root.length() - 1) != '/') {
             root += '/';
+        }
 
         this.root = normalizePath(root);
         this.fullContext = normalizePath(this.root + context);
@@ -69,8 +74,9 @@ public class FilterImpl implements HttpRequestHandler {
 
         // Parse params
         HashMap<String, String> params = matchURL(fullContext, requestPath);
-        if (params == null)
+        if (params == null) {
             return;
+        }
 
         // Save parameter to request object
         req.setParams(params);
@@ -79,13 +85,15 @@ public class FilterImpl implements HttpRequestHandler {
         params.forEach((s, s2) -> {
             HttpRequestHandler request = parameterListener.get(s);
 
-            if (request != null)
+            if (request != null) {
                 request.handle(req, res);
+            }
         });
 
         // Check if the response is closed
-        if (res.isClosed())
+        if (res.isClosed()) {
             return;
+        }
 
         // Handle request
         req.setContext(context);
@@ -110,11 +118,14 @@ public class FilterImpl implements HttpRequestHandler {
                 val.setLength(0);
 
                 fi++;
-                while (fi < fc.length && fc[fi] != '/')
-                    key.append(fc[fi++]);
 
-                while (ui < uc.length && uc[ui] != '/')
+                while (fi < fc.length && fc[fi] != '/') {
+                    key.append(fc[fi++]);
+                }
+
+                while (ui < uc.length && uc[ui] != '/') {
                     val.append(uc[ui++]);
+                }
 
                 try {
                     String decVal = URLDecoder.decode(val.toString(), "UTF8");
@@ -149,8 +160,9 @@ public class FilterImpl implements HttpRequestHandler {
 
         sb.append(chars[0]);
         for (int i = 1; i < chars.length; i++) {
-            if ((chars[i] == '/' && chars[i - 1] != '/') || chars[i] != '/')
+            if ((chars[i] == '/' && chars[i - 1] != '/') || chars[i] != '/') {
                 sb.append(chars[i]);
+            }
         }
 
         return sb.toString();
