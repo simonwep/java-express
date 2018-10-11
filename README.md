@@ -41,6 +41,7 @@ app.get("/", (req, res) -> {
 
 # Docs:
 * [Routing](#routing)
+   * [DynExpress](#dynexpress)
    * [Direct](#direct)
    * [With Router](#with-router)
 * [URL Basics](#url-basics)
@@ -49,7 +50,7 @@ app.get("/", (req, res) -> {
    * [URL Querys](#url-querys)
    * [Cookies](#cookies)
    * [Form Data](#form-data)
-* [HTTP - Main Classes](#http---main-classes)
+* [HTTP Relevant classes](#http-relevant-classes)
    * [Response Object](#response-object)
    * [Request Object](#request-object)
 * [Middleware](#middleware)
@@ -59,6 +60,52 @@ app.get("/", (req, res) -> {
 * [Examples](#examples)
 
 # Routing
+## DynExpress
+Express allows the attaching of request-handler to instance methods via the DynExpress annotation:
+```java
+
+// Your main class
+import express.Express;
+public class Main {
+    public static void main(String[] args) {
+        Express app = new Express();
+        app.bind(new Bindings()); // See class below
+        app.listen();
+    }
+}
+
+// Your class with request handlers
+import express.DynExpress;
+import express.http.RequestMethod;
+import express.http.request.Request;
+import express.http.response.Response;
+public class Bindings {
+
+    @DynExpress() // Default is context="/" and method=RequestMethod.GET
+    public void getIndex(Request req, Response res) {
+        res.send("Hello World!");
+    }
+
+    @DynExpress(context = "/about") // Only context is defined, method=RequestMethod.GET is used as method
+    public void getAbout(Request req, Response res) {
+        res.send("About page");
+    }
+
+    @DynExpress(context = "/impressum", method = RequestMethod.PATCH) // Both defined
+    public void getImpressum(Request req, Response res) {
+        res.send("Impressum page was patched");
+    }
+
+    @DynExpress(method = RequestMethod.POST) // Only the method is defined, "/" is used as context
+    public void postIndex(Request req, Response res) {
+        res.send("POST to index");
+    }
+}
+
+
+```
+
+
 ## Direct
 You can add routes (And middlewares) directly to the Express object to handle requests:
 ```java
@@ -216,7 +263,7 @@ app.post("/register", (req, res) -> {
 });
 ```
 
-# HTTP - Main Classes
+# HTTP Relevant classes
 ## Express
 This class represents the entire HTTP-Server, the available methods are:
 ```java

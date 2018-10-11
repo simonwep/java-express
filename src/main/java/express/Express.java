@@ -8,6 +8,8 @@ import express.filter.FilterLayerHandler;
 import express.filter.FilterTask;
 import express.filter.FilterWorker;
 import express.http.HttpRequestHandler;
+import express.http.request.Request;
+import express.http.response.Response;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -233,6 +235,75 @@ public class Express implements Router {
 
     public Express patch(String context, HttpRequestHandler request) {
         handler.add(1, new FilterImpl("PATCH", context, request));
+        return this;
+    }
+
+    /**
+     * Binds a or multiple objects with request-handler methods on this express instance.
+     * With the use of the DynExpress Annotation handler can be declared with a annotation
+     * on a compatible method which has as parameter a Request and Response object.
+     *
+     * @param objects Object with proper request handler methods.
+     * @return This express instance.
+     */
+    public Express bind(Object... objects) {
+        for (Object o : objects) {
+
+            // Skip null objects
+            if (o == null) {
+                continue;
+            }
+
+            // Find methods wich has the DynExpress annotation
+            Method[] methods = o.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+
+                // Validate parameter types
+                Class<?>[] params = method.getParameterTypes();
+                if (params.length < 1 || params[0] != Request.class || params[1] != Response.class) {
+                    StringBuilder sb = new StringBuilder();
+                    for (Class<?> c : params) {
+                        sb.append(c.getSimpleName());
+                        sb.append(", ");
+                    }
+
+                    String paramString = sb.toString();
+                    if (paramString.length() > 2) {
+                        paramString = paramString.substring(0, paramString.length() - 2);
+                    }
+
+                    System.err.println("Skipped method with invalid parameter types found in " +
+                            method.getName() + "(" + paramString + ") in " + o.getClass().getName() +
+                            ". Expected Request and Response.");
+                    continue;
+                }
+
+                // Make private method accessible
+                if (!method.isAccessible()) {
+                    method.setAccessible(true);
+                }
+
+                // Check if dyn-annotation is present
+                if (method.isAnnotationPresent(DynExpress.class)) {
+                    DynExpress[] annotations = method.getAnnotationsByType(DynExpress.class);
+
+                    for (DynExpress dex : annotations) {
+                        String context = dex.context();
+                        String requestMethod = dex.method().getMethod();
+
+                        // Bind to instance
+                        handler.add(1, new FilterImpl(requestMethod, context, (req, res) -> {
+                            try {
+                                method.invoke(o, req, res);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        }));
+                    }
+                }
+            }
+        }
+
         return this;
     }
 
