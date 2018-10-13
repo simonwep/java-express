@@ -111,7 +111,7 @@ public class FilterImpl implements HttpRequestHandler {
         char[] fc = filter.toCharArray();
         int ui = 0, fi = 0;
 
-        for (; fi < fc.length; fi++, ui++) {
+        for (; fi < fc.length && ui < uc.length; fi++, ui++) {
 
             if (fc[fi] == ':') {
                 key.setLength(0);
