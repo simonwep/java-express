@@ -258,6 +258,16 @@ public class Express implements Router {
             Method[] methods = o.getClass().getDeclaredMethods();
             for (Method method : methods) {
 
+                // Skip if annotation is not present
+                if (!method.isAnnotationPresent(DynExpress.class)) {
+                    continue;
+                }
+
+                // Make private method accessible
+                if (!method.isAccessible()) {
+                    method.setAccessible(true);
+                }
+
                 // Validate parameter types
                 Class<?>[] params = method.getParameterTypes();
                 if (params.length < 1 || params[0] != Request.class || params[1] != Response.class) {
@@ -278,28 +288,19 @@ public class Express implements Router {
                     continue;
                 }
 
-                // Make private method accessible
-                if (!method.isAccessible()) {
-                    method.setAccessible(true);
-                }
+                DynExpress[] annotations = method.getAnnotationsByType(DynExpress.class);
+                for (DynExpress dex : annotations) {
+                    String context = dex.context();
+                    String requestMethod = dex.method().getMethod();
 
-                // Check if dyn-annotation is present
-                if (method.isAnnotationPresent(DynExpress.class)) {
-                    DynExpress[] annotations = method.getAnnotationsByType(DynExpress.class);
-
-                    for (DynExpress dex : annotations) {
-                        String context = dex.context();
-                        String requestMethod = dex.method().getMethod();
-
-                        // Bind to instance
-                        handler.add(1, new FilterImpl(requestMethod, context, (req, res) -> {
-                            try {
-                                method.invoke(o, req, res);
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        }));
-                    }
+                    // Bind to instance
+                    handler.add(1, new FilterImpl(requestMethod, context, (req, res) -> {
+                        try {
+                            method.invoke(o, req, res);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }));
                 }
             }
         }
