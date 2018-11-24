@@ -39,6 +39,8 @@ public class ExpressRouter implements Router {
     }
 
     private void addMiddleware(String requestMethod, String context, HttpRequestHandler middleware) {
+
+        // Validate middleware
         if (middleware instanceof FilterTask) {
             workers.add(new FilterWorker((FilterTask) middleware));
         }

@@ -29,8 +29,9 @@ public final class Utils {
             StringBuilder sb = new StringBuilder();
             String line;
 
-            while ((line = br.readLine()) != null)
+            while ((line = br.readLine()) != null) {
                 sb.append(line);
+            }
 
             return sb.toString();
         } catch (IOException ignored) {

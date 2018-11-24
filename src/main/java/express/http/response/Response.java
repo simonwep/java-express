@@ -135,8 +135,8 @@ public class Response {
      *
      * @param contentType - The contentType
      */
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType.getMIME();
     }
 
     /**
@@ -144,8 +144,8 @@ public class Response {
      *
      * @param contentType - The contentType
      */
-    public void setContentType(MediaType contentType) {
-        this.contentType = contentType.getMIME();
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     /**
@@ -193,8 +193,9 @@ public class Response {
      * @return True if the file was successfully send, false if the file doesn't exists or the respose is already closed.
      */
     public boolean sendAttachment(Path file) {
-        if (isClosed() || !Files.isRegularFile(file))
+        if (isClosed() || !Files.isRegularFile(file)) {
             return false;
+        }
 
         String dispo = "attachment; filename=\"" + file.getFileName() + "\"";
         setHeader("Content-Disposition", dispo);
@@ -210,8 +211,10 @@ public class Response {
      * @return True if the file was successfully send, false if the file doesn't exists or the respose is already closed.
      */
     public boolean send(Path file) {
-        if (isClosed() || !Files.isRegularFile(file))
+
+        if (isClosed() || !Files.isRegularFile(file)) {
             return false;
+        }
 
         try {
             this.contentLength = Files.size(file);

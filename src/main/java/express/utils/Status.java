@@ -99,11 +99,14 @@ public enum Status {
     }
 
     public static Status valueOf(int code) {
+
+        // Find status which matches code
         for (Status status : values()) {
             if (status.code == code) {
                 return status;
             }
         }
+
         return null;
     }
 

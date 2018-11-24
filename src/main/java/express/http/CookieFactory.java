@@ -74,17 +74,14 @@ public final class CookieFactory {
     private static Cookie addField(Cookie cookie, String key, String value) {
         key = key.trim();
 
-        if (cookie == null) {
 
+        if (cookie == null) {
             cookie = new Cookie(key, value);
         } else if (key.equalsIgnoreCase("Path")) {
-
             cookie.setPath(value);
         } else if (key.equalsIgnoreCase("Domain")) {
-
             cookie.setDomain(value);
         } else if (key.equalsIgnoreCase("Expire")) {
-
             cookie.setExpire(Instant.parse(value));
         } else if (key.equalsIgnoreCase("Max-Age")) {
 
@@ -98,13 +95,10 @@ public final class CookieFactory {
             cookie.setSameSite(sameSite);
 
         } else if (key.equalsIgnoreCase("Secure")) {
-
             cookie.setSecure(true);
         } else if (key.equalsIgnoreCase("HttpOnly")) {
-
             cookie.setHttpOnly(true);
         }
-
 
         return cookie;
     }
