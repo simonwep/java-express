@@ -15,5 +15,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface DynExpress {
     RequestMethod method() default RequestMethod.GET;
+
     String context() default "/";
 }

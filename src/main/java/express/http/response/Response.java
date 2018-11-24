@@ -238,11 +238,87 @@ public class Response {
 
         } catch (IOException e) {
             logger.log(Level.INFO, "Failed to pipe file to outputstream.", e);
+            return false;
+        } finally {
             close();
+        }
+
+        return true;
+    }
+
+    /**
+     * Send a byte array as response. Content type will be
+     * set to application/octet-streamFrom
+     *
+     * @param bytes Byte arraa
+     * @return If operation was successful
+     */
+    public boolean sendBytes(byte[] bytes) {
+
+        if (isClosed() || bytes == null) {
             return false;
         }
 
-        close();
+        try {
+            this.contentLength = bytes.length;
+
+            // Set content type to octet streamFrom
+            this.contentType = MediaType._bin.getMIME();
+
+            // Send header
+            sendHeaders();
+
+            // Write bytes to body
+            this.body.write(bytes);
+        } catch (IOException e) {
+            logger.log(Level.INFO, "Failed to pipe file to outputstream.", e);
+            return false;
+        } finally {
+            close();
+        }
+
+        return true;
+    }
+
+    /**
+     * Streams a inputstream to the client.
+     * Requires a contentLength as well as a MediaType
+     *
+     * @param contentLength Total size
+     * @param is            Inputstream
+     * @param mediaType     Stream type
+     * @return If operation was successful
+     */
+    public boolean streamFrom(long contentLength, InputStream is, MediaType mediaType) {
+
+        if (isClosed() || is == null) {
+            return false;
+        }
+
+        try {
+            this.contentLength = contentLength;
+
+            // Set content type to octet-stream
+            this.contentType = mediaType.getMIME();
+
+            // Send header
+            sendHeaders();
+
+            // Write bytes to body
+            byte[] buffer = new byte[4096];
+            int n;
+            while ((n = is.read(buffer)) != -1) {
+                this.body.write(buffer, 0, n);
+            }
+
+            is.close();
+        } catch (IOException e) {
+            logger.log(Level.INFO, "Failed to pipe file to outputstream.", e);
+            return false;
+        } finally {
+            close();
+        }
+
         return true;
     }
 

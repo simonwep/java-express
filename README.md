@@ -304,15 +304,17 @@ res.setContentType(String type);       // Set the content type
 res.isClosed();                        // Check if the response is already closed
 res.getHeader(String key);             // Get the value from an header field via key
 res.setHeader(String key, String val); // Add an specific response header
-res.sendAttachment(Path file)          // Sends an file as attachment
-res.send(String str);                  // Send an string as response
-res.send(Path path);                   // Send an file as response
+res.sendAttachment(Path file)          // Sends a file as attachment
+res.send(String str);                  // Send a string as response
+res.send(Path path);                   // Send a file as response
+res.send(byte[] bytes)                 // Send bytes as response
 res.send();                            // Send empty response
 res.redirect(String location);         // Redirect the request to another url
 res.setCookie(Cookie cookie);          // Add an cookie to the response
 res.sendStatus(Status status);         // Set the response status and send an empty response
 res.getStatus();                       // Returns the current status
 res.setStatus(Status status);          // Set the repose status
+res.streamFrom(long contentLength, InputStream is, MediaType mediaType) // Send a inputstream with known length and type
 ```
 The response object calls are comments because **you can only call the .send(xy) once each request!**
 
