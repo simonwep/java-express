@@ -6,6 +6,7 @@ import express.http.response.Response;
 import express.utils.Status;
 import express.utils.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,7 +56,7 @@ public final class FileProvider implements HttpRequestHandler {
             path = "index.html";
         }
 
-        Path reqFile = Paths.get(root + "\\" + path);
+        Path reqFile = Paths.get(root + File.separator + path);
 
         /*
          * If the file wasn't found, it will search in the target-directory for
