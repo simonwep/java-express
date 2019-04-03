@@ -18,6 +18,7 @@ public final class Middleware {
      *
      * @param cookieName An name for the session-cookie, it's recommend to use NOT SID for security reasons
      * @param maxAge     An max-age for the cookie
+     * @return New CookieSession
      */
     public static CookieSession cookieSession(String cookieName, long maxAge) {
         return new CookieSession(cookieName, maxAge);
@@ -28,6 +29,8 @@ public final class Middleware {
      * web application, You can use <code>StaticOptions</code> to add som configurations.
      *
      * @param directoryPath The root directory
+     * @return A fresh FileProvider
+     * @throws IOException If path cannot be found or something like that
      */
     public static FileProvider statics(String directoryPath) throws IOException {
         return new FileProvider(directoryPath, new FileProviderOptions());
@@ -39,6 +42,8 @@ public final class Middleware {
      *
      * @param directoryPath The root directory
      * @param staticOptions Optional options for the file serving.
+     * @return A fresh FileProvider
+     * @throws IOException If path cannot be found or something like that
      */
     public static FileProvider statics(String directoryPath, FileProviderOptions staticOptions) throws IOException {
         return new FileProvider(directoryPath, staticOptions);

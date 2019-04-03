@@ -97,6 +97,7 @@ public class Express implements Router {
      *
      * @param param   The parameter name.
      * @param request An request handler.
+     * @return Express this express instance
      */
     public Express onParam(String param, HttpRequestHandler request) {
         parameterListener.put(param, request);
@@ -148,6 +149,7 @@ public class Express implements Router {
      * Add an routing object.
      *
      * @param router The router.
+     * @return Express this express instance
      */
     public Express use(ExpressRouter router) {
         this.handler.combine(router.getHandler());
@@ -160,6 +162,7 @@ public class Express implements Router {
      *
      * @param root   The root path for all request to this router.
      * @param router The router.
+     * @return Express this express instance
      */
     @SuppressWarnings("unchecked")
     public Express use(String root, ExpressRouter router) {

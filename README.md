@@ -16,7 +16,7 @@
 		src="https://img.shields.io/badge/Java-8-E76E0D.svg"></a>
 	<a href="https://docs.oracle.com/javase/8/"><img
 		alt="Current version"
-		src="https://img.shields.io/badge/version-0.0.9%20alpha-EB4D5C.svg"></a>
+		src="https://img.shields.io/badge/version-0.0.10%20alpha-EB4D5C.svg"></a>
         <a href="https://www.patreon.com/simonwep"><img
                 alt="Support me"
                 src="https://img.shields.io/badge/patreon-support-DF2D41.svg"></a>
@@ -26,6 +26,9 @@
 	<a href="https://travis-ci.org/Simonwep/java-express"><img
 		alt="Build Status"
 		src="https://travis-ci.org/Simonwep/java-express.svg?branch=master"></a>
+	<a href="https://maven-badges.herokuapp.com/maven-central/com.github.Simonwep/java-express"><img
+		alt="Build Status"
+		src="https://maven-badges.herokuapp.com/maven-central/com.github.Simonwep/java-express/badge.svg"></a>
 </p>
 
 <br>

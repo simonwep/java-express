@@ -72,6 +72,7 @@ public final class Utils {
 
     /**
      * @return Your ip.
+     * @throws UnknownHostException If resolving fails
      */
     public static String getYourIp() throws UnknownHostException {
         return Inet4Address.getLocalHost().getHostAddress();

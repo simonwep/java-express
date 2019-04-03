@@ -30,6 +30,7 @@ public class Authorization {
     }
 
     /**
+     * @param req Request instance
      * @return A list of authorization options that are contained in the given request.
      * Authorization options can be separated by a comma in the Authorization header.
      */
@@ -49,6 +50,10 @@ public class Authorization {
      * Validates the given request authentication using each of the given predicates.
      * If any of the predicates returns <code>true</code>, the request is counted as
      * validly authorized and the method returns <code>true</code>.
+     *
+     * @param req Request instance
+     * @param validators Validators
+     * @return If authorization was successful
      */
     @SafeVarargs
     public static boolean validate(Request req, Predicate<Authorization>... validators) {

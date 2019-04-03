@@ -381,6 +381,8 @@ public class Request {
 
     /**
      * Set the params.
+     *
+     * @param params Request parameter
      */
     public void setParams(HashMap<String, String> params) {
         this.params = params;
