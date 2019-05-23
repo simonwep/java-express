@@ -8,9 +8,9 @@
 </h3>
 
 <p align="center">
-	<a href="https://choosealicense.com/licenses/gpl-3.0/"><img
-		alt="License GNU GPLv3"
-		src="https://img.shields.io/badge/licence-GNU%20GPLv3-blue.svg"></a>
+	<a href="https://choosealicense.com/licenses/mit/"><img
+		alt="License MIT"
+		src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 	<a href="https://github.com/Simonwep/java-express/releases"><img
 		alt="Java 8"
 		src="https://img.shields.io/badge/Java-8-E76E0D.svg"></a>
@@ -557,4 +557,4 @@ new Express() {{
 ```
 
 # License
-This project is licensed under the GNU GPLv3 License - see the [LICENSE](https://github.com/Simonwep/java-express/blob/master/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Simonwep/java-express/blob/master/LICENSE) file for details.
