@@ -11,29 +11,23 @@
 	<a href="https://choosealicense.com/licenses/mit/"><img
 		alt="License MIT"
 		src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-	<a href="https://github.com/Simonwep/java-express/releases"><img
-		alt="Java 8"
-		src="https://img.shields.io/badge/Java-8-E76E0D.svg"></a>
 	<a href="https://docs.oracle.com/javase/8/"><img
 		alt="Current version"
-		src="https://img.shields.io/badge/version-0.0.10%20alpha-EB4D5C.svg"></a>
-        <a href="https://www.patreon.com/simonwep"><img
-                alt="Support me"
-                src="https://img.shields.io/badge/patreon-support-DF2D41.svg"></a>
+		src="https://img.shields.io/badge/version-1.0.0-EB4D5C.svg"></a>
+    <a href="https://www.patreon.com/simonwep"><img
+        alt="Support me"
+        src="https://img.shields.io/badge/patreon-support-DF2D41.svg"></a>
 	<a href="https://gradle.org/"><img
 		alt="Build with gradle"
 		src="https://img.shields.io/badge/build%20with-gradle-006533.svg"></a>
 	<a href="https://travis-ci.org/Simonwep/java-express"><img
 		alt="Build Status"
 		src="https://travis-ci.org/Simonwep/java-express.svg?branch=master"></a>
-	<a href="https://maven-badges.herokuapp.com/maven-central/com.github.Simonwep/java-express"><img
-		alt="Build Status"
-		src="https://maven-badges.herokuapp.com/maven-central/com.github.Simonwep/java-express/badge.svg"></a>
 </p>
 
 <br>
 
-# Getting Started
+#### Getting Started
 ```java
 Express app = new Express();
 
@@ -42,7 +36,39 @@ app.get("/", (req, res) -> {
 }).listen(); // Will listen on port 80 which is set as default
 ```
 
-# Docs:
+## Installation
+
+### Maven
+> Add repository:
+```xml
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+```
+
+> Add dependency:
+```xml
+<dependency>
+    <groupId>com.github.Simonwep</groupId>
+    <artifactId>java-express</artifactId>
+    <version>0.1.1</version>
+</dependency>
+```
+
+### Gradle
+> Add this to your build.gradle
+```xml
+repositories {
+    maven { url "https://jitpack.io/" }
+}
+
+dependencies {
+    implementation 'com.github.Simonwep:java-express:0.1.1'
+}
+```
+
+## Docs:
 * [Routing](#routing)
    * [DynExpress](#dynexpress)
    * [Direct](#direct)
@@ -62,8 +88,8 @@ app.get("/", (req, res) -> {
 * [License](#license)
 * [Examples](#examples)
 
-# Routing
-## DynExpress
+## Routing
+### DynExpress
 Express allows the attaching of request-handler to instance methods via the DynExpress annotation:
 ```java
 
@@ -109,7 +135,7 @@ public class Bindings {
 ```
 
 
-## Direct
+### Direct
 You can add routes (And middlewares) directly to the Express object to handle requests:
 ```java
 Express app = new Express();
@@ -141,7 +167,7 @@ app.on("/user", "CONNECT", (req, res) -> res.send("Connect!"));
 app.listen();
 ```
 
-## With Router
+### With Router
 But it's better to split your code, right? With the `ExpressRouter` you can create routes and add it later to the `Express` object:
 ```java
 Express app = new Express() {{
@@ -168,7 +194,7 @@ Express app = new Express() {{
 }};
 ```
 
-# URL Basics
+## URL Basics
 Over the express object you can create handler for all [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts. Some examples:
 ```java
 app.get("/home", (req, res) -> {
@@ -180,7 +206,7 @@ app.post("/login", (req, res) -> {
 });
 ```
 
-## URL Parameter
+### URL Parameter
 Sometimes you want to create dynamic URL where some parts of the URL's are not static.
 With the `:` operator you can create variables in the URL which will be saved later in a HashMap.
 
@@ -193,7 +219,7 @@ app.get("/posts/:user/:description", (req, res) -> {
 });
 ```
 
-### URL Parameter Listener
+#### URL Parameter Listener
 You can also add an event listener when the user called an route which contains an certain parameter.
 
 ```java
@@ -209,7 +235,7 @@ app.onParam("id", (req, res) -> {
 ```
 Now, this function will be called every time when an context is requested which contains the `id` parameter placeholder.
 
-## URL Querys
+### URL Querys
 If you make an request which contains querys, you can access the querys over `req.getQuery(NAME)`.
 
 Example request: `GET`  `/posts?page=12&from=john`:
@@ -242,7 +268,7 @@ app.get("/showcookie", (req, res) -> {
 });
 ```
 
-## Form data
+### Form data
 Over `req.getFormQuery(NAME)` you receive the values from the input elements of an HTML-Form.
 Example HTML-Form:
 ```html
@@ -266,8 +292,8 @@ app.post("/register", (req, res) -> {
 });
 ```
 
-# HTTP Relevant classes
-## Express
+## HTTP Relevant classes
+### Express
 This class represents the entire HTTP-Server, the available methods are:
 ```java
 app.get(String context, HttpRequest handler);                   // Add an GET request handler
@@ -296,7 +322,7 @@ app.listen(ExpressListener onstart, int port);                  // Start the asy
 app.stop();                                                     // Stop the server and all middleware worker
 ```
 
-## Response Object
+### Response Object
 Over the response object, you have serveral possibility like setting cookies, send an file and more. Below is an short explanation what methods exists:
 (We assume that `res` is the `Response` object)
 
@@ -321,7 +347,7 @@ res.streamFrom(long contentLength, InputStream is, MediaType mediaType) // Send 
 ```
 The response object calls are comments because **you can only call the .send(xy) once each request!**
 
-## Request Object
+### Request Object
 Over the `Request` Object you have access to serveral request stuff (We assume that `req` is the `Request` object):
 
 ```java
@@ -507,7 +533,7 @@ Send an info message
    res.send("You take use of your session cookie " + count + " times.");
 });
 ```
-## Global Variables
+### Global Variables
 Java-express also supports to save and read global variables over the Express instance:
 Example:
 ```java
@@ -516,7 +542,7 @@ app.get("my-data"); // Returns "Hello World"
 ```
 
 ## Examples
-### Very simple static-website
+#### Very simple static-website
 ```java
 
 // Create instance
@@ -527,7 +553,7 @@ new Express() {{
 }};
 ```
 
-### File download
+#### File download
 ```java
 
 // Your file
@@ -540,7 +566,7 @@ new Express() {{
   get("/download-me", (req, res) -> res.sendAttachment(downloadFile));
 }};
 ```
-### Send cookies 
+#### Send cookies 
 ```java
 new Express() {{
 
@@ -556,5 +582,5 @@ new Express() {{
 }};
 ```
 
-# License
+### License
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/Simonwep/java-express/blob/master/LICENSE) file for details.
