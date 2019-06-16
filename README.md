@@ -473,6 +473,22 @@ app.get("/port-test", (req, res) -> {
 ## Existing Middlewares
 There are already some basic middlewares included, you can access these via static methods provided from `Middleware`.
 
+#### CORS
+To realize a cors api yu can use the cors middleware.
+```java
+app.use(Middleware.cors());
+```
+You can use CorsOptions to specify origin, methods and more:
+```java
+CorsOptions corsOptions = new CorsOptions();
+corsOptions.setOrigin("https://mypage.com");
+corsOptions.setAllowCredentials(true);
+corsOptions.setHeaders(new String[]{"GET", "POST"});
+corsOptions.setFilter(req -> // Custom validation if cors should be applied);
+        
+app.use(Middleware.cors());
+```
+
 #### Provide static Files
 If you want to allocate some files, like librarys, css, images etc. you can use the [static](https://github.com/Simonwep/java-express/blob/master/src/express/middleware/Middleware.java) middleware. But you can also provide other files like mp4 etc.
 Example:

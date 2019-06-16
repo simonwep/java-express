@@ -34,8 +34,8 @@ public final class Utils {
             }
 
             return sb.toString();
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) { }
+
         return null;
     }
 

@@ -1,6 +1,5 @@
 package express.middleware;
 
-
 import java.io.IOException;
 
 /**
@@ -49,4 +48,22 @@ public final class Middleware {
         return new FileProvider(directoryPath, staticOptions);
     }
 
+    /**
+     * CORS Middleware
+     *
+     * @param options Cors options
+     * @return
+     */
+    public static Cors cors(CorsOptions options) {
+        return new Cors(options);
+    }
+
+    /**
+     * CORS Middleware with default settings
+     *
+     * @return
+     */
+    public static Cors cors() {
+        return new Cors(new CorsOptions());
+    }
 }

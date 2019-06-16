@@ -34,7 +34,7 @@ public final class FileProvider implements HttpRequestHandler {
         Path rootDir = Paths.get(root);
 
         if (!Files.exists(rootDir) || !Files.isDirectory(rootDir)) {
-            throw new IOException(rootDir + " does not exists or isn't an directory.");
+            throw new IOException(rootDir + " does not exists or isn't a directory.");
         }
 
         this.root = rootDir.toAbsolutePath().toString();
@@ -118,8 +118,9 @@ public final class FileProvider implements HttpRequestHandler {
     }
 
     private void finish(Path file, Request req, Response res) {
-        if (options.getHandler() != null)
+        if (options.getHandler() != null) {
             options.getHandler().handle(req, res);
+        }
 
         try {
 
