@@ -9,9 +9,6 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.security.SecureRandom;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 public final class Utils {
 
@@ -34,7 +31,8 @@ public final class Utils {
             }
 
             return sb.toString();
-        } catch (IOException ignored) { }
+        } catch (IOException ignored) {
+        }
 
         return null;
     }
@@ -86,23 +84,13 @@ public final class Utils {
      */
     public static String getExtension(Path file) {
         String path = file.getFileName().toString();
-        int indx = path.lastIndexOf('.') + 1;
+        int index = path.lastIndexOf('.') + 1;
 
         // No extension present
-        if (indx == 0) {
+        if (index == 0) {
             return null;
         }
 
-        return path.substring(indx);
-    }
-
-    /**
-     * @param date The date to format.
-     * @return The current GMT-Date.
-     */
-    public static String getGMTDate(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss zzz");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return sdf.format(date);
+        return path.substring(index);
     }
 }

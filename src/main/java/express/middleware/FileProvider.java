@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,77 +45,83 @@ public final class FileProvider implements HttpRequestHandler {
 
     @Override
     public void handle(Request req, Response res) {
-        String path = req.getURI().getPath();
+        try {
+            String path = req.getURI().getPath();
 
-        // Check context
-        String context = req.getContext();
-        if (path.indexOf(context) == 0) {
-            path = path.substring(context.length());
-        }
+            // Check context
+            String context = req.getContext();
+            if (path.indexOf(context) == 0) {
+                path = path.substring(context.length());
+            }
 
-        // If the path is empty try index.html
-        if (path.length() <= 1) {
-            path = "index.html";
-        }
+            // If the path is empty try index.html
+            if (path.length() <= 1) {
+                path = "index.html";
+            }
 
-        Path reqFile = Paths.get(root + File.separator + path);
+            Path reqFile = Paths.get(root + File.separator + path);
 
-        /*
-         * If the file wasn't found, it will search in the target-directory for
-         * the file by the raw-name without extension.
-         */
-        if (options.isFallBackSearching() && !Files.exists(reqFile) && !Files.isDirectory(reqFile)) {
-            String name = reqFile.getFileName().toString();
+            /*
+             * If the file wasn't found, it will search in the target-directory for
+             * the file by the raw-name without extension.
+             */
+            if (options.isFallBackSearching() && !Files.exists(reqFile) && !Files.isDirectory(reqFile)) {
+                String name = reqFile.getFileName().toString();
 
-            try {
-                Path parent = reqFile.getParent();
+                try {
+                    Path parent = reqFile.getParent();
 
-                // Check if reading is allowed
-                if (Files.isReadable(parent)) {
+                    // Check if reading is allowed
+                    if (Files.isReadable(parent)) {
 
-                    Optional<Path> founded = Files.walk(parent).filter(sub -> getBaseName(sub).equals(name)).findFirst();
+                        Optional<Path> founded = Files.walk(parent)
+                                .filter(sub -> getBaseName(sub).equals(name))
+                                .findFirst();
 
-                    if (founded.isPresent()) {
-                        reqFile = founded.get();
+                        if (founded.isPresent()) {
+                            reqFile = founded.get();
+                        }
                     }
-                }
-            } catch (IOException e) {
-                this.logger.log(Level.WARNING, "Cannot walk file tree.", e);
-            }
-        }
-
-        if (Files.exists(reqFile) && Files.isRegularFile(reqFile)) {
-
-            if (reqFile.getFileName().toString().charAt(0) == '.') {
-                switch (options.getDotFiles()) {
-                    case IGNORE:
-                        res.setStatus(Status._404);
-                        return;
-                    case DENY:
-                        res.setStatus(Status._403);
-                        return;
+                } catch (IOException e) {
+                    this.logger.log(Level.WARNING, "Cannot walk file tree.", e);
                 }
             }
 
-            // Check if extension is present
-            if (options.getExtensions() != null) {
-                String reqEx = Utils.getExtension(reqFile);
+            if (Files.exists(reqFile) && Files.isRegularFile(reqFile)) {
 
-                if (reqEx == null) {
-                    return;
-                }
-
-                for (String ex : options.getExtensions()) {
-                    if (reqEx.equals(ex)) {
-                        finish(reqFile, req, res);
-                        break;
+                if (reqFile.getFileName().toString().charAt(0) == '.') {
+                    switch (options.getDotFiles()) {
+                        case IGNORE:
+                            res.setStatus(Status._404);
+                            return;
+                        case DENY:
+                            res.setStatus(Status._403);
+                            return;
                     }
                 }
 
-                res.setStatus(Status._403);
-            } else {
-                finish(reqFile, req, res);
+                // Check if extension is present
+                if (options.getExtensions() != null) {
+                    String reqEx = Utils.getExtension(reqFile);
+
+                    if (reqEx == null) {
+                        return;
+                    }
+
+                    for (String ex : options.getExtensions()) {
+                        if (reqEx.equals(ex)) {
+                            finish(reqFile, req, res);
+                            break;
+                        }
+                    }
+
+                    res.setStatus(Status._403);
+                } else {
+                    finish(reqFile, req, res);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -126,7 +134,11 @@ public final class FileProvider implements HttpRequestHandler {
 
             // Apply header
             if (options.isLastModified()) {
-                res.setHeader("Last-Modified", Utils.getGMTDate(new Date(Files.getLastModifiedTime(file).toMillis())));
+                Instant instant = Instant.ofEpochMilli(Files.getLastModifiedTime(file).toMillis());
+                DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME
+                        .withZone(ZoneOffset.UTC);
+
+                res.setHeader("Last-Modified", formatter.format(instant));
             }
 
         } catch (IOException e) {
