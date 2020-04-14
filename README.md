@@ -27,6 +27,12 @@
 
 <br>
 
+<h3 align="center">
+	!! This project is looking for a new maintainer! Please comment <a href="https://github.com/Simonwep/java-express/issues/13">here</a> if you're interested !!
+</h3>
+
+<br>
+
 #### Getting Started
 ```java
 Express app = new Express();
