@@ -1,4 +1,4 @@
-plugins { id("io.vacco.common-build") version "0.5.1" }
+plugins { id("io.vacco.common-build") version "0.5.2" }
 
 group = "io.vacco.java-express"
 version = "0.2.1"
