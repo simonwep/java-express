@@ -1,33 +1,26 @@
-
-<h1 align="center">
-	<img alt="Logo" src="https://image.ibb.co/jyxDzx/java_express.png">
-</h1>
+<div style="text-align: center">
+  <img alt="Logo" src="https://image.ibb.co/jyxDzx/java_express.png">
+</div>
 
 <h3 align="center">
-	Simple and fast HTTP-Framework with the touch of expressjs
+  Simple and fast HTTP-Framework with the touch of expressjs
 </h3>
 
+
 <p align="center">
-	<a href="https://choosealicense.com/licenses/mit/"><img
-		alt="License MIT"
-		src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-	<a href="https://docs.oracle.com/javase/8/"><img
-		alt="Current version"
-		src="https://img.shields.io/badge/version-1.0.0-EB4D5C.svg"></a>
-    <a href="https://www.patreon.com/simonwep"><img
-        alt="Support me"
-        src="https://img.shields.io/badge/patreon-support-DF2D41.svg"></a>
-	<a href="https://gradle.org/"><img
-		alt="Build with gradle"
-		src="https://img.shields.io/badge/build%20with-gradle-006533.svg"></a>
-	<a href="https://travis-ci.org/Simonwep/java-express"><img
-		alt="Build Status"
-		src="https://travis-ci.org/Simonwep/java-express.svg?branch=master"></a>
+  <a href="https://choosealicense.com/licenses/mit/">
+    <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg">
+  </a>
+  <a href="https://www.patreon.com/simonwep">
+    <img alt="Support me" src="https://img.shields.io/badge/patreon-support-DF2D41.svg">
+  </a>
+  <a href="https://travis-ci.org/Simonwep/java-express">
+    <img alt="Build Status" src="https://travis-ci.org/Simonwep/java-express.svg?branch=master">
+  </a>
 </p>
 
-<br>
+# Getting Started
 
-#### Getting Started
 ```java
 Express app = new Express();
 
@@ -38,59 +31,49 @@ app.get("/", (req, res) -> {
 
 ## Installation
 
-### Maven
-> Add repository:
-```xml
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
+Add the following dependency coordinate from JCenter on your favorite build system:
+
+[![Download](https://api.bintray.com/packages/vaccovecrana/vacco-oss/java-express/images/download.svg) ](https://bintray.com/vaccovecrana/vacco-oss/java-express/_latestVersion)
+
+```
+io.vacco.java-express:java-express:<VERSION>
 ```
 
-> Add dependency:
-```xml
-<dependency>
-    <groupId>com.github.Simonwep</groupId>
-    <artifactId>java-express</artifactId>
-    <version>0.1.1</version>
-</dependency>
-```
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+- [Routing](#routing)
+    - [DynExpress](#dynexpress)
+    - [Direct](#direct)
+    - [With Router](#with-router)
+  - [URL Basics](#url-basics)
+    - [URL Parameter](#url-parameter)
+      - [URL Parameter Listener](#url-parameter-listener)
+    - [URL Querys](#url-querys)
+  - [Cookies](#cookies)
+    - [Form data](#form-data)
+  - [HTTP Relevant classes](#http-relevant-classes)
+    - [Express](#express)
+    - [Response Object](#response-object)
+    - [Request Object](#request-object)
+- [Middleware](#middleware)
+  - [Create own middleware](#create-own-middleware)
+  - [Existing Middlewares](#existing-middlewares)
+      - [CORS](#cors)
+      - [Provide static Files](#provide-static-files)
+      - [Cookie Session](#cookie-session)
+    - [Global Variables](#global-variables)
+  - [Examples](#examples)
+      - [Very simple static-website](#very-simple-static-website)
+      - [File download](#file-download)
+      - [Send cookies](#send-cookies)
+    - [License](#license)
 
-### Gradle
-> Add this to your build.gradle
-```xml
-repositories {
-    maven { url "https://jitpack.io/" }
-}
+# Routing
 
-dependencies {
-    implementation 'com.github.Simonwep:java-express:0.1.1'
-}
-```
-
-## Docs:
-* [Routing](#routing)
-   * [DynExpress](#dynexpress)
-   * [Direct](#direct)
-   * [With Router](#with-router)
-* [URL Basics](#url-basics)
-   * [URL Parameter](#url-parameter)
-   * [URL Parameter Listener](#url-parameter-listener)
-   * [URL Querys](#url-querys)
-   * [Cookies](#cookies)
-   * [Form Data](#form-data)
-* [HTTP Relevant classes](#http-relevant-classes)
-   * [Response Object](#response-object)
-   * [Request Object](#request-object)
-* [Middleware](#middleware)
-   * [Create own middleware](#create-own-middleware)
-* [Using global variables](#global-variables)
-* [License](#license)
-* [Examples](#examples)
-
-## Routing
 ### DynExpress
+
 Express allows the attaching of request-handler to instance methods via the DynExpress annotation:
+
 ```java
 
 // Your main class
@@ -130,13 +113,12 @@ public class Bindings {
         res.send("POST to index");
     }
 }
-
-
 ```
 
-
 ### Direct
+
 You can add routes (And middlewares) directly to the Express object to handle requests:
+
 ```java
 Express app = new Express();
 
@@ -151,7 +133,9 @@ app.get("/user/register", (req, res) -> res.send("Join now!"));
 
 app.listen();
 ```
+
 Directly it also supports methods like `POST` `PATCH` `DELETE` and `PUT`, others need to be created manually:
+
 ```java
 Express app = new Express();
 
@@ -168,7 +152,9 @@ app.listen();
 ```
 
 ### With Router
+
 But it's better to split your code, right? With the `ExpressRouter` you can create routes and add it later to the `Express` object:
+
 ```java
 Express app = new Express() {{
 
@@ -195,7 +181,9 @@ Express app = new Express() {{
 ```
 
 ## URL Basics
+
 Over the express object you can create handler for all [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts. Some examples:
+
 ```java
 app.get("/home", (req, res) -> {
 	// Will match every request which uses the 'GET' method and matches the '/home' path
@@ -207,10 +195,12 @@ app.post("/login", (req, res) -> {
 ```
 
 ### URL Parameter
+
 Sometimes you want to create dynamic URL where some parts of the URL's are not static.
 With the `:` operator you can create variables in the URL which will be saved later in a HashMap.
 
 Example request: `GET`  `/posts/john/all`:
+
 ```java
 app.get("/posts/:user/:description", (req, res) -> {
    String user = req.getParam("user"); // Contains 'john'
@@ -220,6 +210,7 @@ app.get("/posts/:user/:description", (req, res) -> {
 ```
 
 #### URL Parameter Listener
+
 You can also add an event listener when the user called an route which contains an certain parameter.
 
 ```java
@@ -228,17 +219,21 @@ app.get("/posts/:user/:id", (req, res) -> {
 });
 ```
 For example, if we want to check every `id` before the associated get post etc. handler will be fired, we can use the `app.onParam([PARAM])` function:
+
 ```java
 app.onParam("id", (req, res) -> {
   // Do something with the id parameter, eg. check if it's valid.
 });
 ```
+
 Now, this function will be called every time when an context is requested which contains the `id` parameter placeholder.
 
 ### URL Querys
+
 If you make an request which contains querys, you can access the querys over `req.getQuery(NAME)`.
 
 Example request: `GET`  `/posts?page=12&from=john`:
+
 ```java
 app.get("/posts", (req, res) -> {
    String page = req.getQuery("page"); // Contains '12'
@@ -248,9 +243,11 @@ app.get("/posts", (req, res) -> {
 ```
 
 ## Cookies
+
 With `req.getCookie(NAME)` you can get an cookie by his name, and with `res.setCookie(NAME, VALUE)` you can easily set an cookie.
 
 Example request: `GET`  `/setcookie`:
+
 ```java
 app.get("/setcookie", (req, res) -> {
    Cookie cookie = new Cookie("username", "john");
@@ -260,6 +257,7 @@ app.get("/setcookie", (req, res) -> {
 ```
 
 Example request: `GET`  `/showcookie`:
+
 ```java
 app.get("/showcookie", (req, res) -> {
    Cookie cookie = req.getCookie("username");
@@ -269,8 +267,10 @@ app.get("/showcookie", (req, res) -> {
 ```
 
 ### Form data
+
 Over `req.getFormQuery(NAME)` you receive the values from the input elements of an HTML-Form.
 Example HTML-Form:
+
 ```html
 <form action="http://localhost/register" method="post">
    <input description="text" name="email" placeholder="Your E-Mail">
@@ -278,9 +278,11 @@ Example HTML-Form:
    <input description="submit">
 </form>
 ```
+
 **Attention: Currently, File-inputs don't work, if there is an File-input the data won't get parsed!**
 Now description, for the example below, `john` in username and `john@gmail.com` in the email field.
 Java code to handle the post request and access the form elements:
+
 ```java
 app.post("/register", (req, res) -> {
   String email = req.getFormQuery("email");
@@ -293,8 +295,11 @@ app.post("/register", (req, res) -> {
 ```
 
 ## HTTP Relevant classes
+
 ### Express
+
 This class represents the entire HTTP-Server, the available methods are:
+
 ```java
 app.get(String context, HttpRequest handler);                   // Add an GET request handler
 app.post(String context, HttpRequest handler);                  // Add an POST request handler
@@ -323,6 +328,7 @@ app.stop();                                                     // Stop the serv
 ```
 
 ### Response Object
+
 Over the response object, you have serveral possibility like setting cookies, send an file and more. Below is an short explanation what methods exists:
 (We assume that `res` is the `Response` object)
 
@@ -345,9 +351,11 @@ res.getStatus();                       // Returns the current status
 res.setStatus(Status status);          // Set the repose status
 res.streamFrom(long contentLength, InputStream is, MediaType mediaType) // Send a inputstream with known length and type
 ```
+
 The response object calls are comments because **you can only call the .send(xy) once each request!**
 
 ### Request Object
+
 Over the `Request` Object you have access to serveral request stuff (We assume that `req` is the `Request` object):
 
 ```java
@@ -385,6 +393,7 @@ req.getBody();                    // Returns the request inputstream
 ```
 
 # Middleware
+
 Middleware are one of the most important features of JavaExpress, with middleware you can handle a request before it reaches any other request handler. To create an own middleware you have serveral interfaces:
 * `HttpRequest`  - Is **required** to handle an request.
 * `ExpressFilter` - Is **required** to put data on the request listener.
@@ -399,23 +408,29 @@ app.use((req, res) -> {
   // Handle data
 });
 ```
+
 You can also filter by [request-methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) and contexts:
+
 ```java
 // Global context, you can also pass an context if you want
 app.use("/home", "POST", (req, res) -> {
   // Handle request by context '/home' and method 'POST'
 });
 ```
+
 In addition to that yo can use `*` which stands for every **context** or **request-method**:
+
 ```java
 // Global context, you can also pass an context if you want
 app.use("/home", "*", (req, res) -> {
   // Handle request which matches the context '/home' and all methods.
 });
 ```
+
 ## Create own middleware
 
 Now we take a look how we can create own middlewares. Here we create an simple PortParser which parse / extract the port-number for us. We only used `HttpRequest` and `ExpressFilter` because we don't need any background thread.
+
 ```java
 public class PortMiddleware implements HttpRequest, ExpressFilter {
 
@@ -452,13 +467,15 @@ public class PortMiddleware implements HttpRequest, ExpressFilter {
 }
 ```
 
-No we can, as we learned above, include it with:
+Now we can, as we learned above, include it with:
+
 ```java
 // Global context, you can also pass an context if you want
 app.use(new PortMiddleware());
 ```
 
 And use it:
+
 ```java
 app.get("/port-test", (req, res) -> {
   
@@ -471,14 +488,18 @@ app.get("/port-test", (req, res) -> {
 ```
 
 ## Existing Middlewares
+
 There are already some basic middlewares included, you can access these via static methods provided from `Middleware`.
 
 #### CORS
+
 To realize a cors api yu can use the cors middleware.
+
 ```java
 app.use(Middleware.cors());
 ```
 You can use CorsOptions to specify origin, methods and more:
+
 ```java
 CorsOptions corsOptions = new CorsOptions();
 corsOptions.setOrigin("https://mypage.com");
@@ -490,12 +511,17 @@ app.use(Middleware.cors());
 ```
 
 #### Provide static Files
+
 If you want to allocate some files, like librarys, css, images etc. you can use the [static](https://github.com/Simonwep/java-express/blob/master/src/express/middleware/Middleware.java) middleware. But you can also provide other files like mp4 etc.
+
 Example:
+
 ```java
  app.use(Middleware.statics("examplepath\\myfiles"));
 ```
+
 Now you can access every files in the `test_statics` over the root adress `\`. I'ts also possible to set an configuration for the FileProvider:
+
 ```java
 FileProviderOptionsoptions = new FileProviderOptions();
 options.setExtensions("html", "css", "js"); // By default, all are allowed.
@@ -515,14 +541,19 @@ options.setMaxAge(10000);                   // Send the Cache-Control header, by
 options.setDotFiles(DotFiles.DENY);         // Deny access to dot-files. Default is IGNORE.
 app.use(Middleware.statics("examplepath\\myfiles", new FileProviderOptions())); // Using with StaticOptions
 ```
+
 #### Cookie Session
+
 There is also an simple cookie-session implementation:
+
 ```java
 // You should use an meaningless cookie name for serveral security reasons, here f3v4.
 // Also you can specify the maximum age of the cookie from the creation date and the file types wich are actually allowed.
 app.use(Middleware.cookieSession("f3v4", 9000));
 ```
+
 To use a session cookie we need to get the data from the middleware which is actually an `SessionCookie`:
+
 ```java
  // Cookie session example
 app.get("/session", (req, res) -> {
@@ -549,18 +580,21 @@ Send an info message
    res.send("You take use of your session cookie " + count + " times.");
 });
 ```
+
 ### Global Variables
-Java-express also supports to save and read global variables over the Express instance:
-Example:
+
+Java-express also supports to save and read global variables over the Express instance.
+
 ```java
 app.set("my-data", "Hello World");
 app.get("my-data"); // Returns "Hello World"
 ```
 
 ## Examples
-#### Very simple static-website
-```java
 
+#### Very simple static-website
+
+```java
 // Create instance
 new Express() {{
   
@@ -570,8 +604,8 @@ new Express() {{
 ```
 
 #### File download
-```java
 
+```java
 // Your file
 Path downloadFile = Paths.get("my-big-file");
 
@@ -582,7 +616,9 @@ new Express() {{
   get("/download-me", (req, res) -> res.sendAttachment(downloadFile));
 }};
 ```
+
 #### Send cookies 
+
 ```java
 new Express() {{
 
