@@ -5,6 +5,8 @@ import express.http.request.Request;
 import express.http.response.Response;
 import express.utils.Status;
 import express.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,22 +17,17 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Simon Reinisch
  * An middleware to provide access to static server-files.
  */
 public final class FileProvider implements HttpRequestHandler {
-    private final Logger logger;
+
+    private static final Logger log = LoggerFactory.getLogger(FileProvider.class);
+
     private FileProviderOptions options;
     private String root;
-
-    {
-        this.logger = Logger.getLogger(this.getClass().getSimpleName());
-        this.logger.setUseParentHandlers(false);  // Disable default console log
-    }
 
     FileProvider(String root, FileProviderOptions options) throws IOException {
         Path rootDir = Paths.get(root);
@@ -83,7 +80,7 @@ public final class FileProvider implements HttpRequestHandler {
                         }
                     }
                 } catch (IOException e) {
-                    this.logger.log(Level.WARNING, "Cannot walk file tree.", e);
+                    log.error("Cannot walk file tree.", e);
                 }
             }
 
@@ -143,7 +140,7 @@ public final class FileProvider implements HttpRequestHandler {
 
         } catch (IOException e) {
             res.sendStatus(Status._500);
-            this.logger.log(Level.WARNING, "Cannot read LastModifiedTime from file " + file.toString(), e);
+            log.error("Cannot read LastModifiedTime from file [{}]", file.toString(), e);
             return;
         }
 
@@ -157,14 +154,4 @@ public final class FileProvider implements HttpRequestHandler {
         return index == -1 ? name : name.substring(0, index);
     }
 
-
-    /**
-     * Returns the logger which is concered for this FileProvilder object.
-     * There is no default-handler active, if you want to log it you need to set an handler.
-     *
-     * @return The logger from this FileProvilder object.
-     */
-    public Logger getLogger() {
-        return logger;
-    }
 }
