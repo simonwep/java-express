@@ -1,4 +1,4 @@
-<div style="text-align: center">
+<div align="center">
   <img alt="Logo" src="https://image.ibb.co/jyxDzx/java_express.png">
 </div>
 
