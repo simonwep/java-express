@@ -6,16 +6,12 @@
   Simple and fast HTTP-Framework with the touch of expressjs
 </h3>
 
-
 <p align="center">
   <a href="https://choosealicense.com/licenses/mit/">
     <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg">
   </a>
   <a href="https://www.patreon.com/simonwep">
     <img alt="Support me" src="https://img.shields.io/badge/patreon-support-DF2D41.svg">
-  </a>
-  <a href="https://travis-ci.org/Simonwep/java-express">
-    <img alt="Build Status" src="https://travis-ci.org/Simonwep/java-express.svg?branch=master">
   </a>
 </p>
 
