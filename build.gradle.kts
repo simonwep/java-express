@@ -4,7 +4,7 @@ group = "io.vacco.java-express"
 version = "0.2.1"
 
 configure<io.vacco.common.CbPluginProfileExtension> {
-  addJ8Spec(); addPmd(); addSpotBugs()
+  addJ8Spec(); addPmd(); addSpotBugs(); addGoogleJavaFormat()
   setPublishingUrlTransform { repo -> "${repo.url}/${project.name}" }
   sharedLibrary()
 }
