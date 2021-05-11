@@ -7,42 +7,42 @@ import express.http.response.Response;
 
 public class Cors implements HttpRequestHandler {
 
-    private final CorsOptions options;
+  private final CorsOptions options;
 
-    public Cors(CorsOptions options) {
-        this.options = options;
+  public Cors(CorsOptions options) {
+    this.options = options;
+  }
+
+  @Override
+  public void handle(Request req, Response res) {
+    CorsOptions.Filter filter = this.options.getFilter();
+
+    // Check if filter is present
+    if (filter != null && !filter.shouldBypass(req)) {
+      return;
     }
 
-    @Override
-    public void handle(Request req, Response res) {
-        CorsOptions.Filter filter = this.options.getFilter();
+    // Acquire options
+    boolean ac = this.options.isAllowCredentials();
+    String origins = this.options.getOrigin();
+    String[] headers = this.options.getHeaders();
+    RequestMethod[] methods = this.options.getMethods();
 
-        // Check if filter is present
-        if (filter != null && !filter.shouldBypass(req)) {
-            return;
-        }
+    // Apply headers
+    res.setHeader("Access-Control-Allow-Credentials", Boolean.toString(ac));
+    res.setHeader("Access-Control-Allow-Origin", origins != null ? origins : "*");
+    res.setHeader("Access-Control-Allow-Methods", methods != null ? join(methods) : "*");
+    res.setHeader("Access-Control-Request-Headers", headers != null ? join(headers) : "*");
+  }
 
-        // Acquire options
-        boolean ac = this.options.isAllowCredentials();
-        String origins = this.options.getOrigin();
-        String[] headers = this.options.getHeaders();
-        RequestMethod[] methods = this.options.getMethods();
+  private String join(Object[] objects) {
+    StringBuilder sb = new StringBuilder();
 
-        // Apply headers
-        res.setHeader("Access-Control-Allow-Credentials", Boolean.toString(ac));
-        res.setHeader("Access-Control-Allow-Origin", origins != null ? origins : "*");
-        res.setHeader("Access-Control-Allow-Methods", methods != null ? join(methods) : "*");
-        res.setHeader("Access-Control-Request-Headers", headers != null ? join(headers) : "*");
+    for (Object o : objects) {
+      sb.append(o.toString()).append(", ");
     }
 
-    private String join(Object[] objects) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Object o : objects) {
-            sb.append(o.toString()).append(", ");
-        }
-
-        String string = sb.toString();
-        return string.substring(0, string.length() - 2);
-    }
+    String string = sb.toString();
+    return string.substring(0, string.length() - 2);
+  }
 }
